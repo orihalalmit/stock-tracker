@@ -1,0 +1,19 @@
+{
+  "name": "stock-tracker",
+  "version": "1.0.0",
+  "description": "Stock tracking application with portfolio management and insights",
+  "scripts": {
+    "start": "yarn start:frontend",
+    "start:frontend": "cd trading/frontend && yarn start",
+    "start:backend": "cd trading/backend && yarn start",
+    "install:frontend": "cd trading/frontend && yarn install",
+    "install:backend": "cd trading/backend && yarn install",
+    "install:all": "yarn install:frontend && yarn install:backend",
+    "dev": "concurrently \"yarn start:backend\" \"yarn start:frontend\"",
+    "build": "cd trading/frontend && yarn build"
+  },
+  "dependencies": {
+    "uuid": "^11.1.0",
+    "concurrently": "^9.2.0"
+  }
+}

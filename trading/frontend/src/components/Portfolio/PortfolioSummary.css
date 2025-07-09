@@ -1,0 +1,484 @@
+.portfolio-dashboard {
+  padding: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 32px;
+}
+
+.dashboard-header h1 {
+  font-size: 24px;
+  font-weight: 600;
+  margin: 0 0 8px 0;
+  color: #ffffff;
+}
+
+.subtitle {
+  font-size: 14px;
+  color: #a0a0a0;
+  margin: 0;
+}
+
+.header-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.refresh-btn, .add-stock-btn {
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.refresh-btn {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+}
+
+.add-stock-btn {
+  background: #10b981;
+  border: none;
+  color: white;
+}
+
+.refresh-btn:hover, .add-stock-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.refresh-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.add-stock-btn:hover {
+  background: #059669;
+}
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 24px;
+  margin-bottom: 40px;
+}
+
+.dashboard-grid-extended {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 24px;
+  margin-top: 40px;
+}
+
+.dashboard-card {
+  background: linear-gradient(145deg, #2a2a2a 0%, #1e1e1e 100%);
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.card-title {
+  font-size: 14px;
+  color: #a0a0a0;
+}
+
+.card-icon {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  font-size: 16px;
+  color: white;
+}
+
+.card-value {
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #ffffff;
+}
+
+.card-subtext {
+  font-size: 12px;
+  color: #a0a0a0;
+}
+
+.section-header {
+  margin-bottom: 24px;
+}
+
+.section-header h2 {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0 0 4px 0;
+  color: #ffffff;
+}
+
+.section-subtitle {
+  font-size: 14px;
+  color: #a0a0a0;
+}
+
+/* Historical Performance Section */
+.historical-section {
+  background: linear-gradient(145deg, #2a2a2a 0%, #1e1e1e 100%);
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  margin: 24px 0;
+}
+
+.historical-section h3 {
+  margin: 0 0 20px 0;
+  color: #ffffff;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.historical-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.historical-period {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  padding: 16px;
+  text-align: center;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.2s ease;
+}
+
+.historical-period:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+  transform: translateY(-1px);
+}
+
+.period-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #a0a0a0;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.period-value {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.period-value.positive {
+  color: #0ECB81;
+}
+
+.period-value.negative {
+  color: #F6465D;
+}
+
+.period-subtext {
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.period-subtext.positive {
+  color: #0ECB81;
+}
+
+.period-subtext.negative {
+  color: #F6465D;
+}
+
+.historical-note {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 6px;
+  padding: 12px;
+  font-size: 12px;
+  color: #a0a0a0;
+  line-height: 1.5;
+  border-left: 3px solid rgba(255, 255, 255, 0.2);
+}
+
+.holdings-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.holding-item {
+  background: linear-gradient(145deg, #2a2a2a 0%, #1e1e1e 100%);
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.holding-info {
+  flex: 1;
+}
+
+.holding-symbol {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.symbol {
+  font-size: 16px;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.sector-tag {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  color: #a0a0a0;
+}
+
+.holding-name {
+  font-size: 14px;
+  color: #a0a0a0;
+  margin-bottom: 4px;
+}
+
+.holding-details {
+  font-size: 12px;
+  color: #a0a0a0;
+}
+
+.holding-portfolio-percent {
+  font-size: 12px;
+  color: #a78bfa;
+  font-weight: 500;
+  margin-top: 2px;
+}
+
+.holding-value {
+  text-align: right;
+}
+
+.value-label {
+  font-size: 12px;
+  color: #a0a0a0;
+  margin-bottom: 4px;
+}
+
+.current-price-display {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  padding: 6px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.price-label {
+  font-size: 12px;
+  color: #a0a0a0;
+}
+
+.price-amount {
+  font-size: 14px;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.value-amount {
+  font-size: 18px;
+  font-weight: 600;
+  color: #ffffff;
+  margin-bottom: 4px;
+}
+
+.value-change {
+  font-size: 14px;
+}
+
+/* Currency Widget Styles */
+.currency-widget {
+  margin-bottom: 24px;
+}
+
+.widget-header {
+  margin-bottom: 16px;
+}
+
+.widget-header h3 {
+  margin: 0;
+  font-size: 1.2rem;
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.loading {
+  color: #a0a0a0;
+  font-style: italic;
+}
+
+/* Fear & Greed Index Styles */
+.fear-greed-card {
+  background: linear-gradient(145deg, #2a2a2a 0%, #1e1e1e 100%);
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  margin-top: 20px;
+}
+
+.fear-greed-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.fear-greed-header h2 {
+  margin: 0;
+  font-size: 1.2rem;
+  color: #ffffff;
+}
+
+.sentiment-tag {
+  padding: 6px 12px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.1);
+  font-size: 0.9rem;
+  color: #ffffff;
+}
+
+.sentiment-tag.error {
+  background: rgba(239, 68, 68, 0.2);
+  color: #ef4444;
+}
+
+.fear-greed-scale {
+  margin: 20px 0;
+}
+
+.scale-bar {
+  height: 8px;
+  background: linear-gradient(to right, #ff4d4d, #ffeb3b, #4caf50);
+  border-radius: 4px;
+  position: relative;
+  margin-bottom: 10px;
+}
+
+.scale-indicator {
+  width: 16px;
+  height: 16px;
+  background: #fff;
+  border: 2px solid #333;
+  border-radius: 50%;
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  transition: left 0.3s ease;
+}
+
+.scale-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  color: #a0a0a0;
+}
+
+.fear-greed-details {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  padding: 15px;
+  margin: 15px 0;
+}
+
+.fear-greed-details p {
+  margin: 8px 0;
+  font-size: 0.9rem;
+  color: #ffffff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.fear-greed-details p span {
+  font-weight: 600;
+  color: #0ECB81;
+  font-size: 1rem;
+}
+
+.fear-greed-description {
+  font-size: 0.85rem;
+  color: #a0a0a0;
+  line-height: 1.4;
+  margin-top: 15px;
+}
+
+.holding-daily-change {
+  font-size: 0.9rem;
+  margin-top: 4px;
+  font-weight: 500;
+}
+
+@media (max-width: 1024px) {
+  .dashboard-grid-extended {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .portfolio-dashboard {
+    padding: 16px;
+  }
+
+  .dashboard-header {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .header-actions {
+    width: 100%;
+  }
+
+  .refresh-btn, .add-stock-btn {
+    flex: 1;
+  }
+
+  .holding-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .holding-value {
+    width: 100%;
+    text-align: left;
+  }
+} 

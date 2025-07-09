@@ -1,0 +1,965 @@
+[
+  {
+    "_id": "569c1509-96ce-449f-a284-6e10777ac6d8",
+    "portfolioId": "749c6e37-2f00-47a9-8d86-c87e6f5346f6",
+    "type": "BUY",
+    "symbol": "AAPL",
+    "shares": 100,
+    "price": 150.5,
+    "date": "2025-07-07T06:41:55.756Z"
+  },
+  {
+    "_id": "93c7fa80-1bf0-4487-a215-7c06f914a591",
+    "portfolioId": "749c6e37-2f00-47a9-8d86-c87e6f5346f6",
+    "type": "BUY",
+    "symbol": "GOOGL",
+    "shares": 50,
+    "price": 2800.75,
+    "date": "2025-07-07T06:41:55.756Z"
+  },
+  {
+    "_id": "d7979a0c-f830-4a21-b81c-6a0f82cf115c",
+    "portfolioId": "749c6e37-2f00-47a9-8d86-c87e6f5346f6",
+    "type": "BUY",
+    "symbol": "MSFT",
+    "shares": 75,
+    "price": 300.25,
+    "date": "2025-07-07T06:41:55.756Z"
+  },
+  {
+    "_id": "2e2d6c4a-b66d-4f35-b3a8-5f8bb191131c",
+    "portfolioId": "749c6e37-2f00-47a9-8d86-c87e6f5346f6",
+    "type": "BUY",
+    "symbol": "AMD",
+    "shares": 52,
+    "price": 126.44,
+    "date": "2025-07-07T06:52:30.191Z"
+  },
+  {
+    "_id": "bcd0bd71-5def-475e-a98a-c02b1f175057",
+    "portfolioId": "749c6e37-2f00-47a9-8d86-c87e6f5346f6",
+    "type": "BUY",
+    "symbol": "GOOGL",
+    "shares": 16,
+    "price": 190.54,
+    "date": "2025-07-07T06:52:30.191Z"
+  },
+  {
+    "_id": "fcbd1599-5a22-4e08-a4cd-b67dd21262e5",
+    "portfolioId": "749c6e37-2f00-47a9-8d86-c87e6f5346f6",
+    "type": "BUY",
+    "symbol": "AMZN",
+    "shares": 67,
+    "price": 197.43,
+    "date": "2025-07-07T06:52:30.191Z"
+  },
+  {
+    "_id": "394d04df-9a2b-4b5b-9e97-916322c89383",
+    "portfolioId": "749c6e37-2f00-47a9-8d86-c87e6f5346f6",
+    "type": "BUY",
+    "symbol": "AAPL",
+    "shares": 20,
+    "price": 227.13,
+    "date": "2025-07-07T06:52:30.191Z"
+  },
+  {
+    "_id": "0755eb6a-bc5b-4977-a750-17e051827297",
+    "portfolioId": "749c6e37-2f00-47a9-8d86-c87e6f5346f6",
+    "type": "BUY",
+    "symbol": "APP",
+    "shares": 27,
+    "price": 343.89,
+    "date": "2025-07-07T06:52:30.191Z"
+  },
+  {
+    "_id": "fd3b94ed-128e-48d8-864a-f46e0481866f",
+    "portfolioId": "749c6e37-2f00-47a9-8d86-c87e6f5346f6",
+    "type": "BUY",
+    "symbol": "ASML",
+    "shares": 13,
+    "price": 683.28,
+    "date": "2025-07-07T06:52:30.191Z"
+  },
+  {
+    "_id": "efd9053f-4566-4214-9b61-88cfca817fb8",
+    "portfolioId": "749c6e37-2f00-47a9-8d86-c87e6f5346f6",
+    "type": "BUY",
+    "symbol": "BRK.B",
+    "shares": 10,
+    "price": 415.08,
+    "date": "2025-07-07T06:52:30.191Z"
+  },
+  {
+    "_id": "8a094bf1-b404-49de-b03f-9f364555603f",
+    "portfolioId": "749c6e37-2f00-47a9-8d86-c87e6f5346f6",
+    "type": "BUY",
+    "symbol": "CIBR",
+    "shares": 145,
+    "price": 66.13,
+    "date": "2025-07-07T06:52:30.192Z"
+  },
+  {
+    "_id": "32f5f27c-dc2c-4303-aca2-d1c6fff9d6e9",
+    "portfolioId": "749c6e37-2f00-47a9-8d86-c87e6f5346f6",
+    "type": "BUY",
+    "symbol": "HIMS",
+    "shares": 410,
+    "price": 28.93,
+    "date": "2025-07-07T06:52:30.192Z"
+  },
+  {
+    "_id": "f6b41c2f-4971-4b65-911b-358dcb814b5e",
+    "portfolioId": "749c6e37-2f00-47a9-8d86-c87e6f5346f6",
+    "type": "BUY",
+    "symbol": "QQQM",
+    "shares": 54,
+    "price": 185.19,
+    "date": "2025-07-07T06:52:30.192Z"
+  },
+  {
+    "_id": "3f8c560e-e276-4842-9d6f-a09e2691df33",
+    "portfolioId": "749c6e37-2f00-47a9-8d86-c87e6f5346f6",
+    "type": "BUY",
+    "symbol": "QQQ",
+    "shares": 13,
+    "price": 499.82,
+    "date": "2025-07-07T06:52:30.192Z"
+  },
+  {
+    "_id": "87c93ee2-cad0-4228-b135-f34e867bd29a",
+    "portfolioId": "749c6e37-2f00-47a9-8d86-c87e6f5346f6",
+    "type": "BUY",
+    "symbol": "META",
+    "shares": 27,
+    "price": 564.77,
+    "date": "2025-07-07T06:52:30.192Z"
+  },
+  {
+    "_id": "0a0ab3b5-0f23-45ee-ae47-7349574a87b1",
+    "portfolioId": "749c6e37-2f00-47a9-8d86-c87e6f5346f6",
+    "type": "BUY",
+    "symbol": "MSFT",
+    "shares": 8,
+    "price": 416.54,
+    "date": "2025-07-07T06:52:30.192Z"
+  },
+  {
+    "_id": "27e27755-320b-474e-9866-af5f3d580f02",
+    "portfolioId": "749c6e37-2f00-47a9-8d86-c87e6f5346f6",
+    "type": "BUY",
+    "symbol": "NVDA",
+    "shares": 193,
+    "price": 127.71,
+    "date": "2025-07-07T06:52:30.192Z"
+  },
+  {
+    "_id": "eb7d35bc-4d2a-461f-843b-767ac6887e74",
+    "portfolioId": "749c6e37-2f00-47a9-8d86-c87e6f5346f6",
+    "type": "BUY",
+    "symbol": "PLTR",
+    "shares": 162,
+    "price": 81.21,
+    "date": "2025-07-07T06:52:30.192Z"
+  },
+  {
+    "_id": "26af117b-ecdd-40a7-9e29-8fd3da523d03",
+    "portfolioId": "749c6e37-2f00-47a9-8d86-c87e6f5346f6",
+    "type": "BUY",
+    "symbol": "MAGS",
+    "shares": 352,
+    "price": 49.7,
+    "date": "2025-07-07T06:52:30.192Z"
+  },
+  {
+    "_id": "b1a425d9-00f8-442c-8e81-4304b6972890",
+    "portfolioId": "749c6e37-2f00-47a9-8d86-c87e6f5346f6",
+    "type": "BUY",
+    "symbol": "SOFI",
+    "shares": 978,
+    "price": 14.77,
+    "date": "2025-07-07T06:52:30.192Z"
+  },
+  {
+    "_id": "84887ef5-3550-4b9f-96f5-bb9e8ffa16bf",
+    "portfolioId": "749c6e37-2f00-47a9-8d86-c87e6f5346f6",
+    "type": "BUY",
+    "symbol": "AMD",
+    "shares": 52,
+    "price": 126.44,
+    "date": "2025-07-07T09:12:39.342Z"
+  },
+  {
+    "_id": "deaf2f68-dc14-488a-86a0-2a169a370095",
+    "portfolioId": "749c6e37-2f00-47a9-8d86-c87e6f5346f6",
+    "type": "BUY",
+    "symbol": "GOOGL",
+    "shares": 16,
+    "price": 190.54,
+    "date": "2025-07-07T09:12:39.343Z"
+  },
+  {
+    "_id": "9c2d66be-f048-4b57-b56e-d37f38c1dcff",
+    "portfolioId": "749c6e37-2f00-47a9-8d86-c87e6f5346f6",
+    "type": "BUY",
+    "symbol": "AMZN",
+    "shares": 67,
+    "price": 197.43,
+    "date": "2025-07-07T09:12:39.343Z"
+  },
+  {
+    "_id": "b53858e7-249c-484d-9af1-c981b833f838",
+    "portfolioId": "749c6e37-2f00-47a9-8d86-c87e6f5346f6",
+    "type": "BUY",
+    "symbol": "AAPL",
+    "shares": 20,
+    "price": 227.13,
+    "date": "2025-07-07T09:12:39.343Z"
+  },
+  {
+    "_id": "5ba629e4-f330-4c3d-876c-e01d74eb8006",
+    "portfolioId": "749c6e37-2f00-47a9-8d86-c87e6f5346f6",
+    "type": "BUY",
+    "symbol": "APP",
+    "shares": 27,
+    "price": 343.89,
+    "date": "2025-07-07T09:12:39.343Z"
+  },
+  {
+    "_id": "39d350b3-da3d-4f6a-9ce4-5095b77eaf83",
+    "portfolioId": "749c6e37-2f00-47a9-8d86-c87e6f5346f6",
+    "type": "BUY",
+    "symbol": "ASML",
+    "shares": 13,
+    "price": 683.28,
+    "date": "2025-07-07T09:12:39.343Z"
+  },
+  {
+    "_id": "216d4dcb-02c3-4f43-a460-b9ec82dacd59",
+    "portfolioId": "749c6e37-2f00-47a9-8d86-c87e6f5346f6",
+    "type": "BUY",
+    "symbol": "BRK.B",
+    "shares": 10,
+    "price": 415.08,
+    "date": "2025-07-07T09:12:39.343Z"
+  },
+  {
+    "_id": "6f531c86-cb4a-422f-a073-0daa3b8442d9",
+    "portfolioId": "749c6e37-2f00-47a9-8d86-c87e6f5346f6",
+    "type": "BUY",
+    "symbol": "CIBR",
+    "shares": 145,
+    "price": 66.13,
+    "date": "2025-07-07T09:12:39.343Z"
+  },
+  {
+    "_id": "f3e8b497-4b8e-4188-9fdf-d04c0b282577",
+    "portfolioId": "749c6e37-2f00-47a9-8d86-c87e6f5346f6",
+    "type": "BUY",
+    "symbol": "HIMS",
+    "shares": 410,
+    "price": 28.93,
+    "date": "2025-07-07T09:12:39.343Z"
+  },
+  {
+    "_id": "f8e70ea3-5f62-44b0-90a7-99a195179e14",
+    "portfolioId": "749c6e37-2f00-47a9-8d86-c87e6f5346f6",
+    "type": "BUY",
+    "symbol": "QQQM",
+    "shares": 54,
+    "price": 185.19,
+    "date": "2025-07-07T09:12:39.343Z"
+  },
+  {
+    "_id": "3ce29569-e7ce-4c56-a8a8-97d9d387cf72",
+    "portfolioId": "749c6e37-2f00-47a9-8d86-c87e6f5346f6",
+    "type": "BUY",
+    "symbol": "QQQ",
+    "shares": 13,
+    "price": 499.82,
+    "date": "2025-07-07T09:12:39.343Z"
+  },
+  {
+    "_id": "62e3e103-c7c6-49da-b0fa-e4981229b69f",
+    "portfolioId": "749c6e37-2f00-47a9-8d86-c87e6f5346f6",
+    "type": "BUY",
+    "symbol": "META",
+    "shares": 27,
+    "price": 564.77,
+    "date": "2025-07-07T09:12:39.343Z"
+  },
+  {
+    "_id": "1e642c52-9882-42cd-b307-3f72219e2eb5",
+    "portfolioId": "749c6e37-2f00-47a9-8d86-c87e6f5346f6",
+    "type": "BUY",
+    "symbol": "MSFT",
+    "shares": 8,
+    "price": 416.54,
+    "date": "2025-07-07T09:12:39.343Z"
+  },
+  {
+    "_id": "ce5b0168-2a00-4f8d-a1ce-39f176469034",
+    "portfolioId": "749c6e37-2f00-47a9-8d86-c87e6f5346f6",
+    "type": "BUY",
+    "symbol": "NVDA",
+    "shares": 193,
+    "price": 127.71,
+    "date": "2025-07-07T09:12:39.343Z"
+  },
+  {
+    "_id": "bb5cb1c2-3278-4bd9-a8b5-8984bcf0d1ab",
+    "portfolioId": "749c6e37-2f00-47a9-8d86-c87e6f5346f6",
+    "type": "BUY",
+    "symbol": "PLTR",
+    "shares": 162,
+    "price": 81.21,
+    "date": "2025-07-07T09:12:39.343Z"
+  },
+  {
+    "_id": "7338fcb5-236e-43ad-a21b-3765c412dc9c",
+    "portfolioId": "749c6e37-2f00-47a9-8d86-c87e6f5346f6",
+    "type": "BUY",
+    "symbol": "MAGS",
+    "shares": 352,
+    "price": 49.7,
+    "date": "2025-07-07T09:12:39.343Z"
+  },
+  {
+    "_id": "e065b6dd-801a-4bf1-878c-d43edd303fac",
+    "portfolioId": "749c6e37-2f00-47a9-8d86-c87e6f5346f6",
+    "type": "BUY",
+    "symbol": "SOFI",
+    "shares": 978,
+    "price": 14.77,
+    "date": "2025-07-07T09:12:39.343Z"
+  },
+  {
+    "_id": "135572d7-4fc3-482a-aac3-2fd2a617767f",
+    "portfolioId": "40fd7cbf-8991-4975-b10a-145846cd627e",
+    "type": "BUY",
+    "symbol": "AMD",
+    "shares": 52,
+    "price": 126.44,
+    "date": "2025-07-07T10:02:16.862Z"
+  },
+  {
+    "_id": "47036c0b-2ba7-426e-8cad-8c9305941ef3",
+    "portfolioId": "40fd7cbf-8991-4975-b10a-145846cd627e",
+    "type": "BUY",
+    "symbol": "GOOGL",
+    "shares": 16,
+    "price": 190.54,
+    "date": "2025-07-07T10:02:16.863Z"
+  },
+  {
+    "_id": "ff28407f-a310-4bb2-b8d6-ac10c58e2cfb",
+    "portfolioId": "40fd7cbf-8991-4975-b10a-145846cd627e",
+    "type": "BUY",
+    "symbol": "AMZN",
+    "shares": 67,
+    "price": 197.43,
+    "date": "2025-07-07T10:02:16.863Z"
+  },
+  {
+    "_id": "0194f8e3-b114-46ed-9dc8-0a75ed116592",
+    "portfolioId": "40fd7cbf-8991-4975-b10a-145846cd627e",
+    "type": "BUY",
+    "symbol": "AAPL",
+    "shares": 20,
+    "price": 227.13,
+    "date": "2025-07-07T10:02:16.863Z"
+  },
+  {
+    "_id": "e36916d5-0c45-4134-b294-bcda89bf98bd",
+    "portfolioId": "40fd7cbf-8991-4975-b10a-145846cd627e",
+    "type": "BUY",
+    "symbol": "APP",
+    "shares": 27,
+    "price": 343.89,
+    "date": "2025-07-07T10:02:16.864Z"
+  },
+  {
+    "_id": "b77593fc-ed57-492a-9673-a8eab31ec235",
+    "portfolioId": "40fd7cbf-8991-4975-b10a-145846cd627e",
+    "type": "BUY",
+    "symbol": "ASML",
+    "shares": 13,
+    "price": 683.28,
+    "date": "2025-07-07T10:02:16.864Z"
+  },
+  {
+    "_id": "d89a58d7-6a24-4338-b072-faec8017847c",
+    "portfolioId": "40fd7cbf-8991-4975-b10a-145846cd627e",
+    "type": "BUY",
+    "symbol": "BRK.B",
+    "shares": 10,
+    "price": 415.08,
+    "date": "2025-07-07T10:02:16.864Z"
+  },
+  {
+    "_id": "ba86b153-f50b-4b97-b4a8-a8d19cdbccd0",
+    "portfolioId": "40fd7cbf-8991-4975-b10a-145846cd627e",
+    "type": "BUY",
+    "symbol": "CIBR",
+    "shares": 145,
+    "price": 66.13,
+    "date": "2025-07-07T10:02:16.864Z"
+  },
+  {
+    "_id": "54b81102-cfe6-47f6-838b-0f99b73611ed",
+    "portfolioId": "40fd7cbf-8991-4975-b10a-145846cd627e",
+    "type": "BUY",
+    "symbol": "HIMS",
+    "shares": 410,
+    "price": 28.93,
+    "date": "2025-07-07T10:02:16.864Z"
+  },
+  {
+    "_id": "9800ae37-5813-493c-b610-8831fc753ab8",
+    "portfolioId": "40fd7cbf-8991-4975-b10a-145846cd627e",
+    "type": "BUY",
+    "symbol": "QQQM",
+    "shares": 54,
+    "price": 185.19,
+    "date": "2025-07-07T10:02:16.864Z"
+  },
+  {
+    "_id": "0238169a-d348-4690-821b-c97cb8be1e34",
+    "portfolioId": "40fd7cbf-8991-4975-b10a-145846cd627e",
+    "type": "BUY",
+    "symbol": "QQQ",
+    "shares": 13,
+    "price": 499.82,
+    "date": "2025-07-07T10:02:16.864Z"
+  },
+  {
+    "_id": "683cf4e0-aa71-4d7a-9f58-b332dfa64263",
+    "portfolioId": "40fd7cbf-8991-4975-b10a-145846cd627e",
+    "type": "BUY",
+    "symbol": "META",
+    "shares": 27,
+    "price": 564.77,
+    "date": "2025-07-07T10:02:16.864Z"
+  },
+  {
+    "_id": "02ad8fc4-6f00-4bbd-9b9d-1de723352316",
+    "portfolioId": "40fd7cbf-8991-4975-b10a-145846cd627e",
+    "type": "BUY",
+    "symbol": "MSFT",
+    "shares": 8,
+    "price": 416.54,
+    "date": "2025-07-07T10:02:16.864Z"
+  },
+  {
+    "_id": "c8fe7cd8-b32a-4ad1-90d1-a8978bac0088",
+    "portfolioId": "40fd7cbf-8991-4975-b10a-145846cd627e",
+    "type": "BUY",
+    "symbol": "NVDA",
+    "shares": 193,
+    "price": 127.71,
+    "date": "2025-07-07T10:02:16.864Z"
+  },
+  {
+    "_id": "86ee823b-233a-4103-af68-290e18cef08c",
+    "portfolioId": "40fd7cbf-8991-4975-b10a-145846cd627e",
+    "type": "BUY",
+    "symbol": "PLTR",
+    "shares": 162,
+    "price": 81.21,
+    "date": "2025-07-07T10:02:16.864Z"
+  },
+  {
+    "_id": "474e26bb-f160-4601-bafc-6c9d669b7185",
+    "portfolioId": "40fd7cbf-8991-4975-b10a-145846cd627e",
+    "type": "BUY",
+    "symbol": "MAGS",
+    "shares": 352,
+    "price": 49.7,
+    "date": "2025-07-07T10:02:16.864Z"
+  },
+  {
+    "_id": "be818d62-9302-4440-84c8-ed0d56b77677",
+    "portfolioId": "40fd7cbf-8991-4975-b10a-145846cd627e",
+    "type": "BUY",
+    "symbol": "SOFI",
+    "shares": 978,
+    "price": 14.77,
+    "date": "2025-07-07T10:02:16.864Z"
+  },
+  {
+    "_id": "040fccb4-4ccc-450d-99e4-0b2c2031cb42",
+    "portfolioId": "5cc3993c-46be-4759-8120-48765bc03b7b",
+    "type": "BUY",
+    "symbol": "AMD",
+    "shares": 52,
+    "price": 126.44,
+    "date": "2025-07-07T10:47:11.265Z"
+  },
+  {
+    "_id": "4f246dd4-5dad-411e-9217-3664c198d110",
+    "portfolioId": "5cc3993c-46be-4759-8120-48765bc03b7b",
+    "type": "BUY",
+    "symbol": "GOOGL",
+    "shares": 16,
+    "price": 190.54,
+    "date": "2025-07-07T10:47:11.266Z"
+  },
+  {
+    "_id": "8b6dff7b-f87e-40b4-8384-a97767e10859",
+    "portfolioId": "5cc3993c-46be-4759-8120-48765bc03b7b",
+    "type": "BUY",
+    "symbol": "AMZN",
+    "shares": 67,
+    "price": 197.43,
+    "date": "2025-07-07T10:47:11.267Z"
+  },
+  {
+    "_id": "679239b1-f474-4ff1-a65c-46b1a2afa91b",
+    "portfolioId": "5cc3993c-46be-4759-8120-48765bc03b7b",
+    "type": "BUY",
+    "symbol": "AAPL",
+    "shares": 20,
+    "price": 227.13,
+    "date": "2025-07-07T10:47:11.267Z"
+  },
+  {
+    "_id": "f704eec4-1c9d-4f0f-8c10-74cce17648f9",
+    "portfolioId": "5cc3993c-46be-4759-8120-48765bc03b7b",
+    "type": "BUY",
+    "symbol": "APP",
+    "shares": 27,
+    "price": 343.89,
+    "date": "2025-07-07T10:47:11.267Z"
+  },
+  {
+    "_id": "ae137c25-b010-44dc-ace1-c5893f1dea5e",
+    "portfolioId": "5cc3993c-46be-4759-8120-48765bc03b7b",
+    "type": "BUY",
+    "symbol": "ASML",
+    "shares": 13,
+    "price": 683.28,
+    "date": "2025-07-07T10:47:11.267Z"
+  },
+  {
+    "_id": "9c2611b8-ec58-4e31-b908-05dc9592d772",
+    "portfolioId": "5cc3993c-46be-4759-8120-48765bc03b7b",
+    "type": "BUY",
+    "symbol": "BRK.B",
+    "shares": 10,
+    "price": 415.08,
+    "date": "2025-07-07T10:47:11.267Z"
+  },
+  {
+    "_id": "71c90581-423d-4297-8555-167ddf5eafee",
+    "portfolioId": "5cc3993c-46be-4759-8120-48765bc03b7b",
+    "type": "BUY",
+    "symbol": "CIBR",
+    "shares": 145,
+    "price": 66.13,
+    "date": "2025-07-07T10:47:11.267Z"
+  },
+  {
+    "_id": "5620941e-6ed6-4790-bd68-6cd040066b36",
+    "portfolioId": "5cc3993c-46be-4759-8120-48765bc03b7b",
+    "type": "BUY",
+    "symbol": "HIMS",
+    "shares": 410,
+    "price": 28.93,
+    "date": "2025-07-07T10:47:11.267Z"
+  },
+  {
+    "_id": "0985654c-1dc9-4264-a013-cb429cabb76b",
+    "portfolioId": "5cc3993c-46be-4759-8120-48765bc03b7b",
+    "type": "BUY",
+    "symbol": "QQQM",
+    "shares": 54,
+    "price": 185.19,
+    "date": "2025-07-07T10:47:11.267Z"
+  },
+  {
+    "_id": "ccdca478-d324-44e6-a305-4de160d57f50",
+    "portfolioId": "5cc3993c-46be-4759-8120-48765bc03b7b",
+    "type": "BUY",
+    "symbol": "QQQ",
+    "shares": 13,
+    "price": 499.82,
+    "date": "2025-07-07T10:47:11.267Z"
+  },
+  {
+    "_id": "dfecd887-9937-4366-a3ef-ec9cfdb0addf",
+    "portfolioId": "5cc3993c-46be-4759-8120-48765bc03b7b",
+    "type": "BUY",
+    "symbol": "META",
+    "shares": 27,
+    "price": 564.77,
+    "date": "2025-07-07T10:47:11.267Z"
+  },
+  {
+    "_id": "edfe4f0c-2799-482d-b806-5be3e6438fc9",
+    "portfolioId": "5cc3993c-46be-4759-8120-48765bc03b7b",
+    "type": "BUY",
+    "symbol": "MSFT",
+    "shares": 8,
+    "price": 416.54,
+    "date": "2025-07-07T10:47:11.267Z"
+  },
+  {
+    "_id": "810e0da8-bbe6-4fe9-b395-515d52054800",
+    "portfolioId": "5cc3993c-46be-4759-8120-48765bc03b7b",
+    "type": "BUY",
+    "symbol": "NVDA",
+    "shares": 193,
+    "price": 127.71,
+    "date": "2025-07-07T10:47:11.267Z"
+  },
+  {
+    "_id": "224d5835-9af2-40cf-b56c-232d75a0d45f",
+    "portfolioId": "5cc3993c-46be-4759-8120-48765bc03b7b",
+    "type": "BUY",
+    "symbol": "PLTR",
+    "shares": 162,
+    "price": 81.21,
+    "date": "2025-07-07T10:47:11.267Z"
+  },
+  {
+    "_id": "9ca625ff-a9eb-4dea-be94-51e658145b60",
+    "portfolioId": "5cc3993c-46be-4759-8120-48765bc03b7b",
+    "type": "BUY",
+    "symbol": "MAGS",
+    "shares": 352,
+    "price": 49.7,
+    "date": "2025-07-07T10:47:11.267Z"
+  },
+  {
+    "_id": "723c8f71-c1fc-4964-a1ec-f551ec95d288",
+    "portfolioId": "5cc3993c-46be-4759-8120-48765bc03b7b",
+    "type": "BUY",
+    "symbol": "SOFI",
+    "shares": 978,
+    "price": 14.77,
+    "date": "2025-07-07T10:47:11.267Z"
+  },
+  {
+    "_id": "476b64f4-2176-4d57-a98c-4cc07b8f26e5",
+    "portfolioId": "763ef391-6ba9-43e4-97c1-e0c561408fae",
+    "type": "BUY",
+    "symbol": "AMD",
+    "shares": 52,
+    "price": 126.44,
+    "date": "2025-07-07T10:53:30.022Z"
+  },
+  {
+    "_id": "06ba5ce6-6b4c-41cb-9667-9473e69bd166",
+    "portfolioId": "763ef391-6ba9-43e4-97c1-e0c561408fae",
+    "type": "BUY",
+    "symbol": "GOOGL",
+    "shares": 16,
+    "price": 190.54,
+    "date": "2025-07-07T10:53:30.022Z"
+  },
+  {
+    "_id": "6ddaef92-adb3-49b5-8f25-d7a5dbfd04cd",
+    "portfolioId": "763ef391-6ba9-43e4-97c1-e0c561408fae",
+    "type": "BUY",
+    "symbol": "AMZN",
+    "shares": 67,
+    "price": 197.43,
+    "date": "2025-07-07T10:53:30.023Z"
+  },
+  {
+    "_id": "9ec6279a-2e42-4461-a477-a2ca83411f61",
+    "portfolioId": "763ef391-6ba9-43e4-97c1-e0c561408fae",
+    "type": "BUY",
+    "symbol": "AAPL",
+    "shares": 20,
+    "price": 227.13,
+    "date": "2025-07-07T10:53:30.023Z"
+  },
+  {
+    "_id": "7fb92138-e5e2-466a-ac0b-35b417545f37",
+    "portfolioId": "763ef391-6ba9-43e4-97c1-e0c561408fae",
+    "type": "BUY",
+    "symbol": "APP",
+    "shares": 27,
+    "price": 343.89,
+    "date": "2025-07-07T10:53:30.023Z"
+  },
+  {
+    "_id": "de0f9974-1f50-4ac8-8715-262f1bf58a31",
+    "portfolioId": "763ef391-6ba9-43e4-97c1-e0c561408fae",
+    "type": "BUY",
+    "symbol": "ASML",
+    "shares": 13,
+    "price": 683.28,
+    "date": "2025-07-07T10:53:30.023Z"
+  },
+  {
+    "_id": "85c19d75-c2ec-41fa-8a1c-48d858aa0861",
+    "portfolioId": "763ef391-6ba9-43e4-97c1-e0c561408fae",
+    "type": "BUY",
+    "symbol": "BRK.B",
+    "shares": 10,
+    "price": 415.08,
+    "date": "2025-07-07T10:53:30.023Z"
+  },
+  {
+    "_id": "42d73179-43a5-431d-aa61-0fd5f9b5548f",
+    "portfolioId": "763ef391-6ba9-43e4-97c1-e0c561408fae",
+    "type": "BUY",
+    "symbol": "CIBR",
+    "shares": 145,
+    "price": 66.13,
+    "date": "2025-07-07T10:53:30.023Z"
+  },
+  {
+    "_id": "87a3e0f1-1b67-4f93-b057-f2aeacc3d2d2",
+    "portfolioId": "763ef391-6ba9-43e4-97c1-e0c561408fae",
+    "type": "BUY",
+    "symbol": "HIMS",
+    "shares": 410,
+    "price": 28.93,
+    "date": "2025-07-07T10:53:30.023Z"
+  },
+  {
+    "_id": "518334e6-c7c3-4c9d-bb3a-b439d222359c",
+    "portfolioId": "763ef391-6ba9-43e4-97c1-e0c561408fae",
+    "type": "BUY",
+    "symbol": "QQQM",
+    "shares": 54,
+    "price": 185.19,
+    "date": "2025-07-07T10:53:30.023Z"
+  },
+  {
+    "_id": "a24a6ffa-53c7-49e0-a80b-820b9344b9ef",
+    "portfolioId": "763ef391-6ba9-43e4-97c1-e0c561408fae",
+    "type": "BUY",
+    "symbol": "QQQ",
+    "shares": 13,
+    "price": 499.82,
+    "date": "2025-07-07T10:53:30.023Z"
+  },
+  {
+    "_id": "d0fd7def-bbf8-47b2-9d5f-86f0a4c3d46f",
+    "portfolioId": "763ef391-6ba9-43e4-97c1-e0c561408fae",
+    "type": "BUY",
+    "symbol": "META",
+    "shares": 27,
+    "price": 564.77,
+    "date": "2025-07-07T10:53:30.023Z"
+  },
+  {
+    "_id": "5df661ce-6022-4855-a8e8-af1e0bc2d971",
+    "portfolioId": "763ef391-6ba9-43e4-97c1-e0c561408fae",
+    "type": "BUY",
+    "symbol": "MSFT",
+    "shares": 8,
+    "price": 416.54,
+    "date": "2025-07-07T10:53:30.023Z"
+  },
+  {
+    "_id": "3fbc8723-71bf-49f8-a311-6485c5303e55",
+    "portfolioId": "763ef391-6ba9-43e4-97c1-e0c561408fae",
+    "type": "BUY",
+    "symbol": "NVDA",
+    "shares": 193,
+    "price": 127.71,
+    "date": "2025-07-07T10:53:30.023Z"
+  },
+  {
+    "_id": "74f51b1d-18f6-4539-996b-5e51a06a1b59",
+    "portfolioId": "763ef391-6ba9-43e4-97c1-e0c561408fae",
+    "type": "BUY",
+    "symbol": "PLTR",
+    "shares": 162,
+    "price": 81.21,
+    "date": "2025-07-07T10:53:30.023Z"
+  },
+  {
+    "_id": "24a7cb5e-3f6a-4a9c-9d26-1edb7ab4e063",
+    "portfolioId": "763ef391-6ba9-43e4-97c1-e0c561408fae",
+    "type": "BUY",
+    "symbol": "MAGS",
+    "shares": 352,
+    "price": 49.7,
+    "date": "2025-07-07T10:53:30.023Z"
+  },
+  {
+    "_id": "c81c2924-804c-4e55-a523-c779b8058e34",
+    "portfolioId": "763ef391-6ba9-43e4-97c1-e0c561408fae",
+    "type": "BUY",
+    "symbol": "SOFI",
+    "shares": 978,
+    "price": 14.77,
+    "date": "2025-07-07T10:53:30.023Z"
+  },
+  {
+    "_id": "8b1801ae-11fc-40f9-bc1d-0bcbc6a71f49",
+    "portfolioId": "93604ea9-2936-422d-937e-169da5e88bd6",
+    "type": "BUY",
+    "symbol": "AMD",
+    "shares": 52,
+    "price": 126.44,
+    "date": "2025-07-07T11:16:56.120Z"
+  },
+  {
+    "_id": "3c97c97d-1d16-4b7e-87a6-9f265c957199",
+    "portfolioId": "93604ea9-2936-422d-937e-169da5e88bd6",
+    "type": "BUY",
+    "symbol": "GOOGL",
+    "shares": 16,
+    "price": 190.54,
+    "date": "2025-07-07T11:16:56.121Z"
+  },
+  {
+    "_id": "e5bb01ef-abca-478a-b3df-dba014e38271",
+    "portfolioId": "93604ea9-2936-422d-937e-169da5e88bd6",
+    "type": "BUY",
+    "symbol": "AMZN",
+    "shares": 67,
+    "price": 197.43,
+    "date": "2025-07-07T11:16:56.121Z"
+  },
+  {
+    "_id": "d7906849-d754-4b45-ad35-636d1a029959",
+    "portfolioId": "93604ea9-2936-422d-937e-169da5e88bd6",
+    "type": "BUY",
+    "symbol": "AAPL",
+    "shares": 20,
+    "price": 227.13,
+    "date": "2025-07-07T11:16:56.121Z"
+  },
+  {
+    "_id": "76e83b45-ae0f-48f1-b4da-799c4d3d8802",
+    "portfolioId": "93604ea9-2936-422d-937e-169da5e88bd6",
+    "type": "BUY",
+    "symbol": "APP",
+    "shares": 27,
+    "price": 343.89,
+    "date": "2025-07-07T11:16:56.121Z"
+  },
+  {
+    "_id": "7a95d049-64ec-46db-ba34-93c3a3a1a0d8",
+    "portfolioId": "93604ea9-2936-422d-937e-169da5e88bd6",
+    "type": "BUY",
+    "symbol": "ASML",
+    "shares": 13,
+    "price": 683.28,
+    "date": "2025-07-07T11:16:56.121Z"
+  },
+  {
+    "_id": "df3d0be1-6612-42d3-b8ec-5af68d998e96",
+    "portfolioId": "93604ea9-2936-422d-937e-169da5e88bd6",
+    "type": "BUY",
+    "symbol": "BRK.B",
+    "shares": 10,
+    "price": 415.08,
+    "date": "2025-07-07T11:16:56.121Z"
+  },
+  {
+    "_id": "9eaf094a-e328-463c-9cce-5a32caa9b157",
+    "portfolioId": "93604ea9-2936-422d-937e-169da5e88bd6",
+    "type": "BUY",
+    "symbol": "CIBR",
+    "shares": 145,
+    "price": 66.13,
+    "date": "2025-07-07T11:16:56.121Z"
+  },
+  {
+    "_id": "d86fc676-4028-4ba3-ae66-98c675217152",
+    "portfolioId": "93604ea9-2936-422d-937e-169da5e88bd6",
+    "type": "BUY",
+    "symbol": "HIMS",
+    "shares": 410,
+    "price": 28.93,
+    "date": "2025-07-07T11:16:56.121Z"
+  },
+  {
+    "_id": "bd27e641-c139-4f48-8012-a772a88e6891",
+    "portfolioId": "93604ea9-2936-422d-937e-169da5e88bd6",
+    "type": "BUY",
+    "symbol": "QQQM",
+    "shares": 54,
+    "price": 185.19,
+    "date": "2025-07-07T11:16:56.121Z"
+  },
+  {
+    "_id": "6420e056-64cd-4681-bd42-daf8ac56f883",
+    "portfolioId": "93604ea9-2936-422d-937e-169da5e88bd6",
+    "type": "BUY",
+    "symbol": "QQQ",
+    "shares": 13,
+    "price": 499.82,
+    "date": "2025-07-07T11:16:56.121Z"
+  },
+  {
+    "_id": "456f9223-4296-4bcf-a0a3-8df552b120a1",
+    "portfolioId": "93604ea9-2936-422d-937e-169da5e88bd6",
+    "type": "BUY",
+    "symbol": "META",
+    "shares": 27,
+    "price": 564.77,
+    "date": "2025-07-07T11:16:56.121Z"
+  },
+  {
+    "_id": "577cd0b4-0338-47ef-bad7-3394a13fbd8c",
+    "portfolioId": "93604ea9-2936-422d-937e-169da5e88bd6",
+    "type": "BUY",
+    "symbol": "MSFT",
+    "shares": 8,
+    "price": 416.54,
+    "date": "2025-07-07T11:16:56.121Z"
+  },
+  {
+    "_id": "0c5dbab3-9140-45bb-aa35-4e2e20e50849",
+    "portfolioId": "93604ea9-2936-422d-937e-169da5e88bd6",
+    "type": "BUY",
+    "symbol": "NVDA",
+    "shares": 193,
+    "price": 127.71,
+    "date": "2025-07-07T11:16:56.121Z"
+  },
+  {
+    "_id": "d444a98c-beea-4b90-8f87-bc62b3f13e44",
+    "portfolioId": "93604ea9-2936-422d-937e-169da5e88bd6",
+    "type": "BUY",
+    "symbol": "PLTR",
+    "shares": 162,
+    "price": 81.21,
+    "date": "2025-07-07T11:16:56.121Z"
+  },
+  {
+    "_id": "2f8fb10c-58f5-4dbb-9bfe-a67ed35d141b",
+    "portfolioId": "93604ea9-2936-422d-937e-169da5e88bd6",
+    "type": "BUY",
+    "symbol": "MAGS",
+    "shares": 352,
+    "price": 49.7,
+    "date": "2025-07-07T11:16:56.121Z"
+  },
+  {
+    "_id": "d1c33b54-f602-4021-a8e8-4f13178255fb",
+    "portfolioId": "93604ea9-2936-422d-937e-169da5e88bd6",
+    "type": "BUY",
+    "symbol": "SOFI",
+    "shares": 978,
+    "price": 14.77,
+    "date": "2025-07-07T11:16:56.121Z"
+  },
+  {
+    "_id": "880cee4c-0b04-42c8-9025-12e3562f5d54",
+    "portfolioId": "93604ea9-2936-422d-937e-169da5e88bd6",
+    "type": "BUY",
+    "symbol": "AAPL",
+    "shares": 100,
+    "price": 5,
+    "date": "2025-07-07T11:17:25.024Z"
+  },
+  {
+    "_id": "654ac0bc-dff5-4914-b39a-80ec019c69f5",
+    "portfolioId": "93604ea9-2936-422d-937e-169da5e88bd6",
+    "type": "BUY",
+    "symbol": "MAGS",
+    "shares": 100,
+    "price": 150,
+    "date": "2025-07-07T11:17:43.774Z"
+  }
+]

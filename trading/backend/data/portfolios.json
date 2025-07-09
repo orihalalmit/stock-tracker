@@ -1,0 +1,697 @@
+[
+  {
+    "_id": "749c6e37-2f00-47a9-8d86-c87e6f5346f6",
+    "name": "Ori",
+    "positions": [
+      {
+        "symbol": "AAPL",
+        "shares": 100,
+        "averagePrice": 150.5,
+        "sector": "Technology"
+      },
+      {
+        "symbol": "GOOGL",
+        "shares": 50,
+        "averagePrice": 2800.75,
+        "sector": "Technology"
+      },
+      {
+        "symbol": "MSFT",
+        "shares": 75,
+        "averagePrice": 300.25,
+        "sector": "Technology "
+      },
+      {
+        "symbol": "AMD",
+        "shares": 52,
+        "averagePrice": 126.44,
+        "sector": "Information Technology"
+      },
+      {
+        "symbol": "GOOGL",
+        "shares": 16,
+        "averagePrice": 190.54,
+        "sector": "Communication Services"
+      },
+      {
+        "symbol": "AMZN",
+        "shares": 67,
+        "averagePrice": 197.43,
+        "sector": "Consumer Discretionary"
+      },
+      {
+        "symbol": "AAPL",
+        "shares": 20,
+        "averagePrice": 227.13,
+        "sector": "Information Technology"
+      },
+      {
+        "symbol": "APP",
+        "shares": 27,
+        "averagePrice": 343.89,
+        "sector": "Communication Services"
+      },
+      {
+        "symbol": "ASML",
+        "shares": 13,
+        "averagePrice": 683.28,
+        "sector": "Unknown"
+      },
+      {
+        "symbol": "BRK.B",
+        "shares": 10,
+        "averagePrice": 415.08,
+        "sector": "Unknown"
+      },
+      {
+        "symbol": "CIBR",
+        "shares": 145,
+        "averagePrice": 66.13,
+        "sector": "Unknown"
+      },
+      {
+        "symbol": "HIMS",
+        "shares": 410,
+        "averagePrice": 28.93,
+        "sector": "Healthcare"
+      },
+      {
+        "symbol": "QQQM",
+        "shares": 54,
+        "averagePrice": 185.19,
+        "sector": "Unknown"
+      },
+      {
+        "symbol": "QQQ",
+        "shares": 13,
+        "averagePrice": 499.82,
+        "sector": "Unknown"
+      },
+      {
+        "symbol": "META",
+        "shares": 27,
+        "averagePrice": 564.77,
+        "sector": "Unknown"
+      },
+      {
+        "symbol": "MSFT",
+        "shares": 8,
+        "averagePrice": 416.54,
+        "sector": "Unknown"
+      },
+      {
+        "symbol": "NVDA",
+        "shares": 193,
+        "averagePrice": 127.71,
+        "sector": "Unknown"
+      },
+      {
+        "symbol": "PLTR",
+        "shares": 162,
+        "averagePrice": 81.21,
+        "sector": "Unknown"
+      },
+      {
+        "symbol": "MAGS",
+        "shares": 352,
+        "averagePrice": 49.7,
+        "sector": "Unknown"
+      },
+      {
+        "symbol": "SOFI",
+        "shares": 978,
+        "averagePrice": 14.77,
+        "sector": "Unknown"
+      },
+      {
+        "symbol": "AMD",
+        "shares": 52,
+        "averagePrice": 126.44,
+        "sector": "Information Technology"
+      },
+      {
+        "symbol": "GOOGL",
+        "shares": 16,
+        "averagePrice": 190.54,
+        "sector": "Communication Services"
+      },
+      {
+        "symbol": "AMZN",
+        "shares": 67,
+        "averagePrice": 197.43,
+        "sector": "Consumer Discretionary"
+      },
+      {
+        "symbol": "AAPL",
+        "shares": 20,
+        "averagePrice": 227.13,
+        "sector": "Information Technology"
+      },
+      {
+        "symbol": "APP",
+        "shares": 27,
+        "averagePrice": 343.89,
+        "sector": "Communication Services"
+      },
+      {
+        "symbol": "ASML",
+        "shares": 13,
+        "averagePrice": 683.28,
+        "sector": "Unknown"
+      },
+      {
+        "symbol": "BRK.B",
+        "shares": 10,
+        "averagePrice": 415.08,
+        "sector": "Unknown"
+      },
+      {
+        "symbol": "CIBR",
+        "shares": 145,
+        "averagePrice": 66.13,
+        "sector": "Unknown"
+      },
+      {
+        "symbol": "HIMS",
+        "shares": 410,
+        "averagePrice": 28.93,
+        "sector": "Healthcare"
+      },
+      {
+        "symbol": "QQQM",
+        "shares": 54,
+        "averagePrice": 185.19,
+        "sector": "Unknown"
+      },
+      {
+        "symbol": "QQQ",
+        "shares": 13,
+        "averagePrice": 499.82,
+        "sector": "Unknown"
+      },
+      {
+        "symbol": "META",
+        "shares": 27,
+        "averagePrice": 564.77,
+        "sector": "Unknown"
+      },
+      {
+        "symbol": "MSFT",
+        "shares": 8,
+        "averagePrice": 416.54,
+        "sector": "Unknown"
+      },
+      {
+        "symbol": "NVDA",
+        "shares": 193,
+        "averagePrice": 127.71,
+        "sector": "Unknown"
+      },
+      {
+        "symbol": "PLTR",
+        "shares": 162,
+        "averagePrice": 81.21,
+        "sector": "Unknown"
+      },
+      {
+        "symbol": "MAGS",
+        "shares": 352,
+        "averagePrice": 49.7,
+        "sector": "Unknown"
+      },
+      {
+        "symbol": "SOFI",
+        "shares": 978,
+        "averagePrice": 14.77,
+        "sector": "Unknown"
+      }
+    ],
+    "cash": 0,
+    "createdAt": "2025-07-07T06:34:46.078Z",
+    "lastUpdated": "2025-07-07T09:12:39.343Z"
+  },
+  {
+    "_id": "40fd7cbf-8991-4975-b10a-145846cd627e",
+    "name": "Ori2",
+    "positions": [
+      {
+        "symbol": "AMD",
+        "shares": 52,
+        "averagePrice": 126.44,
+        "sector": "Information Technology"
+      },
+      {
+        "symbol": "GOOGL",
+        "shares": 16,
+        "averagePrice": 190.54,
+        "sector": "Communication Services"
+      },
+      {
+        "symbol": "AMZN",
+        "shares": 67,
+        "averagePrice": 197.43,
+        "sector": "Consumer Discretionary"
+      },
+      {
+        "symbol": "AAPL",
+        "shares": 20,
+        "averagePrice": 227.13,
+        "sector": "Information Technology"
+      },
+      {
+        "symbol": "APP",
+        "shares": 27,
+        "averagePrice": 343.89,
+        "sector": "Communication Services"
+      },
+      {
+        "symbol": "ASML",
+        "shares": 13,
+        "averagePrice": 683.28,
+        "sector": "Unknown"
+      },
+      {
+        "symbol": "BRK.B",
+        "shares": 10,
+        "averagePrice": 415.08,
+        "sector": "Unknown"
+      },
+      {
+        "symbol": "CIBR",
+        "shares": 145,
+        "averagePrice": 66.13,
+        "sector": "Unknown"
+      },
+      {
+        "symbol": "HIMS",
+        "shares": 410,
+        "averagePrice": 28.93,
+        "sector": "Healthcare"
+      },
+      {
+        "symbol": "QQQM",
+        "shares": 54,
+        "averagePrice": 185.19,
+        "sector": "Unknown"
+      },
+      {
+        "symbol": "QQQ",
+        "shares": 13,
+        "averagePrice": 499.82,
+        "sector": "Unknown"
+      },
+      {
+        "symbol": "META",
+        "shares": 27,
+        "averagePrice": 564.77,
+        "sector": "Unknown"
+      },
+      {
+        "symbol": "MSFT",
+        "shares": 8,
+        "averagePrice": 416.54,
+        "sector": "Unknown"
+      },
+      {
+        "symbol": "NVDA",
+        "shares": 193,
+        "averagePrice": 127.71,
+        "sector": "Unknown"
+      },
+      {
+        "symbol": "PLTR",
+        "shares": 162,
+        "averagePrice": 81.21,
+        "sector": "Unknown"
+      },
+      {
+        "symbol": "MAGS",
+        "shares": 352,
+        "averagePrice": 49.7,
+        "sector": "Unknown"
+      },
+      {
+        "symbol": "SOFI",
+        "shares": 978,
+        "averagePrice": 14.77,
+        "sector": "Unknown"
+      }
+    ],
+    "cash": 0,
+    "createdAt": "2025-07-07T10:02:10.715Z",
+    "lastUpdated": "2025-07-07T10:02:16.864Z"
+  },
+  {
+    "_id": "76bed383-2dfe-4367-b785-a1a19c60a3da",
+    "name": "Ori-test",
+    "positions": [],
+    "cash": 0,
+    "createdAt": "2025-07-07T10:17:42.495Z",
+    "lastUpdated": "2025-07-07T10:17:42.495Z"
+  },
+  {
+    "_id": "5cc3993c-46be-4759-8120-48765bc03b7b",
+    "name": "s",
+    "positions": [
+      {
+        "symbol": "AMD",
+        "shares": 52,
+        "averagePrice": 126.44,
+        "sector": "Information Technology"
+      },
+      {
+        "symbol": "GOOGL",
+        "shares": 16,
+        "averagePrice": 190.54,
+        "sector": "Communication Services"
+      },
+      {
+        "symbol": "AMZN",
+        "shares": 67,
+        "averagePrice": 197.43,
+        "sector": "Consumer Discretionary"
+      },
+      {
+        "symbol": "AAPL",
+        "shares": 20,
+        "averagePrice": 227.13,
+        "sector": "Information Technology"
+      },
+      {
+        "symbol": "APP",
+        "shares": 27,
+        "averagePrice": 343.89,
+        "sector": "Communication Services"
+      },
+      {
+        "symbol": "ASML",
+        "shares": 13,
+        "averagePrice": 683.28,
+        "sector": "Unknown"
+      },
+      {
+        "symbol": "BRK.B",
+        "shares": 10,
+        "averagePrice": 415.08,
+        "sector": "Unknown"
+      },
+      {
+        "symbol": "CIBR",
+        "shares": 145,
+        "averagePrice": 66.13,
+        "sector": "Unknown"
+      },
+      {
+        "symbol": "HIMS",
+        "shares": 410,
+        "averagePrice": 28.93,
+        "sector": "Healthcare"
+      },
+      {
+        "symbol": "QQQM",
+        "shares": 54,
+        "averagePrice": 185.19,
+        "sector": "Unknown"
+      },
+      {
+        "symbol": "QQQ",
+        "shares": 13,
+        "averagePrice": 499.82,
+        "sector": "Unknown"
+      },
+      {
+        "symbol": "META",
+        "shares": 27,
+        "averagePrice": 564.77,
+        "sector": "Unknown"
+      },
+      {
+        "symbol": "MSFT",
+        "shares": 8,
+        "averagePrice": 416.54,
+        "sector": "Unknown"
+      },
+      {
+        "symbol": "NVDA",
+        "shares": 193,
+        "averagePrice": 127.71,
+        "sector": "Unknown"
+      },
+      {
+        "symbol": "PLTR",
+        "shares": 162,
+        "averagePrice": 81.21,
+        "sector": "Unknown"
+      },
+      {
+        "symbol": "MAGS",
+        "shares": 352,
+        "averagePrice": 49.7,
+        "sector": "Unknown"
+      },
+      {
+        "symbol": "SOFI",
+        "shares": 978,
+        "averagePrice": 14.77,
+        "sector": "Unknown"
+      }
+    ],
+    "cash": 0,
+    "createdAt": "2025-07-07T10:46:58.009Z",
+    "lastUpdated": "2025-07-07T10:47:11.267Z"
+  },
+  {
+    "_id": "763ef391-6ba9-43e4-97c1-e0c561408fae",
+    "name": "ss",
+    "positions": [
+      {
+        "symbol": "AMD",
+        "shares": 52,
+        "averagePrice": 126.44,
+        "sector": "Information Technology"
+      },
+      {
+        "symbol": "GOOGL",
+        "shares": 16,
+        "averagePrice": 190.54,
+        "sector": "Communication Services"
+      },
+      {
+        "symbol": "AMZN",
+        "shares": 67,
+        "averagePrice": 197.43,
+        "sector": "Consumer Discretionary"
+      },
+      {
+        "symbol": "AAPL",
+        "shares": 20,
+        "averagePrice": 227.13,
+        "sector": "Information Technology"
+      },
+      {
+        "symbol": "APP",
+        "shares": 27,
+        "averagePrice": 343.89,
+        "sector": "Communication Services"
+      },
+      {
+        "symbol": "ASML",
+        "shares": 13,
+        "averagePrice": 683.28,
+        "sector": "Unknown"
+      },
+      {
+        "symbol": "BRK.B",
+        "shares": 10,
+        "averagePrice": 415.08,
+        "sector": "Unknown"
+      },
+      {
+        "symbol": "CIBR",
+        "shares": 145,
+        "averagePrice": 66.13,
+        "sector": "Unknown"
+      },
+      {
+        "symbol": "HIMS",
+        "shares": 410,
+        "averagePrice": 28.93,
+        "sector": "Healthcare"
+      },
+      {
+        "symbol": "QQQM",
+        "shares": 54,
+        "averagePrice": 185.19,
+        "sector": "Unknown"
+      },
+      {
+        "symbol": "QQQ",
+        "shares": 13,
+        "averagePrice": 499.82,
+        "sector": "Unknown"
+      },
+      {
+        "symbol": "META",
+        "shares": 27,
+        "averagePrice": 564.77,
+        "sector": "Unknown"
+      },
+      {
+        "symbol": "MSFT",
+        "shares": 8,
+        "averagePrice": 416.54,
+        "sector": "Unknown"
+      },
+      {
+        "symbol": "NVDA",
+        "shares": 193,
+        "averagePrice": 127.71,
+        "sector": "Unknown"
+      },
+      {
+        "symbol": "PLTR",
+        "shares": 162,
+        "averagePrice": 81.21,
+        "sector": "Unknown"
+      },
+      {
+        "symbol": "MAGS",
+        "shares": 352,
+        "averagePrice": 49.7,
+        "sector": "Unknown"
+      },
+      {
+        "symbol": "SOFI",
+        "shares": 978,
+        "averagePrice": 14.77,
+        "sector": "Unknown"
+      }
+    ],
+    "cash": 0,
+    "createdAt": "2025-07-07T10:53:20.171Z",
+    "lastUpdated": "2025-07-07T10:53:30.023Z"
+  },
+  {
+    "_id": "93604ea9-2936-422d-937e-169da5e88bd6",
+    "name": "d",
+    "positions": [
+      {
+        "symbol": "AMD",
+        "shares": 52,
+        "averagePrice": 126.44,
+        "sector": "Information Technology"
+      },
+      {
+        "symbol": "GOOGL",
+        "shares": 16,
+        "averagePrice": 190.54,
+        "sector": "Communication Services"
+      },
+      {
+        "symbol": "AMZN",
+        "shares": 67,
+        "averagePrice": 197.43,
+        "sector": "Consumer Discretionary"
+      },
+      {
+        "symbol": "AAPL",
+        "shares": 20,
+        "averagePrice": 227.13,
+        "sector": "Information Technology"
+      },
+      {
+        "symbol": "APP",
+        "shares": 27,
+        "averagePrice": 343.89,
+        "sector": "Communication Services"
+      },
+      {
+        "symbol": "ASML",
+        "shares": 13,
+        "averagePrice": 683.28,
+        "sector": "Unknown"
+      },
+      {
+        "symbol": "BRK.B",
+        "shares": 10,
+        "averagePrice": 415.08,
+        "sector": "Unknown"
+      },
+      {
+        "symbol": "CIBR",
+        "shares": 145,
+        "averagePrice": 66.13,
+        "sector": "Unknown"
+      },
+      {
+        "symbol": "HIMS",
+        "shares": 410,
+        "averagePrice": 28.93,
+        "sector": "Healthcare"
+      },
+      {
+        "symbol": "QQQM",
+        "shares": 54,
+        "averagePrice": 185.19,
+        "sector": "Unknown"
+      },
+      {
+        "symbol": "QQQ",
+        "shares": 13,
+        "averagePrice": 499.82,
+        "sector": "Unknown"
+      },
+      {
+        "symbol": "META",
+        "shares": 27,
+        "averagePrice": 564.77,
+        "sector": "Unknown"
+      },
+      {
+        "symbol": "MSFT",
+        "shares": 8,
+        "averagePrice": 416.54,
+        "sector": "Unknown"
+      },
+      {
+        "symbol": "NVDA",
+        "shares": 193,
+        "averagePrice": 127.71,
+        "sector": "Unknown"
+      },
+      {
+        "symbol": "PLTR",
+        "shares": 162,
+        "averagePrice": 81.21,
+        "sector": "Unknown"
+      },
+      {
+        "symbol": "MAGS",
+        "shares": 352,
+        "averagePrice": 49.7,
+        "sector": "Unknown"
+      },
+      {
+        "symbol": "SOFI",
+        "shares": 978,
+        "averagePrice": 14.77,
+        "sector": "Unknown"
+      },
+      {
+        "symbol": "AAPL",
+        "shares": 100,
+        "averagePrice": 5,
+        "sector": "Technology"
+      },
+      {
+        "symbol": "MAGS",
+        "shares": 100,
+        "averagePrice": 150,
+        "sector": "Technology"
+      }
+    ],
+    "cash": 0,
+    "createdAt": "2025-07-07T11:16:50.326Z",
+    "lastUpdated": "2025-07-07T11:17:43.774Z"
+  }
+]

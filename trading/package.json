@@ -1,0 +1,17 @@
+{
+  "name": "stock-tracker",
+  "version": "1.0.0",
+  "description": "Stock tracker application with Alpaca API integration",
+  "main": "index.js",
+  "scripts": {
+    "install-all": "npm install && cd backend && npm install && cd ../frontend && npm install",
+    "dev": "concurrently \"cd backend && npm run dev\" \"cd frontend && npm start\"",
+    "start": "cd backend && npm start"
+  },
+  "keywords": ["stock", "trading", "alpaca", "react"],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "concurrently": "^7.6.0"
+  }
+} 

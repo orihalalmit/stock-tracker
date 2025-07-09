@@ -1,0 +1,91 @@
+.bitcoin-card {
+  background: linear-gradient(145deg, #2a2a2a 0%, #1e1e1e 100%);
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  min-height: 140px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.bitcoin-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.bitcoin-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 10px;
+}
+
+.bitcoin-symbol {
+  font-size: 18px;
+  font-weight: bold;
+  color: #ffffff;
+  margin: 0;
+}
+
+.bitcoin-name {
+  font-size: 12px;
+  color: #a0a0a0;
+  text-align: right;
+}
+
+.bitcoin-price {
+  font-size: 24px;
+  font-weight: bold;
+  color: #ffffff;
+  margin: 10px 0;
+}
+
+.bitcoin-change {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+}
+
+.bitcoin-change.positive {
+  color: #4caf50;
+}
+
+.bitcoin-change.negative {
+  color: #f44336;
+}
+
+.change-amount {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.change-percent {
+  font-size: 12px;
+  opacity: 0.8;
+}
+
+.bitcoin-error {
+  font-size: 10px;
+  color: #ff9800;
+  margin-top: 5px;
+}
+
+@media (max-width: 768px) {
+  .bitcoin-card {
+    min-height: 120px;
+    padding: 15px;
+  }
+  
+  .bitcoin-price {
+    font-size: 20px;
+  }
+  
+  .bitcoin-symbol {
+    font-size: 16px;
+  }
+} 

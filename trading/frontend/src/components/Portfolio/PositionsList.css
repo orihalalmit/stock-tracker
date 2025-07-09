@@ -1,0 +1,335 @@
+.positions-list {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border-radius: 15px;
+  padding: 2rem;
+  margin: 2rem 0;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.positions-list h3 {
+  color: white;
+  margin: 0 0 2rem 0;
+  font-size: 1.3rem;
+}
+
+.positions-table-container {
+  overflow-x: auto;
+  margin: 0 -1rem;
+  padding: 0 1rem;
+}
+
+.positions-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  color: white;
+}
+
+.positions-table th {
+  background: rgba(255, 255, 255, 0.08);
+  padding: 1rem;
+  text-align: left;
+  font-weight: 500;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.9);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.positions-table th.active {
+  color: #10b981;
+}
+
+.positions-table th:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.positions-table th:first-child {
+  border-top-left-radius: 8px;
+}
+
+.positions-table th:last-child {
+  border-top-right-radius: 8px;
+}
+
+.positions-table td {
+  padding: 1rem;
+  font-size: 0.9rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.positions-table tr:last-child td {
+  border-bottom: none;
+}
+
+.positions-table tr:hover td {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.positions-table .symbol {
+  font-weight: 600;
+  color: #10b981;
+}
+
+.sector-badge {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* Sector-specific colors */
+.sector-badge[data-sector="Technology"] {
+  background: rgba(59, 130, 246, 0.2);
+  color: #93c5fd;
+}
+
+.sector-badge[data-sector="Healthcare"] {
+  background: rgba(16, 185, 129, 0.2);
+  color: #6ee7b7;
+}
+
+.sector-badge[data-sector="Financial Services"] {
+  background: rgba(245, 158, 11, 0.2);
+  color: #fcd34d;
+}
+
+.sector-badge[data-sector="Consumer Cyclical"] {
+  background: rgba(236, 72, 153, 0.2);
+  color: #f9a8d4;
+}
+
+.sector-badge[data-sector="Consumer Defensive"] {
+  background: rgba(139, 92, 246, 0.2);
+  color: #c4b5fd;
+}
+
+.sector-badge[data-sector="Industrials"] {
+  background: rgba(75, 85, 99, 0.2);
+  color: #d1d5db;
+}
+
+.sector-badge[data-sector="Energy"] {
+  background: rgba(239, 68, 68, 0.2);
+  color: #fca5a5;
+}
+
+.positions-table .shares {
+  font-family: monospace;
+  text-align: right;
+}
+
+.positions-table .price,
+.positions-table .value {
+  font-family: monospace;
+  text-align: right;
+}
+
+.positions-table .portfolio-percent {
+  font-family: monospace;
+  text-align: right;
+  font-weight: 500;
+  color: #a78bfa;
+}
+
+.positions-table .gain-loss {
+  font-family: monospace;
+  text-align: right;
+}
+
+.gain-loss.positive {
+  color: #10b981;
+}
+
+.gain-loss.negative {
+  color: #ef4444;
+}
+
+.gain-loss .percent {
+  display: block;
+  font-size: 0.8rem;
+  opacity: 0.8;
+}
+
+.positions-loading {
+  text-align: center;
+  padding: 3rem;
+  color: white;
+  font-size: 1.2rem;
+}
+
+.positions-error {
+  background: rgba(239, 68, 68, 0.2);
+  color: white;
+  text-align: center;
+  padding: 1.5rem;
+  border-radius: 8px;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.no-positions {
+  text-align: center;
+  padding: 3rem;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 1.1rem;
+}
+
+/* Action buttons and editing styles */
+.actions {
+  text-align: center;
+  white-space: nowrap;
+  width: 120px;
+}
+
+.position-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  align-items: center;
+}
+
+.edit-btn,
+.delete-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  font-size: 14px;
+}
+
+.edit-btn:hover {
+  background: rgba(59, 130, 246, 0.2);
+}
+
+.delete-btn:hover {
+  background: rgba(239, 68, 68, 0.2);
+}
+
+.edit-actions {
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+  align-items: center;
+}
+
+.save-btn,
+.cancel-btn {
+  background: none;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: white;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  font-size: 12px;
+  min-width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.save-btn {
+  border-color: rgba(16, 185, 129, 0.5);
+  color: #10b981;
+}
+
+.save-btn:hover:not(:disabled) {
+  background: rgba(16, 185, 129, 0.2);
+  border-color: #10b981;
+}
+
+.cancel-btn {
+  border-color: rgba(239, 68, 68, 0.5);
+  color: #ef4444;
+}
+
+.cancel-btn:hover:not(:disabled) {
+  background: rgba(239, 68, 68, 0.2);
+  border-color: #ef4444;
+}
+
+.save-btn:disabled,
+.cancel-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Editing state styles */
+.positions-table tr.editing {
+  background: rgba(59, 130, 246, 0.1);
+  border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+.positions-table tr.editing td {
+  background: rgba(59, 130, 246, 0.05);
+}
+
+/* Edit input styles */
+.edit-input {
+  width: 100%;
+  padding: 4px 6px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  font-size: 0.9rem;
+  font-family: inherit;
+}
+
+.edit-input:focus {
+  outline: none;
+  border-color: rgba(59, 130, 246, 0.6);
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.edit-input option {
+  background: #1f2937;
+  color: white;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .positions-list {
+    padding: 1.5rem;
+    margin: 1rem 0;
+  }
+
+  .positions-table td,
+  .positions-table th {
+    padding: 0.75rem;
+    font-size: 0.8rem;
+  }
+
+  .sector-badge {
+    padding: 0.2rem 0.5rem;
+    font-size: 0.7rem;
+  }
+
+  .actions {
+    width: 80px;
+  }
+  
+  .position-actions {
+    flex-direction: column;
+    gap: 4px;
+  }
+  
+  .edit-actions {
+    flex-direction: column;
+    gap: 4px;
+  }
+  
+  .edit-btn,
+  .delete-btn {
+    font-size: 12px;
+    padding: 4px;
+  }
+} 

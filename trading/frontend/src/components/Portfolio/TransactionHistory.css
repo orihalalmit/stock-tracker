@@ -1,0 +1,186 @@
+.transaction-history {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border-radius: 15px;
+  padding: 2rem;
+  margin: 2rem 0;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.transactions-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.transactions-header h3 {
+  color: white;
+  margin: 0;
+  font-size: 1.3rem;
+}
+
+.transactions-filters {
+  display: flex;
+  gap: 1rem;
+}
+
+.filter-select {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  color: white;
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.filter-select:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.filter-select:focus {
+  outline: none;
+  border-color: rgba(16, 185, 129, 0.5);
+}
+
+.filter-select option {
+  background: #1f2937;
+  color: white;
+}
+
+.transactions-table-container {
+  overflow-x: auto;
+  margin: 0 -1rem;
+  padding: 0 1rem;
+}
+
+.transactions-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  color: white;
+}
+
+.transactions-table th {
+  background: rgba(255, 255, 255, 0.08);
+  padding: 1rem;
+  text-align: left;
+  font-weight: 500;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.9);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.transactions-table th.active {
+  color: #10b981;
+}
+
+.transactions-table th:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.transactions-table th:first-child {
+  border-top-left-radius: 8px;
+}
+
+.transactions-table th:last-child {
+  border-top-right-radius: 8px;
+}
+
+.transactions-table td {
+  padding: 1rem;
+  font-size: 0.9rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.transactions-table tr:last-child td {
+  border-bottom: none;
+}
+
+.transactions-table tr:hover td {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.transactions-table .symbol {
+  font-weight: 600;
+  color: #10b981;
+}
+
+.transactions-table .type {
+  text-transform: uppercase;
+  font-weight: 500;
+  font-size: 0.8rem;
+}
+
+.transactions-table .type.buy {
+  color: #10b981;
+}
+
+.transactions-table .type.sell {
+  color: #ef4444;
+}
+
+.transactions-table .shares {
+  font-family: monospace;
+}
+
+.transactions-table .price,
+.transactions-table .total {
+  font-family: monospace;
+  text-align: right;
+}
+
+.transactions-loading {
+  text-align: center;
+  padding: 3rem;
+  color: white;
+  font-size: 1.2rem;
+}
+
+.transactions-error {
+  background: rgba(239, 68, 68, 0.2);
+  color: white;
+  text-align: center;
+  padding: 1.5rem;
+  border-radius: 8px;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.no-transactions {
+  text-align: center;
+  padding: 3rem;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 1.1rem;
+}
+
+@media (max-width: 768px) {
+  .transaction-history {
+    padding: 1.5rem;
+    margin: 1rem 0;
+  }
+
+  .transactions-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .transactions-filters {
+    width: 100%;
+  }
+
+  .filter-select {
+    width: 100%;
+  }
+
+  .transactions-table td,
+  .transactions-table th {
+    padding: 0.75rem;
+    font-size: 0.8rem;
+  }
+} 
