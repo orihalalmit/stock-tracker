@@ -149,13 +149,15 @@ const MainApp = () => {
         // Handle errors and warnings
         if (errors.length > 0) {
           console.warn('Stock data errors:', errors);
-          const errorMessage = `Some symbols failed to load: ${errors.slice(0, 3).join(', ')}${errors.length > 3 ? ` and ${errors.length - 3} more` : ''}`;
-          setError(errorMessage);
+          // Don't show error message to user for symbol failures
+          // const errorMessage = `Some symbols failed to load: ${errors.slice(0, 3).join(', ')}${errors.length > 3 ? ` and ${errors.length - 3} more` : ''}`;
+          // setError(errorMessage);
         } else if (warnings.length > 0) {
           console.warn('Stock data warnings:', warnings);
-        } else {
-          setError(null);
         }
+        
+        // Clear any existing errors when we successfully load data
+        setError(null);
         
         // Show info message about data availability
         if (requestedSymbols > 0 && returnedSymbols < requestedSymbols) {
