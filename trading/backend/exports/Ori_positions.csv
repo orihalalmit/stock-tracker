@@ -1,0 +1,19 @@
+symbol,shares,averagePrice,sector
+AMD,52,126.44,Technology
+GOOGL,16,190.54,Technology
+AMZN,67,197.43,Technology
+AAPL,20,227.13,Technology
+APP,27,343.89,Technology
+ASML,13,683.28,Technology
+BRK.B,10,415.08,Financial Services
+CIBR,145,66.13,ETF - Technology
+QQQM,54,185.19,ETF - Technology
+QQQ,13,499.82,ETF - Technology
+META,27,564.77,Technology
+MSFT,8,416.54,Technology
+NVDA,193,127.71,Technology
+PLTR,162,81.21,Technology
+MAGS,352,49.7,ETF - Technology
+SOFI,978,14.77,Financial Services
+HIMS,410,33.41,Healthcare
+OSCR,298,16.8,Healthcare

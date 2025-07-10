@@ -7,7 +7,6 @@ import BitcoinCard from './components/BitcoinCard';
 import LoadingSpinner from './components/LoadingSpinner';
 import PortfolioPage from './components/Portfolio/PortfolioPage';
 import WatchlistsPage from './components/Watchlists/WatchlistsPage';
-import TestButton from './components/TestButton';
 import { AuthProvider, useAuth } from './components/Auth/AuthContext';
 import AuthPage from './components/Auth/AuthPage';
 import AdminPanel from './components/Admin/AdminPanel';
@@ -525,7 +524,6 @@ const MainApp = () => {
 
   return (
     <div className="app">
-      <TestButton />
       <Header 
         lastUpdated={activeTab === 'market' ? lastUpdated : null}
         onRefresh={activeTab === 'market' ? fetchStockData : null}
