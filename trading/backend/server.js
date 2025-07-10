@@ -12,10 +12,30 @@ const PORT = process.env.PORT || 3001;
 console.log('Environment variables check:');
 console.log('NODE_ENV:', process.env.NODE_ENV);
 console.log('MONGODB_URI exists:', !!process.env.MONGODB_URI);
-console.log('Available env vars:', Object.keys(process.env).filter(key => key.includes('MONGO')));
+
+// Security warnings for production
+if (process.env.NODE_ENV === 'production') {
+  if (!process.env.JWT_SECRET || process.env.JWT_SECRET === 'your-secret-key-change-in-production') {
+    console.warn('⚠️  WARNING: JWT_SECRET is not set or using default value in production!');
+    console.warn('⚠️  Please set a secure JWT_SECRET in your environment variables.');
+  }
+  if (!process.env.ADMIN_PASSWORD) {
+    console.warn('⚠️  WARNING: ADMIN_PASSWORD is not set. Admin user will not be created.');
+  }
+}
 
 // Connect to MongoDB
 connectDB();
+
+// Initialize admin user
+const User = require('./models/User');
+setTimeout(async () => {
+  try {
+    await User.createAdminUser();
+  } catch (error) {
+    console.error('Error creating admin user:', error);
+  }
+}, 2000); // Wait 2 seconds for DB connection
 
 // Alpaca API configuration
 const ALPACA_CONFIG = {
@@ -45,8 +65,10 @@ if (process.env.NODE_ENV === 'production') {
 const portfolioRoutes = require('./routes/portfolio');
 const watchlistRoutes = require('./routes/watchlist');
 const marketRoutes = require('./routes/market');
+const authRoutes = require('./routes/auth');
 
 // Use routes
+app.use('/api/auth', authRoutes);
 app.use('/api/portfolio', portfolioRoutes);
 app.use('/api/watchlist', watchlistRoutes);
 app.use('/api/market', marketRoutes);

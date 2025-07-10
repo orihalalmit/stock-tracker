@@ -6,14 +6,37 @@ const axios = require('axios');
 const multer = require('multer');
 const { parse } = require('csv-parse');
 const SentimentAnalysisService = require('../services/sentimentAnalysis');
+const { authenticate, requireAdmin } = require('../middleware/auth');
 
 // Configure multer for file uploads
 const upload = multer({ storage: multer.memoryStorage() });
 
-// Get all portfolios
-router.get('/', async (req, res) => {
+// Helper function to check portfolio ownership
+const checkPortfolioAccess = async (portfolioId, user) => {
+  let query = { _id: portfolioId };
+  
+  // Non-admin users can only access their own portfolios
+  if (user.role !== 'admin') {
+    query.userId = user._id;
+  }
+  
+  const portfolio = await Portfolio.findOne(query);
+  return portfolio;
+};
+
+// Get all portfolios (user-specific or all for admin)
+router.get('/', authenticate, async (req, res) => {
   try {
-    const portfolios = await Portfolio.find();
+    let portfolios;
+    
+    if (req.user.role === 'admin') {
+      // Admin can see all portfolios with user information
+      portfolios = await Portfolio.find().populate('userId', 'username email firstName lastName');
+    } else {
+      // Regular users can only see their own portfolios
+      portfolios = await Portfolio.find({ userId: req.user._id });
+    }
+    
     res.json(portfolios);
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch portfolios' });
@@ -21,9 +44,18 @@ router.get('/', async (req, res) => {
 });
 
 // Get a specific portfolio
-router.get('/:id', async (req, res) => {
+router.get('/:id', authenticate, async (req, res) => {
   try {
-    const portfolio = await Portfolio.findById(req.params.id);
+    let portfolio;
+    
+    if (req.user.role === 'admin') {
+      // Admin can access any portfolio
+      portfolio = await Portfolio.findById(req.params.id).populate('userId', 'username email firstName lastName');
+    } else {
+      // Regular users can only access their own portfolios
+      portfolio = await Portfolio.findOne({ _id: req.params.id, userId: req.user._id });
+    }
+    
     if (!portfolio) {
       return res.status(404).json({ error: 'Portfolio not found' });
     }
@@ -178,9 +210,12 @@ router.get('/:id', async (req, res) => {
 });
 
 // Create a new portfolio
-router.post('/', async (req, res) => {
+router.post('/', authenticate, async (req, res) => {
   try {
-    const portfolio = new Portfolio(req.body);
+    const portfolio = new Portfolio({
+      ...req.body,
+      userId: req.user._id
+    });
     await portfolio.save();
     res.status(201).json(portfolio);
   } catch (error) {
@@ -189,16 +224,25 @@ router.post('/', async (req, res) => {
 });
 
 // Update a portfolio
-router.put('/:id', async (req, res) => {
+router.put('/:id', authenticate, async (req, res) => {
   try {
-    const portfolio = await Portfolio.findByIdAndUpdate(
-      req.params.id,
+    let query = { _id: req.params.id };
+    
+    // Non-admin users can only update their own portfolios
+    if (req.user.role !== 'admin') {
+      query.userId = req.user._id;
+    }
+    
+    const portfolio = await Portfolio.findOneAndUpdate(
+      query,
       req.body,
       { new: true, runValidators: true }
     );
+    
     if (!portfolio) {
       return res.status(404).json({ error: 'Portfolio not found' });
     }
+    
     res.json(portfolio);
   } catch (error) {
     res.status(400).json({ error: 'Failed to update portfolio' });
@@ -206,12 +250,21 @@ router.put('/:id', async (req, res) => {
 });
 
 // Delete a portfolio
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', authenticate, async (req, res) => {
   try {
-    const portfolio = await Portfolio.findByIdAndDelete(req.params.id);
+    let query = { _id: req.params.id };
+    
+    // Non-admin users can only delete their own portfolios
+    if (req.user.role !== 'admin') {
+      query.userId = req.user._id;
+    }
+    
+    const portfolio = await Portfolio.findOneAndDelete(query);
+    
     if (!portfolio) {
       return res.status(404).json({ error: 'Portfolio not found' });
     }
+    
     res.json({ message: 'Portfolio deleted successfully' });
   } catch (error) {
     res.status(500).json({ error: 'Failed to delete portfolio' });
@@ -219,9 +272,16 @@ router.delete('/:id', async (req, res) => {
 });
 
 // Add a position to a portfolio
-router.post('/:id/positions', async (req, res) => {
+router.post('/:id/positions', authenticate, async (req, res) => {
   try {
-    const portfolio = await Portfolio.findById(req.params.id);
+    let query = { _id: req.params.id };
+    
+    // Non-admin users can only modify their own portfolios
+    if (req.user.role !== 'admin') {
+      query.userId = req.user._id;
+    }
+    
+    const portfolio = await Portfolio.findOne(query);
     if (!portfolio) {
       return res.status(404).json({ error: 'Portfolio not found' });
     }
@@ -286,9 +346,9 @@ router.post('/:id/positions', async (req, res) => {
 });
 
 // Update a position in a portfolio
-router.put('/:id/positions/:positionId', async (req, res) => {
+router.put('/:id/positions/:positionId', authenticate, async (req, res) => {
   try {
-    const portfolio = await Portfolio.findById(req.params.id);
+    const portfolio = await checkPortfolioAccess(req.params.id, req.user);
     if (!portfolio) {
       return res.status(404).json({ error: 'Portfolio not found' });
     }
@@ -307,9 +367,9 @@ router.put('/:id/positions/:positionId', async (req, res) => {
 });
 
 // Delete a position from a portfolio
-router.delete('/:id/positions/:positionId', async (req, res) => {
+router.delete('/:id/positions/:positionId', authenticate, async (req, res) => {
   try {
-    const portfolio = await Portfolio.findById(req.params.id);
+    const portfolio = await checkPortfolioAccess(req.params.id, req.user);
     if (!portfolio) {
       return res.status(404).json({ error: 'Portfolio not found' });
     }
@@ -346,9 +406,9 @@ router.delete('/:id/positions/:positionId', async (req, res) => {
 });
 
 // Consolidate duplicate positions in a portfolio
-router.post('/:id/consolidate', async (req, res) => {
+router.post('/:id/consolidate', authenticate, async (req, res) => {
   try {
-    const portfolio = await Portfolio.findById(req.params.id);
+    const portfolio = await checkPortfolioAccess(req.params.id, req.user);
     if (!portfolio) {
       return res.status(404).json({ error: 'Portfolio not found' });
     }
@@ -423,9 +483,9 @@ router.post('/:id/consolidate', async (req, res) => {
 });
 
 // Import positions from CSV
-router.post('/:id/import', upload.single('file'), async (req, res) => {
+router.post('/:id/import', authenticate, upload.single('file'), async (req, res) => {
   try {
-    const portfolio = await Portfolio.findById(req.params.id);
+    const portfolio = await checkPortfolioAccess(req.params.id, req.user);
     if (!portfolio) {
       return res.status(404).json({ error: 'Portfolio not found' });
     }
@@ -488,9 +548,9 @@ router.post('/:id/import', upload.single('file'), async (req, res) => {
 });
 
 // Get portfolio value and performance
-router.get('/:id/performance', async (req, res) => {
+router.get('/:id/performance', authenticate, async (req, res) => {
   try {
-    const portfolio = await Portfolio.findById(req.params.id);
+    const portfolio = await checkPortfolioAccess(req.params.id, req.user);
     if (!portfolio) {
       return res.status(404).json({ error: 'Portfolio not found' });
     }
@@ -525,9 +585,9 @@ router.get('/:id/performance', async (req, res) => {
 });
 
 // Get portfolio historical performance
-router.get('/:id/historical', async (req, res) => {
+router.get('/:id/historical', authenticate, async (req, res) => {
   try {
-    const portfolio = await Portfolio.findById(req.params.id);
+    const portfolio = await checkPortfolioAccess(req.params.id, req.user);
     if (!portfolio) {
       return res.status(404).json({ error: 'Portfolio not found' });
     }
@@ -662,9 +722,9 @@ router.get('/:id/historical', async (req, res) => {
 });
 
 // Get portfolio insights - daily summary and enhanced sentiment
-router.get('/:id/insights', async (req, res) => {
+router.get('/:id/insights', authenticate, async (req, res) => {
   try {
-    const portfolio = await Portfolio.findById(req.params.id);
+    const portfolio = await checkPortfolioAccess(req.params.id, req.user);
     if (!portfolio) {
       return res.status(404).json({ error: 'Portfolio not found' });
     }
@@ -926,12 +986,12 @@ router.get('/:id/insights', async (req, res) => {
 });
 
 // Get transactions for a specific portfolio
-router.get('/:id/transactions', async (req, res) => {
+router.get('/:id/transactions', authenticate, async (req, res) => {
   try {
     const portfolioId = req.params.id;
     
-    // Verify portfolio exists
-    const portfolio = await Portfolio.findById(portfolioId);
+    // Verify portfolio exists and user has access
+    const portfolio = await checkPortfolioAccess(portfolioId, req.user);
     if (!portfolio) {
       return res.status(404).json({ error: 'Portfolio not found' });
     }

@@ -8,10 +8,13 @@ import LoadingSpinner from './components/LoadingSpinner';
 import PortfolioPage from './components/Portfolio/PortfolioPage';
 import WatchlistsPage from './components/Watchlists/WatchlistsPage';
 import TestButton from './components/TestButton';
+import { AuthProvider, useAuth } from './components/Auth/AuthContext';
+import AuthPage from './components/Auth/AuthPage';
+import AdminPanel from './components/Admin/AdminPanel';
 import './App.css';
 
-function App() {
-  const [activeTab, setActiveTab] = useState('portfolio'); // market, portfolio, watchlists
+const MainApp = () => {
+  const [activeTab, setActiveTab] = useState('portfolio'); // market, portfolio, watchlists, admin
   const [stocks, setStocks] = useState([]);
   const [usdIls, setUsdIls] = useState(null);
   const [bitcoin, setBitcoin] = useState(null);
@@ -20,6 +23,7 @@ function App() {
   const [lastUpdated, setLastUpdated] = useState(null);
   const [marketConfig, setMarketConfig] = useState(null);
   const [isEditingMarket, setIsEditingMarket] = useState(false);
+  const { user, loading: authLoading, logout, isAdmin } = useAuth();
 
   const fetchUsdIlsData = async () => {
     try {
@@ -489,9 +493,35 @@ function App() {
       return <WatchlistsPage />;
     }
 
+    // Handle admin tab
+    if (activeTab === 'admin') {
+      return <AdminPanel />;
+    }
+
     // Handle portfolio tab (includes both management and insights as sub-tabs)
     return <PortfolioPage activeView="management" />;
   };
+
+  // Show loading screen while checking authentication
+  if (authLoading) {
+    return (
+      <div className="app">
+        <div className="loading-container">
+          <LoadingSpinner />
+          <p>Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Show login page if not authenticated
+  if (!user) {
+    return (
+      <div className="app">
+        <AuthPage />
+      </div>
+    );
+  }
 
   return (
     <div className="app">
@@ -499,6 +529,9 @@ function App() {
       <Header 
         lastUpdated={activeTab === 'market' ? lastUpdated : null}
         onRefresh={activeTab === 'market' ? fetchStockData : null}
+        user={user}
+        onLogout={logout}
+        isAdmin={isAdmin()}
       />
 
       <div className="tabs">
@@ -520,12 +553,28 @@ function App() {
         >
           Watchlists
         </button>
+        {isAdmin() && (
+          <button
+            className={`tab-button ${activeTab === 'admin' ? 'active' : ''}`}
+            onClick={() => setActiveTab('admin')}
+          >
+            Admin Panel
+          </button>
+        )}
       </div>
 
       <div className="content">
         {renderContent()}
       </div>
     </div>
+  );
+};
+
+function App() {
+  return (
+    <AuthProvider>
+      <MainApp />
+    </AuthProvider>
   );
 }
 
