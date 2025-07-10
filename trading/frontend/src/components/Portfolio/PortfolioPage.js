@@ -7,6 +7,7 @@ import AddPositionForm from './AddPositionForm';
 import TransactionHistory from './TransactionHistory';
 import ImportCSV from './ImportCSV';
 import PortfolioInsights from './PortfolioInsights';
+import { useAuth } from '../Auth/AuthContext';
 
 const PortfolioPage = ({ activeView = 'management' }) => {
   const [portfolios, setPortfolios] = useState([]);
@@ -15,6 +16,7 @@ const PortfolioPage = ({ activeView = 'management' }) => {
   const [error, setError] = useState(null);
   const [activeTab, setActiveTab] = useState(activeView); // management, insights
   const [showPremarket, setShowPremarket] = useState(false);
+  const { user, token } = useAuth();
 
   // Sync activeTab with activeView prop when it changes
   useEffect(() => {
@@ -38,22 +40,16 @@ const PortfolioPage = ({ activeView = 'management' }) => {
     }
   }, [showPremarket]); // Removed portfolios dependency to prevent infinite loops
 
-  useEffect(() => {
-    fetchPortfolios();
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
-
-  // Re-fetch portfolio data when premarket toggle changes
-  useEffect(() => {
-    if (selectedPortfolio) {
-      handlePortfolioChange(selectedPortfolio._id);
-    }
-  }, [showPremarket, handlePortfolioChange]); // Removed selectedPortfolio dependency to prevent loops
-
-  const fetchPortfolios = async () => {
+  const fetchPortfolios = useCallback(async () => {
     try {
+      console.log('Fetching portfolios...');
+      console.log('User:', user?.username, 'Token exists:', !!token);
+      console.log('Auth header:', axios.defaults.headers.common['Authorization']);
+      
       // First get the list of portfolios
       const response = await axios.get('/api/portfolio');
       const portfoliosList = response.data;
+      console.log('Portfolios fetched:', portfoliosList.length);
 
       if (portfoliosList.length > 0) {
         // Try to restore last selected portfolio from localStorage
@@ -65,6 +61,7 @@ const PortfolioPage = ({ activeView = 'management' }) => {
           portfolioToSelect = portfoliosList.find(p => p._id === selectedPortfolio?._id) || portfoliosList[0];
         }
 
+        console.log('Selected portfolio:', portfolioToSelect.name);
         const url = `/api/portfolio/${portfolioToSelect._id}${showPremarket ? '?include_premarket=true' : ''}`;
         const detailedResponse = await axios.get(url);
         const updatedPortfolio = detailedResponse.data;
@@ -87,12 +84,32 @@ const PortfolioPage = ({ activeView = 'management' }) => {
       
       setError(null);
     } catch (err) {
-      setError('Failed to fetch portfolios');
-      console.error(err);
+      console.error('Error fetching portfolios:', err);
+      console.error('Response data:', err.response?.data);
+      console.error('Response status:', err.response?.status);
+      
+      if (err.response?.status === 401) {
+        setError('Authentication failed. Please log in again.');
+      } else {
+        setError('Failed to fetch portfolios: ' + (err.response?.data?.error || err.message));
+      }
     } finally {
       setLoading(false);
     }
-  };
+  }, [showPremarket, user, token]); // Add user and token to dependencies
+
+  useEffect(() => {
+    if (user && token) {
+      fetchPortfolios();
+    }
+  }, [fetchPortfolios, user, token]); // Only fetch when user is authenticated
+
+  // Re-fetch portfolio data when premarket toggle changes
+  useEffect(() => {
+    if (selectedPortfolio) {
+      handlePortfolioChange(selectedPortfolio._id);
+    }
+  }, [showPremarket, handlePortfolioChange]); // Removed selectedPortfolio dependency to prevent loops
 
   const createPortfolio = async (name) => {
     try {
