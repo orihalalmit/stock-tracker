@@ -48,7 +48,7 @@ router.get('/:id', async (req, res) => {
     const includePremarket = req.query.include_premarket === 'true';
     
     // Fetch current market data (snapshots include daily change)
-    const baseUrl = process.env.NODE_ENV === 'production' ? '' : 'http://localhost:3001';
+    const baseUrl = process.env.NODE_ENV === 'production' ? `http://localhost:${process.env.PORT || 8080}` : 'http://localhost:3001';
     const snapshotsUrl = `${baseUrl}/api/stocks/snapshots?symbols=${symbols}${includePremarket ? '&include_premarket=true' : ''}`;
     const snapshotsResponse = await axios.get(snapshotsUrl);
     const snapshots = snapshotsResponse.data.snapshots || {};
@@ -497,7 +497,7 @@ router.get('/:id/performance', async (req, res) => {
 
     // Get current prices for all symbols
     const symbols = portfolio.positions.map(p => p.symbol).join(',');
-    const baseUrl = process.env.NODE_ENV === 'production' ? '' : 'http://localhost:3001';
+    const baseUrl = process.env.NODE_ENV === 'production' ? `http://localhost:${process.env.PORT || 8080}` : 'http://localhost:3001';
     const response = await axios.get(`${baseUrl}/api/stocks/latest?symbols=${symbols}`);
     const marketPrices = {};
     
@@ -547,7 +547,7 @@ router.get('/:id/historical', async (req, res) => {
     const symbols = [...new Set(portfolio.positions.map(p => p.symbol))].join(',');
     
     // Get current prices
-    const baseUrl = process.env.NODE_ENV === 'production' ? '' : 'http://localhost:3001';
+    const baseUrl = process.env.NODE_ENV === 'production' ? `http://localhost:${process.env.PORT || 8080}` : 'http://localhost:3001';
     const currentResponse = await axios.get(`${baseUrl}/api/stocks/snapshots?symbols=${symbols}`);
     const currentSnapshots = currentResponse.data.snapshots || {};
 
@@ -701,7 +701,7 @@ router.get('/:id/insights', async (req, res) => {
     const symbols = [...new Set(portfolio.positions.map(p => p.symbol))].join(',');
     
     // Fetch current market data and historical data in parallel
-    const baseUrl = process.env.NODE_ENV === 'production' ? '' : 'http://localhost:3001';
+    const baseUrl = process.env.NODE_ENV === 'production' ? `http://localhost:${process.env.PORT || 8080}` : 'http://localhost:3001';
     const [snapshotsResponse, historicalResponse] = await Promise.all([
       axios.get(`${baseUrl}/api/stocks/snapshots?symbols=${symbols}`),
       axios.get(`${baseUrl}/api/portfolio/${req.params.id}/historical`)
