@@ -1,0 +1,14 @@
+[phases.setup]
+nixPkgs = ['nodejs-18_x', 'npm-9_x', 'yarn']
+
+[phases.install]
+cmds = [
+  'cd trading/backend && npm install',
+  'cd trading/frontend && npm install'
+]
+
+[phases.build]
+cmds = ['cd trading/frontend && npm run build']
+
+[start]
+cmd = 'cd trading/backend && npm start' 

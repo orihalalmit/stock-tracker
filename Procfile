@@ -1,2 +1,1 @@
-web: cd trading/backend && npm start
-build: cd trading/frontend && npm run build 
+web: cd trading/backend && npm start 

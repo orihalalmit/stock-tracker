@@ -8,9 +8,9 @@
     "start:backend": "cd trading/backend && yarn start",
     "install:frontend": "cd trading/frontend && yarn install",
     "install:backend": "cd trading/backend && yarn install",
-    "install:all": "yarn install:frontend && yarn install:backend",
+    "install:all": "npm run install:backend && npm run install:frontend",
     "dev": "concurrently \"yarn start:backend\" \"yarn start:frontend\"",
-    "build": "cd trading/frontend && yarn build",
+    "build": "./build.sh",
     "railway:build": "npm run install:all && npm run build",
     "railway:start": "cd trading/backend && npm start"
   },
