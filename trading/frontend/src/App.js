@@ -112,7 +112,9 @@ const MainApp = () => {
       ]);
       
       if (stockResponse.data && stockResponse.data.snapshots) {
-        const stockData = Object.entries(stockResponse.data.snapshots)
+        const { snapshots, errors = [], warnings = [], requestedSymbols = 0, returnedSymbols = 0 } = stockResponse.data;
+        
+        const stockData = Object.entries(snapshots)
           .filter(([symbol, data]) => {
             // Filter out symbols with no data
             return data && (data.latestTrade?.p || data.latestQuote?.ap || data.latestQuote?.bp);
@@ -144,13 +146,28 @@ const MainApp = () => {
         setStocks(stockData);
         setLastUpdated(new Date());
         
-        // Show info message if some symbols were filtered out
-        if (stockData.length < tickers.length) {
-          console.log(`Note: ${tickers.length - stockData.length} symbols were not available or had no data`);
-          console.log('Note: VIX, TA35, and TA125 are not supported by Alpaca API. Using VXX, UVXY, SVXY as VIX alternatives.');
+        // Handle errors and warnings
+        if (errors.length > 0) {
+          console.warn('Stock data errors:', errors);
+          const errorMessage = `Some symbols failed to load: ${errors.slice(0, 3).join(', ')}${errors.length > 3 ? ` and ${errors.length - 3} more` : ''}`;
+          setError(errorMessage);
+        } else if (warnings.length > 0) {
+          console.warn('Stock data warnings:', warnings);
+        } else {
+          setError(null);
         }
         
-        setError(null);
+        // Show info message about data availability
+        if (requestedSymbols > 0 && returnedSymbols < requestedSymbols) {
+          console.log(`Note: ${requestedSymbols - returnedSymbols} of ${requestedSymbols} symbols were not available or had no data`);
+          console.log('Note: Some symbols may not be supported by the data provider.');
+        }
+        
+        // Show success message if we got partial data despite errors
+        if (stockData.length > 0 && errors.length > 0) {
+          console.log(`Successfully loaded ${stockData.length} symbols with ${errors.length} errors`);
+        }
+        
       } else {
         setError('No market data available. Please check your API configuration.');
       }

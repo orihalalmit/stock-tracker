@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const MarketConfiguration = require('../models/MarketConfiguration');
+const axios = require('axios'); // Added axios for the new endpoint
 
 // Get market configuration
 router.get('/config', async (req, res) => {
@@ -164,6 +165,101 @@ router.delete('/config/sections/:sectionId/symbols/:symbol', async (req, res) =>
   } catch (error) {
     console.error('Error removing symbol from section:', error);
     res.status(500).json({ error: 'Failed to remove symbol from section' });
+  }
+});
+
+// Validate and clean up invalid symbols
+router.post('/config/validate-symbols', async (req, res) => {
+  try {
+    const config = await MarketConfiguration.findOne({ userId: 'default' });
+    if (!config) {
+      return res.status(404).json({ error: 'Market configuration not found' });
+    }
+
+    const allSymbols = [];
+    const sectionSymbols = new Map();
+    
+    // Collect all symbols from all sections
+    config.sections.forEach(section => {
+      if (section.enabled && section.symbols.length > 0) {
+        section.symbols.forEach(symbol => {
+          allSymbols.push(symbol);
+          if (!sectionSymbols.has(symbol)) {
+            sectionSymbols.set(symbol, []);
+          }
+          sectionSymbols.get(symbol).push({
+            sectionId: section._id,
+            sectionName: section.name
+          });
+        });
+      }
+    });
+
+    if (allSymbols.length === 0) {
+      return res.json({
+        message: 'No symbols to validate',
+        validSymbols: [],
+        invalidSymbols: [],
+        removedSymbols: []
+      });
+    }
+
+    // Test symbols with the stocks API
+    const baseUrl = process.env.NODE_ENV === 'production' ? `http://localhost:${process.env.PORT || 8080}` : 'http://localhost:3001';
+    const response = await axios.get(`${baseUrl}/api/stocks/snapshots?symbols=${allSymbols.join(',')}`);
+    
+    const validSymbols = Object.keys(response.data.snapshots || {});
+    const invalidSymbols = [];
+    const removedSymbols = [];
+
+    // Find invalid symbols
+    if (response.data.errors && response.data.errors.length > 0) {
+      response.data.errors.forEach(error => {
+        const match = error.match(/Failed to fetch data for ([^:]+):/);
+        if (match && match[1]) {
+          invalidSymbols.push(match[1]);
+        }
+      });
+    }
+
+    // If auto-remove is requested, remove invalid symbols
+    if (req.body.autoRemove === true && invalidSymbols.length > 0) {
+      for (const symbol of invalidSymbols) {
+        const sections = sectionSymbols.get(symbol) || [];
+        for (const section of sections) {
+          try {
+            // Remove the symbol from the section
+            const sectionToUpdate = config.sections.id(section.sectionId);
+            if (sectionToUpdate) {
+              sectionToUpdate.symbols = sectionToUpdate.symbols.filter(s => s !== symbol);
+              removedSymbols.push({
+                symbol,
+                sectionId: section.sectionId,
+                sectionName: section.sectionName
+              });
+            }
+          } catch (err) {
+            console.error(`Error removing symbol ${symbol} from section ${section.sectionName}:`, err);
+          }
+        }
+      }
+
+      // Save the updated configuration
+      await config.save();
+    }
+
+    res.json({
+      message: `Validated ${allSymbols.length} symbols. Found ${validSymbols.length} valid and ${invalidSymbols.length} invalid symbols.`,
+      totalSymbols: allSymbols.length,
+      validSymbols,
+      invalidSymbols,
+      removedSymbols,
+      autoRemoveEnabled: req.body.autoRemove === true
+    });
+
+  } catch (error) {
+    console.error('Error validating symbols:', error);
+    res.status(500).json({ error: 'Failed to validate symbols' });
   }
 });
 

@@ -123,95 +123,175 @@ app.get('/api/stocks/snapshots', async (req, res) => {
     const includePremarket = req.query.include_premarket === 'true';
     
     if (!symbols) {
-      return res.json({ snapshots: {} }); // Return empty snapshots object if no symbols provided
+      return res.json({ snapshots: {}, errors: [], warnings: [] }); // Return empty snapshots object if no symbols provided
     }
     
-    const response = await axios.get(
-      `${ALPACA_CONFIG.baseURL}/stocks/snapshots?symbols=${symbols}&feed=iex`,
-      { headers: getAlpacaHeaders() }
-    );
+    // Split symbols and validate
+    const symbolList = symbols.split(',').map(s => s.trim().toUpperCase()).filter(s => s.length > 0);
+    const validSnapshots = {};
+    const errors = [];
+    const warnings = [];
     
-    // If pre-market data is requested, enhance the response with extended hours calculations
-    if (includePremarket) {
-      const enhancedSnapshots = {};
+    // Try to fetch data for all symbols first
+    try {
+      const response = await axios.get(
+        `${ALPACA_CONFIG.baseURL}/stocks/snapshots?symbols=${symbols}&feed=iex`,
+        { headers: getAlpacaHeaders() }
+      );
       
-      Object.entries(response.data).forEach(([symbol, data]) => {
-        const currentPrice = data.latestTrade?.p || data.latestQuote?.ap || 0;
-        const previousClose = data.prevDailyBar?.c || 0;
-        const todayOpen = data.dailyBar?.o || 0;
-        const todayHigh = data.dailyBar?.h || 0;
-        const todayLow = data.dailyBar?.l || 0;
-        const todayVolume = data.dailyBar?.v || 0;
-        
-        // Calculate overnight gap (previous close to today's open)
-        const gapChange = todayOpen - previousClose;
-        const gapChangePercent = previousClose > 0 ? ((gapChange / previousClose) * 100) : 0;
-        
-        // Calculate intraday change (today's open to current price)
-        const intradayChange = currentPrice - todayOpen;
-        const intradayChangePercent = todayOpen > 0 ? ((intradayChange / todayOpen) * 100) : 0;
-        
-        // Calculate total daily change (previous close to current price)
-        const totalDailyChange = currentPrice - previousClose;
-        const totalDailyChangePercent = previousClose > 0 ? ((totalDailyChange / previousClose) * 100) : 0;
-        
-        // Enhanced pre-market data structure
-        enhancedSnapshots[symbol] = {
-          ...data,
+      // Process successful response
+      const processSnapshots = (data) => {
+        if (includePremarket) {
+          const enhancedSnapshots = {};
           
-          // Current market data
-          currentPrice,
-          previousClose,
-          todayOpen,
-          todayHigh,
-          todayLow,
-          todayVolume,
+          Object.entries(data).forEach(([symbol, data]) => {
+            const currentPrice = data.latestTrade?.p || data.latestQuote?.ap || 0;
+            const previousClose = data.prevDailyBar?.c || 0;
+            const todayOpen = data.dailyBar?.o || 0;
+            const todayHigh = data.dailyBar?.h || 0;
+            const todayLow = data.dailyBar?.l || 0;
+            const todayVolume = data.dailyBar?.v || 0;
+            
+            // Calculate overnight gap (previous close to today's open)
+            const gapChange = todayOpen - previousClose;
+            const gapChangePercent = previousClose > 0 ? ((gapChange / previousClose) * 100) : 0;
+            
+            // Calculate intraday change (today's open to current price)
+            const intradayChange = currentPrice - todayOpen;
+            const intradayChangePercent = todayOpen > 0 ? ((intradayChange / todayOpen) * 100) : 0;
+            
+            // Calculate total daily change (previous close to current price)
+            const totalDailyChange = currentPrice - previousClose;
+            const totalDailyChangePercent = previousClose > 0 ? ((totalDailyChange / previousClose) * 100) : 0;
+            
+            // Enhanced pre-market data structure
+            enhancedSnapshots[symbol] = {
+              ...data,
+              
+              // Current market data
+              currentPrice,
+              previousClose,
+              todayOpen,
+              todayHigh,
+              todayLow,
+              todayVolume,
+              
+              // Overnight gap analysis
+              preMarketData: {
+                change: gapChange,
+                changePercent: gapChangePercent,
+                from: previousClose,
+                to: todayOpen,
+                description: `Overnight Gap: ${previousClose.toFixed(2)} → ${todayOpen.toFixed(2)}`
+              },
+              
+              // Intraday analysis (market hours performance)
+              intradayData: {
+                change: intradayChange,
+                changePercent: intradayChangePercent,
+                from: todayOpen,
+                to: currentPrice,
+                description: `Market Session: ${todayOpen.toFixed(2)} → ${currentPrice.toFixed(2)}`
+              },
+              
+              // Total daily performance
+              totalDailyData: {
+                change: totalDailyChange,
+                changePercent: totalDailyChangePercent,
+                from: previousClose,
+                to: currentPrice,
+                description: `Total Daily: ${previousClose.toFixed(2)} → ${currentPrice.toFixed(2)}`
+              },
+              
+              // Additional context
+              marketContext: {
+                isPreMarket: isPreMarketHours(),
+                isAfterHours: isAfterHours(),
+                isMarketOpen: isMarketOpen(),
+                lastUpdateTime: new Date().toISOString()
+              }
+            };
+          });
           
-          // Overnight gap analysis
-          preMarketData: {
-            change: gapChange,
-            changePercent: gapChangePercent,
-            from: previousClose,
-            to: todayOpen,
-            description: `Overnight Gap: ${previousClose.toFixed(2)} → ${todayOpen.toFixed(2)}`
-          },
-          
-          // Intraday analysis (market hours performance)
-          intradayData: {
-            change: intradayChange,
-            changePercent: intradayChangePercent,
-            from: todayOpen,
-            to: currentPrice,
-            description: `Market Session: ${todayOpen.toFixed(2)} → ${currentPrice.toFixed(2)}`
-          },
-          
-          // Total daily performance
-          totalDailyData: {
-            change: totalDailyChange,
-            changePercent: totalDailyChangePercent,
-            from: previousClose,
-            to: currentPrice,
-            description: `Total Daily: ${previousClose.toFixed(2)} → ${currentPrice.toFixed(2)}`
-          },
-          
-          // Additional context
-          marketContext: {
-            isPreMarket: isPreMarketHours(),
-            isAfterHours: isAfterHours(),
-            isMarketOpen: isMarketOpen(),
-            lastUpdateTime: new Date().toISOString()
-          }
-        };
+          return enhancedSnapshots;
+        } else {
+          return data;
+        }
+      };
+      
+      const processedData = processSnapshots(response.data);
+      
+      // Check if we got data for all requested symbols
+      const receivedSymbols = Object.keys(processedData);
+      const missingSymbols = symbolList.filter(symbol => !receivedSymbols.includes(symbol));
+      
+      if (missingSymbols.length > 0) {
+        warnings.push(`No data available for symbols: ${missingSymbols.join(', ')}`);
+      }
+      
+      res.json({ 
+        snapshots: processedData,
+        errors,
+        warnings,
+        requestedSymbols: symbolList.length,
+        returnedSymbols: receivedSymbols.length
       });
       
-      res.json({ snapshots: enhancedSnapshots });
-    } else {
-      res.json({ snapshots: response.data });
+    } catch (error) {
+      // If the bulk request fails, try individual symbol requests to identify problematic ones
+      console.warn('Bulk request failed, trying individual symbol requests:', error.message);
+      
+      const individualResults = await Promise.allSettled(
+        symbolList.map(async (symbol) => {
+          try {
+            const response = await axios.get(
+              `${ALPACA_CONFIG.baseURL}/stocks/snapshots?symbols=${symbol}&feed=iex`,
+              { headers: getAlpacaHeaders() }
+            );
+            return { symbol, data: response.data[symbol], success: true };
+          } catch (err) {
+            return { symbol, error: err.message, success: false };
+          }
+        })
+      );
+      
+      // Process individual results
+      individualResults.forEach(result => {
+        if (result.status === 'fulfilled') {
+          const { symbol, data, success, error } = result.value;
+          if (success && data) {
+            validSnapshots[symbol] = data;
+          } else {
+            errors.push(`Failed to fetch data for ${symbol}: ${error || 'Unknown error'}`);
+          }
+        } else {
+          errors.push(`Request failed for symbol: ${result.reason}`);
+        }
+      });
+      
+      // Process valid snapshots with pre-market data if requested
+      const processedSnapshots = includePremarket ? 
+        processSnapshots(validSnapshots) : validSnapshots;
+      
+      res.json({ 
+        snapshots: processedSnapshots,
+        errors,
+        warnings,
+        requestedSymbols: symbolList.length,
+        returnedSymbols: Object.keys(processedSnapshots).length,
+        partialSuccess: Object.keys(processedSnapshots).length > 0
+      });
     }
     
   } catch (error) {
     console.error('Error fetching stock snapshots:', error.message);
-    res.status(500).json({ error: 'Failed to fetch stock snapshots' });
+    res.status(500).json({ 
+      error: 'Failed to fetch stock snapshots',
+      details: error.message,
+      snapshots: {},
+      errors: [error.message],
+      warnings: []
+    });
   }
 });
 
