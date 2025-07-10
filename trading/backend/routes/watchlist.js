@@ -35,7 +35,8 @@ router.get('/:id', async (req, res) => {
     const includePremarket = req.query.include_premarket === 'true';
     
     // Fetch current market data with optional pre-market data
-    const snapshotsUrl = `http://localhost:3001/api/stocks/snapshots?symbols=${symbols}${includePremarket ? '&include_premarket=true' : ''}`;
+    const baseUrl = process.env.NODE_ENV === 'production' ? '' : 'http://localhost:3001';
+    const snapshotsUrl = `${baseUrl}/api/stocks/snapshots?symbols=${symbols}${includePremarket ? '&include_premarket=true' : ''}`;
     const snapshotsResponse = await axios.get(snapshotsUrl);
     const snapshots = snapshotsResponse.data.snapshots || {};
 
