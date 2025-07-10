@@ -21,6 +21,23 @@ const PortfolioPage = ({ activeView = 'management' }) => {
     setActiveTab(activeView);
   }, [activeView]);
 
+  const handlePortfolioChange = useCallback(async (portfolioId) => {
+    try {
+      const url = `/api/portfolio/${portfolioId}${showPremarket ? '?include_premarket=true' : ''}`;
+      const response = await axios.get(url);
+      const portfolio = response.data;
+      setSelectedPortfolio(portfolio);
+      setPortfolios(portfolios.map(p => 
+        p._id === portfolio._id ? portfolio : p
+      ));
+      localStorage.setItem('lastSelectedPortfolioId', portfolioId);
+      setError(null);
+    } catch (err) {
+      setError('Failed to fetch portfolio details');
+      console.error(err);
+    }
+  }, [showPremarket, portfolios]);
+
   useEffect(() => {
     fetchPortfolios();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
@@ -179,23 +196,6 @@ const PortfolioPage = ({ activeView = 'management' }) => {
       console.error(err);
     }
   };
-
-  const handlePortfolioChange = useCallback(async (portfolioId) => {
-    try {
-      const url = `/api/portfolio/${portfolioId}${showPremarket ? '?include_premarket=true' : ''}`;
-      const response = await axios.get(url);
-      const portfolio = response.data;
-      setSelectedPortfolio(portfolio);
-      setPortfolios(portfolios.map(p => 
-        p._id === portfolio._id ? portfolio : p
-      ));
-      localStorage.setItem('lastSelectedPortfolioId', portfolioId);
-      setError(null);
-    } catch (err) {
-      setError('Failed to fetch portfolio details');
-      console.error(err);
-    }
-  }, [showPremarket, portfolios]);
 
   if (loading) {
     return <div className="loading">Loading portfolios...</div>;
