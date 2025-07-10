@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const axios = require('axios');
+const path = require('path');
 require('dotenv').config();
 const connectDB = require('./config/db');
 
@@ -28,6 +29,11 @@ function getAlpacaHeaders() {
 // Middleware
 app.use(cors());
 app.use(express.json());
+
+// Serve static files from the React app build directory in production
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static(path.join(__dirname, '../frontend/build')));
+}
 
 // Import routes
 const portfolioRoutes = require('./routes/portfolio');
@@ -570,6 +576,13 @@ app.get('/api/stocks/premarket-data', async (req, res) => {
     res.status(500).json({ error: 'Failed to fetch pre-market data' });
   }
 });
+
+// The "catchall" handler: send back React's index.html file in production
+if (process.env.NODE_ENV === 'production') {
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '../frontend/build/index.html'));
+  });
+}
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
