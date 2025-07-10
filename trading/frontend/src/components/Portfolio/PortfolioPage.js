@@ -96,7 +96,7 @@ const PortfolioPage = ({ activeView = 'management' }) => {
     } finally {
       setLoading(false);
     }
-  }, [showPremarket, user, token]); // Add user and token to dependencies
+  }, [showPremarket, user, token, selectedPortfolio?._id]); // Add selectedPortfolio._id to dependencies
 
   useEffect(() => {
     if (user && token) {
@@ -109,7 +109,7 @@ const PortfolioPage = ({ activeView = 'management' }) => {
     if (selectedPortfolio) {
       handlePortfolioChange(selectedPortfolio._id);
     }
-  }, [showPremarket, handlePortfolioChange]); // Removed selectedPortfolio dependency to prevent loops
+  }, [showPremarket, handlePortfolioChange, selectedPortfolio]); // Added selectedPortfolio dependency
 
   const createPortfolio = async (name) => {
     try {
