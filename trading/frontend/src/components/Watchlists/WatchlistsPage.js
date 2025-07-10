@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import StockCard from '../StockCard';
 import './WatchlistsPage.css';
@@ -13,11 +13,19 @@ const WatchlistsPage = () => {
   const [newWatchlistDescription, setNewWatchlistDescription] = useState('');
   const [showPremarket, setShowPremarket] = useState(false);
 
-  useEffect(() => {
-    fetchWatchlists();
-  }, []);
+  const selectWatchlist = useCallback(async (watchlistId) => {
+    try {
+      const url = `/api/watchlist/${watchlistId}${showPremarket ? '?include_premarket=true' : ''}`;
+      const response = await axios.get(url);
+      setSelectedWatchlist(response.data);
+      setError(null);
+    } catch (err) {
+      console.error('Error fetching watchlist details:', err);
+      setError('Failed to fetch watchlist details');
+    }
+  }, [showPremarket]);
 
-  const fetchWatchlists = async () => {
+  const fetchWatchlists = useCallback(async () => {
     try {
       setLoading(true);
       const response = await axios.get('/api/watchlist');
@@ -35,26 +43,18 @@ const WatchlistsPage = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [selectedWatchlist, selectWatchlist]);
 
-  const selectWatchlist = async (watchlistId) => {
-    try {
-      const url = `/api/watchlist/${watchlistId}${showPremarket ? '?include_premarket=true' : ''}`;
-      const response = await axios.get(url);
-      setSelectedWatchlist(response.data);
-      setError(null);
-    } catch (err) {
-      console.error('Error fetching watchlist details:', err);
-      setError('Failed to fetch watchlist details');
-    }
-  };
+  useEffect(() => {
+    fetchWatchlists();
+  }, [fetchWatchlists]);
 
   // Re-fetch current watchlist when premarket toggle changes
   useEffect(() => {
     if (selectedWatchlist) {
       selectWatchlist(selectedWatchlist._id);
     }
-  }, [showPremarket]);
+  }, [showPremarket, selectedWatchlist, selectWatchlist]);
 
   const createWatchlist = async (e) => {
     e.preventDefault();

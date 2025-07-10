@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import './TransactionHistory.css';
 
@@ -10,11 +10,7 @@ const TransactionHistory = ({ portfolioId }) => {
   const [sortBy, setSortBy] = useState('date'); // date, symbol, shares, price
   const [sortOrder, setSortOrder] = useState('desc'); // asc, desc
 
-  useEffect(() => {
-    fetchTransactions();
-  }, [portfolioId]);
-
-  const fetchTransactions = async () => {
+  const fetchTransactions = useCallback(async () => {
     try {
       const response = await axios.get(`/api/portfolio/${portfolioId}/transactions`);
       setTransactions(response.data);
@@ -25,7 +21,11 @@ const TransactionHistory = ({ portfolioId }) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [portfolioId]);
+
+  useEffect(() => {
+    fetchTransactions();
+  }, [fetchTransactions]);
 
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString('en-US', {

@@ -57,14 +57,7 @@ const PortfolioInsights = ({ portfolio }) => {
     }
   };
 
-  const getVolatilityColor = (volatility) => {
-    switch (volatility) {
-      case 'Low': return '#0ECB81';
-      case 'Medium': return '#FFA500';
-      case 'High': return '#F6465D';
-      default: return '#FFA500';
-    }
-  };
+
 
   if (loading) {
     return (

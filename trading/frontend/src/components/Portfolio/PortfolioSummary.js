@@ -73,6 +73,17 @@ const UsdIlsWidget = () => {
     );
   }
 
+  if (error) {
+    return (
+      <div className="currency-widget">
+        <div className="widget-header">
+          <h3>USD/ILS Exchange Rate</h3>
+          <div className="error">{error}</div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="currency-widget">
       <div className="widget-header">
@@ -180,7 +191,6 @@ const PortfolioSummary = ({ portfolio, showPremarket = false }) => {
   // Use the pre-calculated summary values from the backend
   const {
     totalValue = 0,
-    totalCost = 0,
     totalDailyGain = 0,
     totalDailyGainPercentage = 0,
     totalOverallGain = 0,

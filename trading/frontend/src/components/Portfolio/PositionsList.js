@@ -87,8 +87,6 @@ const PositionsList = ({ positions, portfolioId, onPositionUpdate, portfolioSumm
 
     try {
       // Get the raw portfolio data to find positions with this symbol
-      const portfolioResponse = await axios.get(`/api/portfolio/${portfolioId}`);
-      const portfolio = portfolioResponse.data;
       
       // Since positions are consolidated in the response, we need to work differently
       // We'll delete all positions with this symbol and add a new consolidated one

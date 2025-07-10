@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import './PortfolioPage.css';
 import PortfolioSummary from './PortfolioSummary';
@@ -30,7 +30,7 @@ const PortfolioPage = ({ activeView = 'management' }) => {
     if (selectedPortfolio) {
       handlePortfolioChange(selectedPortfolio._id);
     }
-  }, [showPremarket]);
+  }, [showPremarket, selectedPortfolio, handlePortfolioChange]);
 
   const fetchPortfolios = async () => {
     try {
@@ -180,7 +180,7 @@ const PortfolioPage = ({ activeView = 'management' }) => {
     }
   };
 
-  const handlePortfolioChange = async (portfolioId) => {
+  const handlePortfolioChange = useCallback(async (portfolioId) => {
     try {
       const url = `/api/portfolio/${portfolioId}${showPremarket ? '?include_premarket=true' : ''}`;
       const response = await axios.get(url);
@@ -195,7 +195,7 @@ const PortfolioPage = ({ activeView = 'management' }) => {
       setError('Failed to fetch portfolio details');
       console.error(err);
     }
-  };
+  }, [showPremarket, portfolios]);
 
   if (loading) {
     return <div className="loading">Loading portfolios...</div>;
