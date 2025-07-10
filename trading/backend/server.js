@@ -8,6 +8,12 @@ const connectDB = require('./config/db');
 const app = express();
 const PORT = process.env.PORT || 3001;
 
+// Debug environment variables
+console.log('Environment variables check:');
+console.log('NODE_ENV:', process.env.NODE_ENV);
+console.log('MONGODB_URI exists:', !!process.env.MONGODB_URI);
+console.log('Available env vars:', Object.keys(process.env).filter(key => key.includes('MONGO')));
+
 // Connect to MongoDB
 connectDB();
 
