@@ -27,7 +27,7 @@ const PortfolioPage = ({ activeView = 'management' }) => {
       const response = await axios.get(url);
       const portfolio = response.data;
       setSelectedPortfolio(portfolio);
-      setPortfolios(portfolios.map(p => 
+      setPortfolios(prevPortfolios => prevPortfolios.map(p => 
         p._id === portfolio._id ? portfolio : p
       ));
       localStorage.setItem('lastSelectedPortfolioId', portfolioId);
@@ -36,7 +36,7 @@ const PortfolioPage = ({ activeView = 'management' }) => {
       setError('Failed to fetch portfolio details');
       console.error(err);
     }
-  }, [showPremarket, portfolios]);
+  }, [showPremarket]); // Removed portfolios dependency to prevent infinite loops
 
   useEffect(() => {
     fetchPortfolios();
@@ -47,7 +47,7 @@ const PortfolioPage = ({ activeView = 'management' }) => {
     if (selectedPortfolio) {
       handlePortfolioChange(selectedPortfolio._id);
     }
-  }, [showPremarket, selectedPortfolio, handlePortfolioChange]);
+  }, [showPremarket, handlePortfolioChange]); // Removed selectedPortfolio dependency to prevent loops
 
   const fetchPortfolios = async () => {
     try {
@@ -98,7 +98,7 @@ const PortfolioPage = ({ activeView = 'management' }) => {
     try {
       const response = await axios.post('/api/portfolio', { name });
       const newPortfolio = response.data;
-      setPortfolios([...portfolios, newPortfolio]);
+      setPortfolios(prevPortfolios => [...prevPortfolios, newPortfolio]);
       setSelectedPortfolio(newPortfolio);
       localStorage.setItem('lastSelectedPortfolioId', newPortfolio._id);
       setError(null);
@@ -116,20 +116,23 @@ const PortfolioPage = ({ activeView = 'management' }) => {
     try {
       await axios.delete(`/api/portfolio/${portfolioId}`);
       
-      const updatedPortfolios = portfolios.filter(p => p._id !== portfolioId);
-      setPortfolios(updatedPortfolios);
-      
-      // If we deleted the selected portfolio, select another one
-      if (selectedPortfolio?._id === portfolioId) {
-        if (updatedPortfolios.length > 0) {
-          const newSelected = updatedPortfolios[0];
-          setSelectedPortfolio(newSelected);
-          localStorage.setItem('lastSelectedPortfolioId', newSelected._id);
-        } else {
-          setSelectedPortfolio(null);
-          localStorage.removeItem('lastSelectedPortfolioId');
+      setPortfolios(prevPortfolios => {
+        const updatedPortfolios = prevPortfolios.filter(p => p._id !== portfolioId);
+        
+        // If we deleted the selected portfolio, select another one
+        if (selectedPortfolio?._id === portfolioId) {
+          if (updatedPortfolios.length > 0) {
+            const newSelected = updatedPortfolios[0];
+            setSelectedPortfolio(newSelected);
+            localStorage.setItem('lastSelectedPortfolioId', newSelected._id);
+          } else {
+            setSelectedPortfolio(null);
+            localStorage.removeItem('lastSelectedPortfolioId');
+          }
         }
-      }
+        
+        return updatedPortfolios;
+      });
       
       setError(null);
     } catch (err) {
