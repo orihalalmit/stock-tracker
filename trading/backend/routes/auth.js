@@ -38,6 +38,14 @@ router.post('/register', async (req, res) => {
       // Don't fail registration if portfolio creation fails
     }
 
+    // Create default watchlist for new user
+    try {
+      await user.createDefaultWatchlist();
+    } catch (error) {
+      console.error('Failed to create default watchlist:', error);
+      // Don't fail registration if watchlist creation fails
+    }
+
     // Generate token
     const token = generateToken(user._id);
 

@@ -85,6 +85,26 @@ UserSchema.methods.toJSON = function() {
   return user;
 };
 
+// Instance method to create default watchlist for new users
+UserSchema.methods.createDefaultWatchlist = async function() {
+  const Watchlist = require('./Watchlist');
+  
+  // Check if user already has watchlists
+  const existingWatchlists = await Watchlist.find({ userId: this._id });
+  if (existingWatchlists.length > 0) {
+    return null; // User already has watchlists
+  }
+
+  try {
+    const defaultWatchlist = await Watchlist.createDefaultWatchlist(this._id);
+    console.log(`✅ Created default watchlist for user: ${this.username}`);
+    return defaultWatchlist;
+  } catch (error) {
+    console.error(`❌ Failed to create default watchlist for user ${this.username}:`, error);
+    return null;
+  }
+};
+
 // Instance method to create sample portfolio for new users
 UserSchema.methods.createSamplePortfolio = async function() {
   const Portfolio = require('./Portfolio');

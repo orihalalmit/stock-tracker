@@ -1,12 +1,35 @@
 const express = require('express');
 const router = express.Router();
 const Watchlist = require('../models/Watchlist');
+const { authenticate } = require('../middleware/auth');
 const axios = require('axios');
 
-// Get all watchlists
-router.get('/', async (req, res) => {
+// Helper function to check watchlist ownership
+const checkWatchlistAccess = async (watchlistId, user) => {
+  let query = { _id: watchlistId };
+  
+  // Non-admin users can only access their own watchlists
+  if (user.role !== 'admin') {
+    query.userId = user._id;
+  }
+  
+  const watchlist = await Watchlist.findOne(query);
+  return watchlist;
+};
+
+// Get all watchlists (user-specific or all for admin)
+router.get('/', authenticate, async (req, res) => {
   try {
-    const watchlists = await Watchlist.find().sort({ createdAt: -1 });
+    let watchlists;
+    
+    if (req.user.role === 'admin') {
+      // Admin can see all watchlists with user information
+      watchlists = await Watchlist.find().populate('userId', 'username email firstName lastName').sort({ createdAt: -1 });
+    } else {
+      // Regular users can only see their own watchlists
+      watchlists = await Watchlist.find({ userId: req.user._id }).sort({ createdAt: -1 });
+    }
+    
     res.json(watchlists);
   } catch (error) {
     console.error('Error fetching watchlists:', error);
@@ -15,9 +38,10 @@ router.get('/', async (req, res) => {
 });
 
 // Get a specific watchlist with market data
-router.get('/:id', async (req, res) => {
+router.get('/:id', authenticate, async (req, res) => {
   try {
-    const watchlist = await Watchlist.findById(req.params.id);
+    const watchlist = await checkWatchlistAccess(req.params.id, req.user);
+    
     if (!watchlist) {
       return res.status(404).json({ error: 'Watchlist not found' });
     }
@@ -89,7 +113,7 @@ router.get('/:id', async (req, res) => {
 });
 
 // Create a new watchlist
-router.post('/', async (req, res) => {
+router.post('/', authenticate, async (req, res) => {
   try {
     const { name, description } = req.body;
     
@@ -98,6 +122,7 @@ router.post('/', async (req, res) => {
     }
 
     const watchlist = new Watchlist({
+      userId: req.user._id,
       name,
       description,
       items: []
@@ -112,20 +137,21 @@ router.post('/', async (req, res) => {
 });
 
 // Update watchlist details
-router.put('/:id', async (req, res) => {
+router.put('/:id', authenticate, async (req, res) => {
   try {
     const { name, description } = req.body;
     
-    const watchlist = await Watchlist.findByIdAndUpdate(
-      req.params.id,
-      { name, description },
-      { new: true }
-    );
-
+    const watchlist = await checkWatchlistAccess(req.params.id, req.user);
+    
     if (!watchlist) {
       return res.status(404).json({ error: 'Watchlist not found' });
     }
 
+    // Update watchlist
+    watchlist.name = name || watchlist.name;
+    watchlist.description = description !== undefined ? description : watchlist.description;
+    
+    await watchlist.save();
     res.json(watchlist);
   } catch (error) {
     console.error('Error updating watchlist:', error);
@@ -134,14 +160,15 @@ router.put('/:id', async (req, res) => {
 });
 
 // Delete a watchlist
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', authenticate, async (req, res) => {
   try {
-    const watchlist = await Watchlist.findByIdAndDelete(req.params.id);
+    const watchlist = await checkWatchlistAccess(req.params.id, req.user);
     
     if (!watchlist) {
       return res.status(404).json({ error: 'Watchlist not found' });
     }
 
+    await Watchlist.findByIdAndDelete(req.params.id);
     res.json({ message: 'Watchlist deleted successfully' });
   } catch (error) {
     console.error('Error deleting watchlist:', error);
@@ -150,7 +177,7 @@ router.delete('/:id', async (req, res) => {
 });
 
 // Add stock to watchlist
-router.post('/:id/items', async (req, res) => {
+router.post('/:id/items', authenticate, async (req, res) => {
   try {
     const { symbol, notes } = req.body;
     
@@ -158,7 +185,8 @@ router.post('/:id/items', async (req, res) => {
       return res.status(400).json({ error: 'Stock symbol is required' });
     }
 
-    const watchlist = await Watchlist.findById(req.params.id);
+    const watchlist = await checkWatchlistAccess(req.params.id, req.user);
+    
     if (!watchlist) {
       return res.status(404).json({ error: 'Watchlist not found' });
     }
@@ -184,9 +212,10 @@ router.post('/:id/items', async (req, res) => {
 });
 
 // Remove stock from watchlist
-router.delete('/:id/items/:symbol', async (req, res) => {
+router.delete('/:id/items/:symbol', authenticate, async (req, res) => {
   try {
-    const watchlist = await Watchlist.findById(req.params.id);
+    const watchlist = await checkWatchlistAccess(req.params.id, req.user);
+    
     if (!watchlist) {
       return res.status(404).json({ error: 'Watchlist not found' });
     }
@@ -203,11 +232,12 @@ router.delete('/:id/items/:symbol', async (req, res) => {
 });
 
 // Update notes for a watchlist item
-router.put('/:id/items/:symbol', async (req, res) => {
+router.put('/:id/items/:symbol', authenticate, async (req, res) => {
   try {
     const { notes } = req.body;
     
-    const watchlist = await Watchlist.findById(req.params.id);
+    const watchlist = await checkWatchlistAccess(req.params.id, req.user);
+    
     if (!watchlist) {
       return res.status(404).json({ error: 'Watchlist not found' });
     }

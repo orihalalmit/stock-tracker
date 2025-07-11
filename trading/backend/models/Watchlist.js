@@ -18,6 +18,11 @@ const WatchlistItemSchema = new mongoose.Schema({
 });
 
 const WatchlistSchema = new mongoose.Schema({
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true
+  },
   name: {
     type: String,
     required: true,
@@ -47,5 +52,40 @@ WatchlistSchema.pre('save', function(next) {
   this.updatedAt = new Date();
   next();
 });
+
+// Static method to create default watchlist for new users
+WatchlistSchema.statics.createDefaultWatchlist = async function(userId) {
+  const defaultWatchlist = new this({
+    userId,
+    name: 'My Watchlist',
+    description: 'Your default watchlist',
+    isDefault: true,
+    items: [
+      {
+        symbol: 'AAPL',
+        notes: 'Apple Inc.'
+      },
+      {
+        symbol: 'GOOGL',
+        notes: 'Alphabet Inc.'
+      },
+      {
+        symbol: 'MSFT',
+        notes: 'Microsoft Corporation'
+      },
+      {
+        symbol: 'TSLA',
+        notes: 'Tesla Inc.'
+      },
+      {
+        symbol: 'NVDA',
+        notes: 'NVIDIA Corporation'
+      }
+    ]
+  });
+
+  await defaultWatchlist.save();
+  return defaultWatchlist;
+};
 
 module.exports = mongoose.model('Watchlist', WatchlistSchema); 

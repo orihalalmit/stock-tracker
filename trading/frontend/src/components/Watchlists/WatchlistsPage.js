@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import StockCard from '../StockCard';
+import { useAuth } from '../Auth/AuthContext';
 import './WatchlistsPage.css';
 
 const WatchlistsPage = () => {
@@ -12,6 +13,7 @@ const WatchlistsPage = () => {
   const [newWatchlistName, setNewWatchlistName] = useState('');
   const [newWatchlistDescription, setNewWatchlistDescription] = useState('');
   const [showPremarket, setShowPremarket] = useState(false);
+  const { user, token } = useAuth();
 
   const selectWatchlist = useCallback(async (watchlistId) => {
     try {
@@ -39,15 +41,21 @@ const WatchlistsPage = () => {
       setError(null);
     } catch (err) {
       console.error('Error fetching watchlists:', err);
-      setError('Failed to fetch watchlists');
+      if (err.response?.status === 401) {
+        setError('Authentication failed. Please log in again.');
+      } else {
+        setError('Failed to fetch watchlists: ' + (err.response?.data?.error || err.message));
+      }
     } finally {
       setLoading(false);
     }
   }, [selectedWatchlist, selectWatchlist]);
 
   useEffect(() => {
-    fetchWatchlists();
-  }, [fetchWatchlists]);
+    if (user && token) {
+      fetchWatchlists();
+    }
+  }, [fetchWatchlists, user, token]);
 
   // Re-fetch current watchlist when premarket toggle changes
   useEffect(() => {
