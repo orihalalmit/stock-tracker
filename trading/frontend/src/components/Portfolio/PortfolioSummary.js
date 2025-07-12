@@ -187,6 +187,7 @@ const PortfolioSummary = ({ portfolio, showPremarket = false }) => {
   const { positions = [], summary = {} } = portfolio;
   const [historicalData, setHistoricalData] = useState({});
   const [historicalLoading, setHistoricalLoading] = useState(true);
+  const [isHoldingsExpanded, setIsHoldingsExpanded] = useState(false);
   
   // Use the pre-calculated summary values from the backend
   const {
@@ -412,12 +413,46 @@ const PortfolioSummary = ({ portfolio, showPremarket = false }) => {
 
       <div className="dashboard-grid-extended">
         <div className="holdings-section">
-          <div className="section-header">
-            <h2>Your Holdings</h2>
-            <span className="section-subtitle">Sorted by portfolio value</span>
+          <div className="section-header collapsible-header" onClick={() => setIsHoldingsExpanded(!isHoldingsExpanded)}>
+            <div className="header-content">
+              <h2>Your Holdings</h2>
+              <span className="section-subtitle">
+                {positions.length} positions • {formatCurrency(totalValue)} total value
+              </span>
+            </div>
+            <div className="collapse-indicator">
+              <span className={`chevron ${isHoldingsExpanded ? 'expanded' : ''}`}>▼</span>
+            </div>
           </div>
 
-          <div className="holdings-list">
+          {/* Holdings Summary - Always visible */}
+          <div className="holdings-summary">
+            <div className="summary-stats">
+              <div className="stat-item">
+                <span className="stat-label">Top Holding</span>
+                <span className="stat-value">
+                  {positions.length > 0 ? positions.sort((a, b) => (b.totalValue || 0) - (a.totalValue || 0))[0].symbol : 'N/A'}
+                </span>
+              </div>
+              <div className="stat-item">
+                <span className="stat-label">Best Performer</span>
+                <span className="stat-value">
+                  {positions.length > 0 ? 
+                    positions.sort((a, b) => (b.overallGainPercentage || 0) - (a.overallGainPercentage || 0))[0].symbol : 'N/A'}
+                </span>
+              </div>
+              <div className="stat-item">
+                <span className="stat-label">Worst Performer</span>
+                <span className="stat-value">
+                  {positions.length > 0 ? 
+                    positions.sort((a, b) => (a.overallGainPercentage || 0) - (b.overallGainPercentage || 0))[0].symbol : 'N/A'}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* Detailed Holdings - Collapsible */}
+          <div className={`holdings-list ${isHoldingsExpanded ? 'expanded' : 'collapsed'}`}>
             {positions
               .sort((a, b) => (b.totalValue || 0) - (a.totalValue || 0))
               .map(position => {

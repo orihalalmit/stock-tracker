@@ -138,6 +138,100 @@
   color: #a0a0a0;
 }
 
+/* Collapsible Holdings Styles */
+.collapsible-header {
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  background: linear-gradient(145deg, #2a2a2a 0%, #1e1e1e 100%);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
+  margin-bottom: 16px;
+}
+
+.collapsible-header:hover {
+  background: linear-gradient(145deg, #333333 0%, #252525 100%);
+  border-color: rgba(255, 255, 255, 0.2);
+  transform: translateY(-1px);
+}
+
+.header-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.collapse-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
+}
+
+.chevron {
+  font-size: 14px;
+  color: #a0a0a0;
+  transition: transform 0.3s ease;
+}
+
+.chevron.expanded {
+  transform: rotate(180deg);
+}
+
+.collapsible-header:hover .collapse-indicator {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.collapsible-header:hover .chevron {
+  color: #ffffff;
+}
+
+/* Holdings Summary */
+.holdings-summary {
+  background: linear-gradient(145deg, rgba(0, 0, 0, 0.4) 0%, rgba(30, 30, 30, 0.6) 100%);
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 16px;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.summary-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 16px;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.stat-label {
+  font-size: 12px;
+  color: #e0e0e0;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+}
+
+.stat-value {
+  font-size: 18px;
+  font-weight: 700;
+  color: #10b981;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+}
+
 /* Historical Performance Section */
 .historical-section {
   background: linear-gradient(145deg, #2a2a2a 0%, #1e1e1e 100%);
@@ -227,6 +321,20 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.holdings-list.collapsed {
+  max-height: 0;
+  opacity: 0;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.holdings-list.expanded {
+  max-height: 2000px;
+  opacity: 1;
 }
 
 .holding-item {
