@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import axios from 'axios';
 import StockCard from '../StockCard';
 import { useAuth } from '../Auth/AuthContext';
@@ -14,12 +14,16 @@ const WatchlistsPage = () => {
   const [newWatchlistDescription, setNewWatchlistDescription] = useState('');
   const [showPremarket, setShowPremarket] = useState(false);
   const { user, token } = useAuth();
+  
+  // Use ref to track selected watchlist without causing re-renders
+  const selectedWatchlistRef = useRef(null);
 
   const selectWatchlist = useCallback(async (watchlistId) => {
     try {
       const url = `/api/watchlist/${watchlistId}${showPremarket ? '?include_premarket=true' : ''}`;
       const response = await axios.get(url);
       setSelectedWatchlist(response.data);
+      selectedWatchlistRef.current = response.data;
       setError(null);
     } catch (err) {
       console.error('Error fetching watchlist details:', err);
@@ -34,7 +38,7 @@ const WatchlistsPage = () => {
       setWatchlists(response.data);
       
       // Select first watchlist if none selected
-      if (response.data.length > 0 && !selectedWatchlist) {
+      if (response.data.length > 0 && !selectedWatchlistRef.current) {
         await selectWatchlist(response.data[0]._id);
       }
       
@@ -49,7 +53,7 @@ const WatchlistsPage = () => {
     } finally {
       setLoading(false);
     }
-  }, [selectedWatchlist, selectWatchlist]);
+  }, [selectWatchlist]); // Removed selectedWatchlist dependency
 
   useEffect(() => {
     if (user && token) {
@@ -59,10 +63,10 @@ const WatchlistsPage = () => {
 
   // Re-fetch current watchlist when premarket toggle changes
   useEffect(() => {
-    if (selectedWatchlist) {
-      selectWatchlist(selectedWatchlist._id);
+    if (selectedWatchlistRef.current) {
+      selectWatchlist(selectedWatchlistRef.current._id);
     }
-  }, [showPremarket, selectedWatchlist, selectWatchlist]);
+  }, [showPremarket, selectWatchlist]); // Removed selectedWatchlist dependency
 
   const createWatchlist = async (e) => {
     e.preventDefault();
@@ -98,8 +102,9 @@ const WatchlistsPage = () => {
       await axios.delete(`/api/watchlist/${watchlistId}`);
       
       // If we deleted the selected watchlist, clear selection
-      if (selectedWatchlist && selectedWatchlist._id === watchlistId) {
+      if (selectedWatchlistRef.current && selectedWatchlistRef.current._id === watchlistId) {
         setSelectedWatchlist(null);
+        selectedWatchlistRef.current = null;
       }
       
       await fetchWatchlists();
@@ -111,17 +116,17 @@ const WatchlistsPage = () => {
   };
 
   const addStockToWatchlist = async () => {
-    if (!selectedWatchlist) return;
+    if (!selectedWatchlistRef.current) return;
     
     const symbol = prompt('Enter stock symbol (e.g., AAPL):');
     if (!symbol) return;
 
     try {
-      await axios.post(`/api/watchlist/${selectedWatchlist._id}/items`, {
+      await axios.post(`/api/watchlist/${selectedWatchlistRef.current._id}/items`, {
         symbol: symbol.toUpperCase()
       });
       
-      await selectWatchlist(selectedWatchlist._id);
+      await selectWatchlist(selectedWatchlistRef.current._id);
       setError(null);
     } catch (err) {
       console.error('Error adding stock to watchlist:', err);
@@ -134,15 +139,15 @@ const WatchlistsPage = () => {
   };
 
   const removeStockFromWatchlist = async (symbol) => {
-    if (!selectedWatchlist) return;
+    if (!selectedWatchlistRef.current) return;
     
     if (!window.confirm(`Remove ${symbol} from watchlist?`)) {
       return;
     }
 
     try {
-      await axios.delete(`/api/watchlist/${selectedWatchlist._id}/items/${symbol}`);
-      await selectWatchlist(selectedWatchlist._id);
+      await axios.delete(`/api/watchlist/${selectedWatchlistRef.current._id}/items/${symbol}`);
+      await selectWatchlist(selectedWatchlistRef.current._id);
       setError(null);
     } catch (err) {
       console.error('Error removing stock from watchlist:', err);

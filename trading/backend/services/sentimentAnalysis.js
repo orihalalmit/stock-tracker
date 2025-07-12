@@ -1,19 +1,9 @@
 const axios = require('axios');
+const AlpacaService = require('./alpacaService');
 
 class SentimentAnalysisService {
   constructor() {
-    this.ALPACA_CONFIG = {
-      apiKey: process.env.ALPACA_API_KEY,
-      secretKey: process.env.ALPACA_SECRET_KEY,
-      baseURL: process.env.ALPACA_BASE_URL
-    };
-  }
-
-  getAlpacaHeaders() {
-    return {
-      'APCA-API-KEY-ID': this.ALPACA_CONFIG.apiKey,
-      'APCA-API-SECRET-KEY': this.ALPACA_CONFIG.secretKey
-    };
+    this.alpacaService = new AlpacaService();
   }
 
   // Calculate correlation between two arrays
@@ -93,13 +83,10 @@ class SentimentAnalysisService {
   async fetchMarketBenchmarks() {
     try {
       const benchmarkSymbols = 'SPY,QQQ,VXX,IWM';
-      const response = await axios.get(
-        `${this.ALPACA_CONFIG.baseURL}/stocks/snapshots?symbols=${benchmarkSymbols}`,
-        { headers: this.getAlpacaHeaders() }
-      );
+      const result = await this.alpacaService.getSnapshots(benchmarkSymbols);
       
       const benchmarks = {};
-      Object.entries(response.data).forEach(([symbol, data]) => {
+      Object.entries(result.snapshots).forEach(([symbol, data]) => {
         const currentPrice = data.latestTrade?.p || data.latestQuote?.ap || 0;
         const previousClose = data.prevDailyBar?.c || currentPrice;
         const change = currentPrice - previousClose;
@@ -277,13 +264,10 @@ class SentimentAnalysisService {
       const endDate = new Date();
       const startDate = new Date(endDate.getTime() - (days * 24 * 60 * 60 * 1000));
       
-      const response = await axios.get(
-        `${this.ALPACA_CONFIG.baseURL}/stocks/bars?symbols=${symbols}&timeframe=1Day&start=${startDate.toISOString()}&end=${endDate.toISOString()}`,
-        { headers: this.getAlpacaHeaders() }
-      );
+      const data = await this.alpacaService.getBars(symbols, '1Day', startDate.toISOString(), endDate.toISOString());
       
       const portfolioReturns = [];
-      const bars = response.data.bars;
+      const bars = data.bars;
       
       // Calculate daily portfolio returns
       if (bars && Object.keys(bars).length > 0) {

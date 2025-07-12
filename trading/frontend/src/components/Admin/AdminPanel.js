@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useAuth } from '../Auth/AuthContext';
+import ApiStats from './ApiStats';
 import './AdminPanel.css';
 
 const AdminPanel = () => {
@@ -114,6 +115,12 @@ const AdminPanel = () => {
             onClick={() => setActiveTab('portfolios')}
           >
             All Portfolios ({portfolios.length})
+          </button>
+          <button 
+            className={activeTab === 'api-stats' ? 'active' : ''}
+            onClick={() => setActiveTab('api-stats')}
+          >
+            API Statistics
           </button>
         </div>
       </div>
@@ -234,6 +241,10 @@ const AdminPanel = () => {
             ))}
           </div>
         </div>
+      )}
+
+      {activeTab === 'api-stats' && (
+        <ApiStats />
       )}
     </div>
   );

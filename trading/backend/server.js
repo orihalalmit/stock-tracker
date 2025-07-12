@@ -4,9 +4,13 @@ const axios = require('axios');
 const path = require('path');
 require('dotenv').config();
 const connectDB = require('./config/db');
+const AlpacaService = require('./services/alpacaService');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
+
+// Initialize Alpaca service
+const alpacaService = new AlpacaService();
 
 // Debug environment variables
 console.log('Environment variables check:');
@@ -73,22 +77,29 @@ app.use('/api/portfolio', portfolioRoutes);
 app.use('/api/watchlist', watchlistRoutes);
 app.use('/api/market', marketRoutes);
 
+// Get API service statistics
+app.get('/api/stats', async (req, res) => {
+  try {
+    const stats = alpacaService.getStats();
+    res.json(stats);
+  } catch (error) {
+    console.error('Error fetching stats:', error.message);
+    res.status(500).json({ error: 'Failed to fetch stats' });
+  }
+});
+
 // Get current stock prices
 app.get('/api/stocks/latest', async (req, res) => {
   try {
     const symbols = req.query.symbols;
     if (!symbols) {
-      return res.json({}); // Return empty object if no symbols provided
+      return res.json({});
     }
     
-    const response = await axios.get(
-      `${ALPACA_CONFIG.baseURL}/stocks/quotes/latest?symbols=${symbols}`,
-      { headers: getAlpacaHeaders() }
-    );
-    
-    res.json(response.data);
+    const data = await alpacaService.getQuotes(symbols);
+    res.json(data);
   } catch (error) {
-    console.error('Error fetching latest quotes:', error.response?.data || error.message);
+    console.error('Error fetching latest quotes:', error.message);
     res.status(500).json({ error: 'Failed to fetch stock quotes' });
   }
 });
@@ -98,20 +109,16 @@ app.get('/api/stocks/bars', async (req, res) => {
   try {
     const symbols = req.query.symbols;
     if (!symbols) {
-      return res.json({ bars: {} }); // Return empty bars object if no symbols provided
+      return res.json({ bars: {} });
     }
     
     const endDate = new Date().toISOString().split('T')[0];
     const startDate = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
     
-    const response = await axios.get(
-      `${ALPACA_CONFIG.baseURL}/stocks/bars?symbols=${symbols}&timeframe=1Day&start=${startDate}&end=${endDate}`,
-      { headers: getAlpacaHeaders() }
-    );
-    
-    res.json(response.data);
+    const data = await alpacaService.getBars(symbols, '1Day', startDate, endDate);
+    res.json(data);
   } catch (error) {
-    console.error('Error fetching bars:', error.response?.data || error.message);
+    console.error('Error fetching bars:', error.message);
     res.status(500).json({ error: 'Failed to fetch stock bars' });
   }
 });
@@ -123,166 +130,12 @@ app.get('/api/stocks/snapshots', async (req, res) => {
     const includePremarket = req.query.include_premarket === 'true';
     
     if (!symbols) {
-      return res.json({ snapshots: {}, errors: [], warnings: [] }); // Return empty snapshots object if no symbols provided
+      return res.json({ snapshots: {}, errors: [], warnings: [] });
     }
     
-    // Split symbols and validate
-    const symbolList = symbols.split(',').map(s => s.trim().toUpperCase()).filter(s => s.length > 0);
-    const validSnapshots = {};
-    const errors = [];
-    const warnings = [];
-    
-    // Try to fetch data for all symbols first
-    try {
-      const response = await axios.get(
-        `${ALPACA_CONFIG.baseURL}/stocks/snapshots?symbols=${symbols}&feed=iex`,
-        { headers: getAlpacaHeaders() }
-      );
-      
-      // Process successful response
-      const processSnapshots = (data) => {
-        if (includePremarket) {
-          const enhancedSnapshots = {};
-          
-          Object.entries(data).forEach(([symbol, data]) => {
-            const currentPrice = data.latestTrade?.p || data.latestQuote?.ap || 0;
-            const previousClose = data.prevDailyBar?.c || 0;
-            const todayOpen = data.dailyBar?.o || 0;
-            const todayHigh = data.dailyBar?.h || 0;
-            const todayLow = data.dailyBar?.l || 0;
-            const todayVolume = data.dailyBar?.v || 0;
-            
-            // Calculate overnight gap (previous close to today's open)
-            const gapChange = todayOpen - previousClose;
-            const gapChangePercent = previousClose > 0 ? ((gapChange / previousClose) * 100) : 0;
-            
-            // Calculate intraday change (today's open to current price)
-            const intradayChange = currentPrice - todayOpen;
-            const intradayChangePercent = todayOpen > 0 ? ((intradayChange / todayOpen) * 100) : 0;
-            
-            // Calculate total daily change (previous close to current price)
-            const totalDailyChange = currentPrice - previousClose;
-            const totalDailyChangePercent = previousClose > 0 ? ((totalDailyChange / previousClose) * 100) : 0;
-            
-            // Enhanced pre-market data structure
-            enhancedSnapshots[symbol] = {
-              ...data,
-              
-              // Current market data
-              currentPrice,
-              previousClose,
-              todayOpen,
-              todayHigh,
-              todayLow,
-              todayVolume,
-              
-              // Overnight gap analysis
-              preMarketData: {
-                change: gapChange,
-                changePercent: gapChangePercent,
-                from: previousClose,
-                to: todayOpen,
-                description: `Overnight Gap: ${previousClose.toFixed(2)} → ${todayOpen.toFixed(2)}`
-              },
-              
-              // Intraday analysis (market hours performance)
-              intradayData: {
-                change: intradayChange,
-                changePercent: intradayChangePercent,
-                from: todayOpen,
-                to: currentPrice,
-                description: `Market Session: ${todayOpen.toFixed(2)} → ${currentPrice.toFixed(2)}`
-              },
-              
-              // Total daily performance
-              totalDailyData: {
-                change: totalDailyChange,
-                changePercent: totalDailyChangePercent,
-                from: previousClose,
-                to: currentPrice,
-                description: `Total Daily: ${previousClose.toFixed(2)} → ${currentPrice.toFixed(2)}`
-              },
-              
-              // Additional context
-              marketContext: {
-                isPreMarket: isPreMarketHours(),
-                isAfterHours: isAfterHours(),
-                isMarketOpen: isMarketOpen(),
-                lastUpdateTime: new Date().toISOString()
-              }
-            };
-          });
-          
-          return enhancedSnapshots;
-        } else {
-          return data;
-        }
-      };
-      
-      const processedData = processSnapshots(response.data);
-      
-      // Check if we got data for all requested symbols
-      const receivedSymbols = Object.keys(processedData);
-      const missingSymbols = symbolList.filter(symbol => !receivedSymbols.includes(symbol));
-      
-      if (missingSymbols.length > 0) {
-        warnings.push(`No data available for symbols: ${missingSymbols.join(', ')}`);
-      }
-      
-      res.json({ 
-        snapshots: processedData,
-        errors,
-        warnings,
-        requestedSymbols: symbolList.length,
-        returnedSymbols: receivedSymbols.length
-      });
-      
-    } catch (error) {
-      // If the bulk request fails, try individual symbol requests to identify problematic ones
-      console.warn('Bulk request failed, trying individual symbol requests:', error.message);
-      
-      const individualResults = await Promise.allSettled(
-        symbolList.map(async (symbol) => {
-          try {
-            const response = await axios.get(
-              `${ALPACA_CONFIG.baseURL}/stocks/snapshots?symbols=${symbol}&feed=iex`,
-              { headers: getAlpacaHeaders() }
-            );
-            return { symbol, data: response.data[symbol], success: true };
-          } catch (err) {
-            return { symbol, error: err.message, success: false };
-          }
-        })
-      );
-      
-      // Process individual results
-      individualResults.forEach(result => {
-        if (result.status === 'fulfilled') {
-          const { symbol, data, success, error } = result.value;
-          if (success && data) {
-            validSnapshots[symbol] = data;
-          } else {
-            errors.push(`Failed to fetch data for ${symbol}: ${error || 'Unknown error'}`);
-          }
-        } else {
-          errors.push(`Request failed for symbol: ${result.reason}`);
-        }
-      });
-      
-      // Process valid snapshots with pre-market data if requested
-      const processedSnapshots = includePremarket ? 
-        processSnapshots(validSnapshots) : validSnapshots;
-      
-      res.json({ 
-        snapshots: processedSnapshots,
-        errors,
-        warnings,
-        requestedSymbols: symbolList.length,
-        returnedSymbols: Object.keys(processedSnapshots).length,
-        partialSuccess: Object.keys(processedSnapshots).length > 0
-      });
-    }
-    
+    // Use the new AlpacaService with rate limiting and caching
+    const result = await alpacaService.getSnapshots(symbols, includePremarket);
+    res.json(result);
   } catch (error) {
     console.error('Error fetching stock snapshots:', error.message);
     res.status(500).json({ 

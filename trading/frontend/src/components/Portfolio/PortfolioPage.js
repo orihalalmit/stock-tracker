@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import axios from 'axios';
 import './PortfolioPage.css';
 import PortfolioSummary from './PortfolioSummary';
@@ -17,6 +17,9 @@ const PortfolioPage = ({ activeView = 'management' }) => {
   const [activeTab, setActiveTab] = useState(activeView); // management, insights
   const [showPremarket, setShowPremarket] = useState(false);
   const { user, token } = useAuth();
+  
+  // Use ref to track selected portfolio without causing re-renders
+  const selectedPortfolioRef = useRef(null);
 
   // Sync activeTab with activeView prop when it changes
   useEffect(() => {
@@ -29,6 +32,7 @@ const PortfolioPage = ({ activeView = 'management' }) => {
       const response = await axios.get(url);
       const portfolio = response.data;
       setSelectedPortfolio(portfolio);
+      selectedPortfolioRef.current = portfolio;
       setPortfolios(prevPortfolios => prevPortfolios.map(p => 
         p._id === portfolio._id ? portfolio : p
       ));
@@ -38,7 +42,7 @@ const PortfolioPage = ({ activeView = 'management' }) => {
       setError('Failed to fetch portfolio details');
       console.error(err);
     }
-  }, [showPremarket]); // Removed portfolios dependency to prevent infinite loops
+  }, [showPremarket]);
 
   const fetchPortfolios = useCallback(async () => {
     try {
@@ -58,7 +62,7 @@ const PortfolioPage = ({ activeView = 'management' }) => {
         
         // If last selected doesn't exist, use current selected or first one
         if (!portfolioToSelect) {
-          portfolioToSelect = portfoliosList.find(p => p._id === selectedPortfolio?._id) || portfoliosList[0];
+          portfolioToSelect = portfoliosList.find(p => p._id === selectedPortfolioRef.current?._id) || portfoliosList[0];
         }
 
         console.log('Selected portfolio:', portfolioToSelect.name);
@@ -73,12 +77,14 @@ const PortfolioPage = ({ activeView = 'management' }) => {
 
         setPortfolios(updatedPortfolios);
         setSelectedPortfolio(updatedPortfolio);
+        selectedPortfolioRef.current = updatedPortfolio;
         
         // Save to localStorage
         localStorage.setItem('lastSelectedPortfolioId', updatedPortfolio._id);
       } else {
         setPortfolios(portfoliosList);
         setSelectedPortfolio(null);
+        selectedPortfolioRef.current = null;
         localStorage.removeItem('lastSelectedPortfolioId');
       }
       
@@ -96,20 +102,20 @@ const PortfolioPage = ({ activeView = 'management' }) => {
     } finally {
       setLoading(false);
     }
-  }, [showPremarket, user, token, selectedPortfolio?._id]); // Add selectedPortfolio._id to dependencies
+  }, [showPremarket, user, token]); // Removed selectedPortfolio dependency
 
   useEffect(() => {
     if (user && token) {
       fetchPortfolios();
     }
-  }, [fetchPortfolios, user, token]); // Only fetch when user is authenticated
+  }, [fetchPortfolios, user, token]);
 
   // Re-fetch portfolio data when premarket toggle changes
   useEffect(() => {
-    if (selectedPortfolio) {
-      handlePortfolioChange(selectedPortfolio._id);
+    if (selectedPortfolioRef.current) {
+      handlePortfolioChange(selectedPortfolioRef.current._id);
     }
-  }, [showPremarket, handlePortfolioChange, selectedPortfolio]); // Added selectedPortfolio dependency
+  }, [showPremarket, handlePortfolioChange]); // Removed selectedPortfolio dependency
 
   const createPortfolio = async (name) => {
     try {
@@ -117,6 +123,7 @@ const PortfolioPage = ({ activeView = 'management' }) => {
       const newPortfolio = response.data;
       setPortfolios(prevPortfolios => [...prevPortfolios, newPortfolio]);
       setSelectedPortfolio(newPortfolio);
+      selectedPortfolioRef.current = newPortfolio;
       localStorage.setItem('lastSelectedPortfolioId', newPortfolio._id);
       setError(null);
     } catch (err) {
@@ -137,13 +144,15 @@ const PortfolioPage = ({ activeView = 'management' }) => {
         const updatedPortfolios = prevPortfolios.filter(p => p._id !== portfolioId);
         
         // If we deleted the selected portfolio, select another one
-        if (selectedPortfolio?._id === portfolioId) {
+        if (selectedPortfolioRef.current?._id === portfolioId) {
           if (updatedPortfolios.length > 0) {
             const newSelected = updatedPortfolios[0];
             setSelectedPortfolio(newSelected);
+            selectedPortfolioRef.current = newSelected;
             localStorage.setItem('lastSelectedPortfolioId', newSelected._id);
           } else {
             setSelectedPortfolio(null);
+            selectedPortfolioRef.current = null;
             localStorage.removeItem('lastSelectedPortfolioId');
           }
         }
@@ -161,7 +170,7 @@ const PortfolioPage = ({ activeView = 'management' }) => {
   const handleAddPosition = async (position) => {
     try {
       await axios.post(
-        `/api/portfolio/${selectedPortfolio._id}/positions`,
+        `/api/portfolio/${selectedPortfolioRef.current._id}/positions`,
         position
       );
       await fetchPortfolios(); // Refresh all portfolios with latest data
@@ -178,7 +187,7 @@ const PortfolioPage = ({ activeView = 'management' }) => {
       formData.append('file', file);
       
       await axios.post(
-        `/api/portfolio/${selectedPortfolio._id}/import`,
+        `/api/portfolio/${selectedPortfolioRef.current._id}/import`,
         formData,
         {
           headers: {
@@ -201,7 +210,7 @@ const PortfolioPage = ({ activeView = 'management' }) => {
     }
 
     try {
-      const response = await axios.post(`/api/portfolio/${selectedPortfolio._id}/consolidate`);
+      const response = await axios.post(`/api/portfolio/${selectedPortfolioRef.current._id}/consolidate`);
       
       if (response.data.duplicatesConsolidated > 0) {
         alert(`Successfully consolidated ${response.data.duplicatesConsolidated} duplicate positions!`);
