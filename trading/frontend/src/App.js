@@ -10,6 +10,7 @@ import WatchlistsPage from './components/Watchlists/WatchlistsPage';
 import { AuthProvider, useAuth } from './components/Auth/AuthContext';
 import AuthPage from './components/Auth/AuthPage';
 import AdminPanel from './components/Admin/AdminPanel';
+import StockSearchModal from './components/StockSearchModal';
 import './App.css';
 
 const MainApp = () => {
@@ -22,6 +23,7 @@ const MainApp = () => {
   const [lastUpdated, setLastUpdated] = useState(null);
   const [marketConfig, setMarketConfig] = useState(null);
   const [isEditingMarket, setIsEditingMarket] = useState(false);
+  const [stockSearchModal, setStockSearchModal] = useState({ isOpen: false, sectionId: null, sectionName: '' });
   const { user, loading: authLoading, logout, isAdmin } = useAuth();
 
   const fetchUsdIlsData = async () => {
@@ -94,15 +96,16 @@ const MainApp = () => {
       // Get market configuration
       const config = marketConfig || await fetchMarketConfig();
       
-      // Collect all symbols from enabled sections
+      // Collect all symbols from ALL enabled sections (including Currency and Bitcoin & Ethereum)
       const allSymbols = new Set();
       config.sections
-        .filter(section => section.enabled && section.name !== 'Currency' && section.name !== 'Bitcoin & Ethereum')
+        .filter(section => section.enabled)
         .forEach(section => {
           section.symbols.forEach(symbol => allSymbols.add(symbol));
         });
       
       const tickers = Array.from(allSymbols);
+      console.log('Fetching data for all symbols:', tickers);
       
       // Fetch stock data, USD/ILS data, and Bitcoin data in parallel
       const [stockResponse] = await Promise.all([
@@ -110,85 +113,37 @@ const MainApp = () => {
         fetchUsdIlsData(),
         fetchBitcoinData()
       ]);
-      
-      if (stockResponse.data && stockResponse.data.snapshots) {
-        const { snapshots, errors = [], warnings = [], requestedSymbols = 0, returnedSymbols = 0 } = stockResponse.data;
-        
-        const stockData = Object.entries(snapshots)
-          .filter(([symbol, data]) => {
-            // Filter out symbols with no data
-            return data && (data.latestTrade?.p || data.latestQuote?.ap || data.latestQuote?.bp);
-          })
-          .map(([symbol, data]) => {
-            // Use latestTrade price if available, otherwise use latestQuote ask/bid
-            const currentPrice = data.latestTrade?.p || data.latestQuote?.ap || data.latestQuote?.bp || 0;
-            const openPrice = data.dailyBar?.o || 0;
-            const prevClose = data.prevDailyBar?.c || 0;
-            
-            // Calculate change from previous close if available, otherwise from open
-            const referencePrice = prevClose || openPrice;
-            const change = referencePrice ? (currentPrice - referencePrice) : 0;
-            const changePercent = referencePrice ? ((change / referencePrice) * 100) : 0;
-            
-            return {
-              symbol,
-              price: currentPrice,
-              change,
-              changePercent,
-              volume: data.dailyBar?.v || 0,
-              high: data.dailyBar?.h || 0,
-              low: data.dailyBar?.l || 0,
-              open: openPrice,
-              close: prevClose
-            };
-          });
-        
-        setStocks(stockData);
-        setLastUpdated(new Date());
-        
-        // Handle errors and warnings
-        if (errors.length > 0) {
-          console.warn('Stock data errors:', errors);
-          // Don't show error message to user for symbol failures
-          // const errorMessage = `Some symbols failed to load: ${errors.slice(0, 3).join(', ')}${errors.length > 3 ? ` and ${errors.length - 3} more` : ''}`;
-          // setError(errorMessage);
-        } else if (warnings.length > 0) {
-          console.warn('Stock data warnings:', warnings);
-        }
-        
-        // Clear any existing errors when we successfully load data
-        setError(null);
-        
-        // Show info message about data availability
-        if (requestedSymbols > 0 && returnedSymbols < requestedSymbols) {
-          console.log(`Note: ${requestedSymbols - returnedSymbols} of ${requestedSymbols} symbols were not available or had no data`);
-          console.log('Note: Some symbols may not be supported by the data provider.');
-        }
-        
-        // Show success message if we got partial data despite errors
-        if (stockData.length > 0 && errors.length > 0) {
-          console.log(`Successfully loaded ${stockData.length} symbols with ${errors.length} errors`);
-        }
-        
-      } else {
-        setError('No market data available. Please check your API configuration.');
-      }
+
+      const snapshots = stockResponse.data.snapshots || {};
+      const processedStocks = Object.entries(snapshots).map(([symbol, data]) => ({
+        symbol,
+        price: data.latestTrade?.p || data.latestQuote?.ap || 0,
+        change: data.latestTrade ? (data.latestTrade.p - data.prevDailyBar?.c) : 0,
+        changePercent: data.prevDailyBar?.c ? 
+          ((data.latestTrade?.p || data.latestQuote?.ap || 0) - data.prevDailyBar.c) / data.prevDailyBar.c * 100 : 0,
+        volume: data.dailyBar?.v || 0,
+        high: data.dailyBar?.h || 0,
+        low: data.dailyBar?.l || 0,
+        open: data.dailyBar?.o || data.prevDailyBar?.c || 0,
+        previousClose: data.prevDailyBar?.c || 0
+      }));
+
+      console.log('Processed stocks:', processedStocks.length, 'symbols');
+      console.log('Stock symbols received:', processedStocks.map(s => s.symbol));
+
+      setStocks(processedStocks);
+      setLastUpdated(new Date());
+      setError(null);
     } catch (err) {
       console.error('Error fetching stock data:', err);
-      setError('Failed to fetch stock data. Please try again.');
+      setError('Failed to fetch stock data: ' + (err.response?.data?.error || err.message));
     } finally {
       setLoading(false);
     }
   };
 
-  // Load market config on app start
   useEffect(() => {
-    console.log('App mounted, loading market config...');
-    fetchMarketConfig();
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
-
-  useEffect(() => {
-    if (activeTab === 'market') {
+    if (activeTab === 'market' && user) {
       console.log('Market tab activated, marketConfig exists:', !!marketConfig);
       
       // Fetch market config first, then stock data
@@ -211,13 +166,24 @@ const MainApp = () => {
       
       return () => clearInterval(interval);
     }
-  }, [activeTab]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [activeTab, user]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Market configuration editing functions
   const editSection = (section) => {
     const newName = prompt('Enter section name:', section.name);
     if (newName && newName !== section.name) {
       updateSection(section._id, { name: newName });
+    }
+  };
+
+  const updateSection = async (sectionId, updates) => {
+    try {
+      await axios.put(`/api/market/config/sections/${sectionId}`, updates);
+      await fetchMarketConfig();
+      await fetchStockData();
+    } catch (err) {
+      console.error('Error updating section:', err);
+      setError('Failed to update section');
     }
   };
 
@@ -234,131 +200,93 @@ const MainApp = () => {
     }
   };
 
-  const addStockToSection = async (sectionId) => {
-    console.log('🚀 addStockToSection called with sectionId:', sectionId);
+  const addStockToSection = async (sectionId, sectionName) => {
+    console.log('🚀 Opening stock search modal for section:', sectionName, 'ID:', sectionId);
+    setStockSearchModal({
+      isOpen: true,
+      sectionId,
+      sectionName
+    });
+  };
+
+  const handleAddStock = async (symbol) => {
+    const { sectionId } = stockSearchModal;
     
-    // Validate sectionId
+    console.log('🚀 handleAddStock called with symbol:', symbol, 'sectionId:', sectionId);
+    console.log('🔍 Current user:', user);
+    console.log('🔍 Auth token exists:', !!axios.defaults.headers.common['Authorization']);
+    
     if (!sectionId) {
-      console.error('❌ No sectionId provided!');
-      alert('Error: No section ID provided');
-      return;
-    }
-    
-    const symbol = prompt('Enter stock symbol (e.g., AAPL):');
-    if (!symbol) {
-      console.log('ℹ️ User cancelled stock addition');
-      return;
+      throw new Error('No section ID provided');
     }
     
     const upperSymbol = symbol.toUpperCase().trim();
     if (!upperSymbol) {
-      console.log('❌ Invalid symbol entered:', symbol);
-      setError('Please enter a valid stock symbol');
-      alert('Please enter a valid stock symbol');
-      return;
+      throw new Error('Please enter a valid stock symbol');
     }
     
-    console.log('📝 Processing add stock request:');
-    console.log('  - Section ID:', sectionId);
-    console.log('  - Symbol:', upperSymbol);
-    console.log('  - API URL:', `/api/market/config/sections/${sectionId}/symbols`);
-    
     try {
-      setLoading(true);
-      setError(null);
+      console.log('📡 Making API request to add stock...');
+      console.log('📡 Request URL:', `/api/market/config/sections/${sectionId}/symbols`);
+      console.log('📡 Request data:', { symbol: upperSymbol });
       
-      console.log('📡 Making API request...');
       const response = await axios.post(`/api/market/config/sections/${sectionId}/symbols`, { 
         symbol: upperSymbol 
       });
       
-      console.log('✅ API Response received:');
-      console.log('  - Status:', response.status);
-      console.log('  - Data:', response.data);
+      console.log('✅ Stock added successfully:', response.data);
       
-      // Update the market config state immediately
-      console.log('🔄 Updating market config state...');
+      // Update the market config state
       setMarketConfig(response.data);
       
       // Refresh stock data to include the new symbol
-      console.log('📊 Refreshing stock data...');
       await fetchStockData();
       
-      // Show success message
-      const successMsg = `✅ Successfully added ${upperSymbol} to the section!`;
-      console.log(successMsg);
-      alert(successMsg);
+      console.log(`✅ Successfully added ${upperSymbol} to the section!`);
       
     } catch (err) {
       console.error('❌ Error adding stock to section:', err);
-      console.error('❌ Error details:');
-      console.error('  - Status:', err.response?.status);
-      console.error('  - Data:', err.response?.data);
-      console.error('  - Message:', err.message);
+      console.error('❌ Error response:', err.response?.data);
+      console.error('❌ Error status:', err.response?.status);
       
       let errorMsg;
-      if (err.response?.status === 400 && err.response?.data?.error?.includes('already exists')) {
+      if (err.response?.status === 401) {
+        errorMsg = 'Authentication required. Please log in again.';
+      } else if (err.response?.status === 400 && err.response?.data?.error?.includes('already exists')) {
         errorMsg = `${upperSymbol} is already in this section`;
       } else if (err.response?.data?.error) {
-        errorMsg = `Failed to add stock: ${err.response.data.error}`;
+        errorMsg = err.response.data.error;
       } else {
         errorMsg = `Failed to add stock: ${err.message}`;
       }
       
-      setError(errorMsg);
-      alert(errorMsg);
-      
-    } finally {
-      setLoading(false);
-      console.log('🏁 addStockToSection completed');
-    }
-  };
-
-  const addNewSection = async () => {
-    const name = prompt('Enter new section name:');
-    if (!name) return;
-    
-    try {
-      await axios.post('/api/market/config/sections', { name, symbols: [] });
-      await fetchMarketConfig();
-    } catch (err) {
-      console.error('Error adding new section:', err);
-      setError('Failed to add new section');
-    }
-  };
-
-  const updateSection = async (sectionId, updates) => {
-    try {
-      await axios.put(`/api/market/config/sections/${sectionId}`, updates);
-      await fetchMarketConfig();
-      await fetchStockData();
-    } catch (err) {
-      console.error('Error updating section:', err);
-      setError('Failed to update section');
+      throw new Error(errorMsg);
     }
   };
 
   const removeStockFromSection = async (sectionId, symbol) => {
-    if (!window.confirm(`Are you sure you want to remove ${symbol} from this section?`)) return;
+    if (!window.confirm(`Remove ${symbol} from this section?`)) return;
     
     try {
-      console.log('Removing stock from section:', sectionId, symbol);
-      setLoading(true);
-      const response = await axios.delete(`/api/market/config/sections/${sectionId}/symbols/${symbol}`);
-      
-      // Update the market config state immediately
-      setMarketConfig(response.data);
-      
-      // Refresh stock data
+      await axios.delete(`/api/market/config/sections/${sectionId}/symbols/${symbol}`);
+      await fetchMarketConfig();
       await fetchStockData();
-      setError(null);
-      
-      console.log(`Successfully removed ${symbol} from section`);
     } catch (err) {
       console.error('Error removing stock from section:', err);
-      setError('Failed to remove stock from section: ' + (err.response?.data?.error || err.message));
-    } finally {
-      setLoading(false);
+      setError('Failed to remove stock from section');
+    }
+  };
+
+  const addNewSection = async () => {
+    const name = prompt('Enter section name:');
+    if (!name) return;
+    
+    try {
+      await axios.post('/api/market/config/sections', { name });
+      await fetchMarketConfig();
+    } catch (err) {
+      console.error('Error adding new section:', err);
+      setError('Failed to add new section');
     }
   };
 
@@ -383,6 +311,12 @@ const MainApp = () => {
             {isEditingMarket && (
               <div className="market-edit-controls">
                 <button 
+                  className="add-section-btn"
+                  onClick={addNewSection}
+                >
+                  ➕ Add New Section
+                </button>
+                <button 
                   className="save-config-btn"
                   onClick={() => setIsEditingMarket(false)}
                 >
@@ -403,8 +337,11 @@ const MainApp = () => {
                   className="edit-market-btn"
                   onClick={() => setIsEditingMarket(true)}
                 >
-                  ⚙️ Customize Sections
+                  ⚙️ Customize Your Market Overview
                 </button>
+                <div className="market-controls-hint">
+                  Personalize your market sections and add your favorite stocks
+                </div>
               </div>
             )}
             
@@ -417,17 +354,20 @@ const MainApp = () => {
                 <div key={section._id || section.name} className="market-section">
                   <div className="section-header">
                     <h2 className="section-title">{section.name}</h2>
+                    {console.log(`Section ${section.name} has symbols:`, section.symbols) || null}
                     {isEditingMarket && (
                       <div className="section-edit-controls">
                         <button 
                           className="edit-section-btn"
                           onClick={() => editSection(section)}
+                          title="Edit section name"
                         >
                           ✏️
                         </button>
                         <button 
                           className="delete-section-btn"
                           onClick={() => deleteSection(section._id)}
+                          title="Delete section"
                         >
                           🗑️
                         </button>
@@ -445,100 +385,73 @@ const MainApp = () => {
                     )}
                     
                     {section.symbols && stocks
-                      .filter(stock => section.symbols.includes(stock.symbol))
-                      .map((stock) => (
-                        <div key={stock.symbol} className="stock-card-container">
-                          <StockCard stock={stock} />
-                          {isEditingMarket && (
-                            <button 
-                              className="remove-stock-btn"
-                              onClick={() => removeStockFromSection(section._id, stock.symbol)}
-                              title={`Remove ${stock.symbol} from ${section.name}`}
-                            >
-                              ✕
-                            </button>
-                          )}
-                        </div>
-                      ))}
+                      .filter(stock => {
+                        const isIncluded = section.symbols.includes(stock.symbol);
+                        if (!isIncluded) {
+                          console.log(`Stock ${stock.symbol} not in section ${section.name} symbols:`, section.symbols);
+                        }
+                        return isIncluded;
+                      })
+                      .map((stock) => {
+                        console.log(`Rendering stock card for ${stock.symbol} in section ${section.name}`);
+                        return (
+                          <div key={stock.symbol} className="stock-card-container">
+                            <StockCard stock={stock} />
+                            {isEditingMarket && (
+                              <button 
+                                className="remove-stock-btn"
+                                onClick={() => removeStockFromSection(section._id, stock.symbol)}
+                                title={`Remove ${stock.symbol} from ${section.name}`}
+                              >
+                                ✕
+                              </button>
+                            )}
+                          </div>
+                        );
+                      })}
                     
                     {isEditingMarket && (
                       <div className="add-stock-card">
                         <button 
                           className="add-stock-btn"
-                          onClick={() => {
-                            console.log('Add stock button clicked for section:', section.name, 'ID:', section._id);
-                            addStockToSection(section._id);
-                          }}
+                          onClick={() => addStockToSection(section._id, section.name)}
                         >
-                          + Add Stock
+                          <div className="add-stock-icon">📈</div>
+                          <div className="add-stock-text">Add Stock</div>
+                          <div className="add-stock-hint">Search and add stocks to this section</div>
                         </button>
-                        <div style={{ fontSize: '0.8rem', color: '#ccc', marginTop: '0.5rem' }}>
-                          Section: {section.name}
-                        </div>
                       </div>
                     )}
                   </div>
                 </div>
               ))
             )}
-            
-            {isEditingMarket && (
-              <div className="add-section-area">
-                <button 
-                  className="add-section-btn"
-                  onClick={addNewSection}
-                >
-                  + Add New Section
-                </button>
-              </div>
-            )}
           </div>
-          
-          {stocks.length === 0 && !loading && (
-            <div className="no-data">
-              <p>No stock data available.</p>
-              <button onClick={fetchStockData} className="retry-button">
-                Load Data
-              </button>
-            </div>
-          )}
+
+          <StockSearchModal
+            isOpen={stockSearchModal.isOpen}
+            onClose={() => setStockSearchModal({ isOpen: false, sectionId: null, sectionName: '' })}
+            onAddStock={handleAddStock}
+            sectionName={stockSearchModal.sectionName}
+            sectionId={stockSearchModal.sectionId}
+          />
         </>
       );
-    }
-
-    // Handle watchlists tab
-    if (activeTab === 'watchlists') {
+    } else if (activeTab === 'portfolio') {
+      return <PortfolioPage />;
+    } else if (activeTab === 'watchlists') {
       return <WatchlistsPage />;
-    }
-
-    // Handle admin tab
-    if (activeTab === 'admin') {
+    } else if (activeTab === 'admin' && isAdmin()) {
       return <AdminPanel />;
     }
-
-    // Handle portfolio tab (includes both management and insights as sub-tabs)
-    return <PortfolioPage activeView="management" />;
   };
 
-  // Show loading screen while checking authentication
   if (authLoading) {
-    return (
-      <div className="app">
-        <div className="loading-container">
-          <LoadingSpinner />
-          <p>Loading...</p>
-        </div>
-      </div>
-    );
+    return <LoadingSpinner />;
   }
 
-  // Show login page if not authenticated
   if (!user) {
-    return (
-      <div className="app">
-        <AuthPage />
-      </div>
-    );
+    return <AuthPage />;
   }
 
   return (
@@ -556,26 +469,26 @@ const MainApp = () => {
           className={`tab-button ${activeTab === 'market' ? 'active' : ''}`}
           onClick={() => setActiveTab('market')}
         >
-          Market Overview
+          📊 Market Overview
         </button>
         <button
           className={`tab-button ${activeTab === 'portfolio' ? 'active' : ''}`}
           onClick={() => setActiveTab('portfolio')}
         >
-          Portfolio
+          💼 Portfolio
         </button>
         <button
           className={`tab-button ${activeTab === 'watchlists' ? 'active' : ''}`}
           onClick={() => setActiveTab('watchlists')}
         >
-          Watchlists
+          👀 Watchlists
         </button>
         {isAdmin() && (
           <button
             className={`tab-button ${activeTab === 'admin' ? 'active' : ''}`}
             onClick={() => setActiveTab('admin')}
           >
-            Admin Panel
+            ⚙️ Admin Panel
           </button>
         )}
       </div>
@@ -587,12 +500,12 @@ const MainApp = () => {
   );
 };
 
-function App() {
+const App = () => {
   return (
     <AuthProvider>
       <MainApp />
     </AuthProvider>
   );
-}
+};
 
 export default App; 

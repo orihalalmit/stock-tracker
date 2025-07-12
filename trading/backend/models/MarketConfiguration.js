@@ -23,8 +23,9 @@ const MarketSectionSchema = new mongoose.Schema({
 
 const MarketConfigurationSchema = new mongoose.Schema({
   userId: {
-    type: String,
-    default: 'default' // For now, we'll use a default user
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true
   },
   sections: [MarketSectionSchema],
   createdAt: {
@@ -43,7 +44,54 @@ MarketConfigurationSchema.pre('save', function(next) {
   next();
 });
 
-// Static method to get or create default configuration
+// Static method to get or create user-specific configuration
+MarketConfigurationSchema.statics.getUserConfiguration = async function(userId) {
+  let config = await this.findOne({ userId });
+  
+  if (!config) {
+    // Create default configuration for the user
+    config = new this({
+      userId,
+      sections: [
+        {
+          name: 'Currency',
+          symbols: [], // Special section for currency data
+          order: 0,
+          enabled: true
+        },
+        {
+          name: 'Major Indices & ETFs',
+          symbols: ['SPY', 'QQQ', 'IWM', 'RSP', 'MAGS'],
+          order: 1,
+          enabled: true
+        },
+        {
+          name: 'Volatility ETFs',
+          symbols: ['VXX', 'UVXY', 'SVXY'],
+          order: 2,
+          enabled: true
+        },
+        {
+          name: 'Individual Stocks',
+          symbols: ['AAPL', 'MSFT', 'GOOGL', 'AMZN', 'TSLA', 'NVDA', 'META', 'PLTR', 'HIMS'],
+          order: 3,
+          enabled: true
+        },
+        {
+          name: 'Bitcoin & Ethereum',
+          symbols: ['IBIT', 'ETHE', 'ETHW'], // Special section that includes Bitcoin data
+          order: 4,
+          enabled: true
+        }
+      ]
+    });
+    await config.save();
+  }
+  
+  return config;
+};
+
+// Static method to get or create default configuration (for backward compatibility)
 MarketConfigurationSchema.statics.getDefaultConfiguration = async function() {
   let config = await this.findOne({ userId: 'default' });
   

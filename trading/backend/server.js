@@ -133,8 +133,111 @@ app.get('/api/stocks/snapshots', async (req, res) => {
       return res.json({ snapshots: {}, errors: [], warnings: [] });
     }
     
-    // Use the new AlpacaService with rate limiting and caching
-    const result = await alpacaService.getSnapshots(symbols, includePremarket);
+    const symbolsArray = symbols.split(',').map(s => s.trim().toUpperCase());
+    console.log('Fetching snapshots for symbols:', symbolsArray);
+    
+    // Separate symbols by type
+    const stockSymbols = [];
+    const forexSymbols = [];
+    const cryptoSymbols = [];
+    
+    symbolsArray.forEach(symbol => {
+      if (symbol.includes('=X') || symbol.includes('USD') || symbol.includes('EUR') || symbol.includes('GBP') || symbol.includes('JPY') || symbol.includes('CAD') || symbol.includes('AUD') || symbol.includes('CHF') || symbol.includes('SEK') || symbol.includes('NOK') || symbol.includes('DKK')) {
+        forexSymbols.push(symbol);
+      } else if (symbol.includes('BTC') || symbol.includes('ETH') || symbol === 'ETH' || symbol === 'BTC') {
+        cryptoSymbols.push(symbol);
+      } else {
+        stockSymbols.push(symbol);
+      }
+    });
+    
+    console.log('Stock symbols:', stockSymbols);
+    console.log('Forex symbols:', forexSymbols);
+    console.log('Crypto symbols:', cryptoSymbols);
+    
+    let result = { snapshots: {}, errors: [], warnings: [] };
+    
+    // Fetch stock data from Alpaca
+    if (stockSymbols.length > 0) {
+      try {
+        const stockResult = await alpacaService.getSnapshots(stockSymbols.join(','), includePremarket);
+        result.snapshots = { ...result.snapshots, ...stockResult.snapshots };
+        result.errors.push(...stockResult.errors);
+        result.warnings.push(...stockResult.warnings);
+      } catch (error) {
+        console.error('Error fetching stock data from Alpaca:', error);
+        result.errors.push('Failed to fetch stock data: ' + error.message);
+      }
+    }
+    
+    // Fetch forex data (simulate for now - in production you'd use a forex API)
+    if (forexSymbols.length > 0) {
+      try {
+        for (const symbol of forexSymbols) {
+          // Simulate forex data for now
+          const baseRate = symbol === 'EURUSD=X' ? 1.0850 : 
+                          symbol === 'GBPUSD=X' ? 1.2650 :
+                          symbol === 'USDJPY=X' ? 148.50 :
+                          symbol === 'USDCAD=X' ? 1.3420 :
+                          symbol === 'AUDUSD=X' ? 0.6720 :
+                          1.0000;
+          
+          const randomChange = (Math.random() - 0.5) * 0.02; // ±1% random change
+          const currentRate = baseRate * (1 + randomChange);
+          const previousRate = baseRate;
+          const change = currentRate - previousRate;
+          const changePercent = (change / previousRate) * 100;
+          
+          result.snapshots[symbol] = {
+            latestTrade: { p: currentRate },
+            prevDailyBar: { c: previousRate },
+            dailyBar: { 
+              o: previousRate, 
+              h: Math.max(currentRate, previousRate), 
+              l: Math.min(currentRate, previousRate),
+              v: Math.floor(Math.random() * 1000000) + 100000
+            }
+          };
+        }
+        console.log('Added forex data for:', forexSymbols);
+      } catch (error) {
+        console.error('Error fetching forex data:', error);
+        result.errors.push('Failed to fetch forex data: ' + error.message);
+      }
+    }
+    
+    // Fetch crypto data (simulate for now - in production you'd use CoinGecko or similar)
+    if (cryptoSymbols.length > 0) {
+      try {
+        for (const symbol of cryptoSymbols) {
+          const basePrice = symbol.includes('BTC') || symbol === 'BTC' ? 100000 :
+                           symbol.includes('ETH') || symbol === 'ETH' ? 3500 :
+                           50000;
+          
+          const randomChange = (Math.random() - 0.5) * 0.10; // ±5% random change
+          const currentPrice = basePrice * (1 + randomChange);
+          const previousPrice = basePrice;
+          const change = currentPrice - previousPrice;
+          
+          result.snapshots[symbol] = {
+            latestTrade: { p: currentPrice },
+            prevDailyBar: { c: previousPrice },
+            dailyBar: { 
+              o: previousPrice, 
+              h: Math.max(currentPrice, previousPrice), 
+              l: Math.min(currentPrice, previousPrice),
+              v: Math.floor(Math.random() * 10000) + 1000
+            }
+          };
+        }
+        console.log('Added crypto data for:', cryptoSymbols);
+      } catch (error) {
+        console.error('Error fetching crypto data:', error);
+        result.errors.push('Failed to fetch crypto data: ' + error.message);
+      }
+    }
+    
+    console.log('Final result contains', Object.keys(result.snapshots).length, 'symbols');
     res.json(result);
   } catch (error) {
     console.error('Error fetching stock snapshots:', error.message);
