@@ -18,12 +18,29 @@ const WatchlistsPage = () => {
   // Use ref to track selected watchlist without causing re-renders
   const selectedWatchlistRef = useRef(null);
 
+  // Initialize showPremarket from localStorage
+  useEffect(() => {
+    const savedShowPremarket = localStorage.getItem('showPremarket');
+    if (savedShowPremarket !== null) {
+      setShowPremarket(JSON.parse(savedShowPremarket));
+    }
+  }, []);
+
+  // Save showPremarket to localStorage when it changes
+  useEffect(() => {
+    localStorage.setItem('showPremarket', JSON.stringify(showPremarket));
+  }, [showPremarket]);
+
   const selectWatchlist = useCallback(async (watchlistId) => {
     try {
       const url = `/api/watchlist/${watchlistId}${showPremarket ? '?include_premarket=true' : ''}`;
       const response = await axios.get(url);
       setSelectedWatchlist(response.data);
       selectedWatchlistRef.current = response.data;
+      
+      // Save to localStorage
+      localStorage.setItem('lastSelectedWatchlistId', watchlistId);
+      
       setError(null);
     } catch (err) {
       console.error('Error fetching watchlist details:', err);
@@ -37,9 +54,23 @@ const WatchlistsPage = () => {
       const response = await axios.get('/api/watchlist');
       setWatchlists(response.data);
       
-      // Select first watchlist if none selected
-      if (response.data.length > 0 && !selectedWatchlistRef.current) {
-        await selectWatchlist(response.data[0]._id);
+      // Try to restore last selected watchlist from localStorage
+      const lastSelectedId = localStorage.getItem('lastSelectedWatchlistId');
+      let watchlistToSelect = null;
+      
+      if (lastSelectedId) {
+        // Check if the last selected watchlist still exists
+        watchlistToSelect = response.data.find(w => w._id === lastSelectedId);
+      }
+      
+      // If last selected doesn't exist or no last selected, use first watchlist
+      if (!watchlistToSelect && response.data.length > 0) {
+        watchlistToSelect = response.data[0];
+      }
+      
+      // Select the determined watchlist if none currently selected
+      if (watchlistToSelect && !selectedWatchlistRef.current) {
+        await selectWatchlist(watchlistToSelect._id);
       }
       
       setError(null);
@@ -77,7 +108,7 @@ const WatchlistsPage = () => {
     }
 
     try {
-      await axios.post('/api/watchlist', {
+      const response = await axios.post('/api/watchlist', {
         name: newWatchlistName.trim(),
         description: newWatchlistDescription.trim()
       });
@@ -86,6 +117,12 @@ const WatchlistsPage = () => {
       setNewWatchlistDescription('');
       setShowCreateForm(false);
       await fetchWatchlists();
+      
+      // Auto-select the newly created watchlist
+      if (response.data && response.data._id) {
+        await selectWatchlist(response.data._id);
+      }
+      
       setError(null);
     } catch (err) {
       console.error('Error creating watchlist:', err);
@@ -105,6 +142,12 @@ const WatchlistsPage = () => {
       if (selectedWatchlistRef.current && selectedWatchlistRef.current._id === watchlistId) {
         setSelectedWatchlist(null);
         selectedWatchlistRef.current = null;
+      }
+      
+      // Remove from localStorage if it was the last selected
+      const lastSelectedId = localStorage.getItem('lastSelectedWatchlistId');
+      if (lastSelectedId === watchlistId) {
+        localStorage.removeItem('lastSelectedWatchlistId');
       }
       
       await fetchWatchlists();
