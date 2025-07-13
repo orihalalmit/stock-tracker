@@ -1,9 +1,9 @@
 .transaction-history {
   background: rgba(255, 255, 255, 0.05);
   backdrop-filter: blur(10px);
-  border-radius: 15px;
-  padding: 2rem;
-  margin: 2rem 0;
+  border-radius: 10px;
+  padding: 1rem;
+  margin: 1rem 0;
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
@@ -11,27 +11,27 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
 }
 
 .transactions-header h3 {
   color: white;
   margin: 0;
-  font-size: 1.3rem;
+  font-size: 1.1rem;
 }
 
 .transactions-filters {
   display: flex;
-  gap: 1rem;
+  gap: 0.75rem;
 }
 
 .filter-select {
   background: rgba(255, 255, 255, 0.08);
   border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 8px;
+  border-radius: 6px;
   color: white;
-  padding: 0.5rem 1rem;
-  font-size: 0.9rem;
+  padding: 0.4rem 0.75rem;
+  font-size: 0.8rem;
   cursor: pointer;
   transition: all 0.2s ease;
 }
@@ -52,8 +52,8 @@
 
 .transactions-table-container {
   overflow-x: auto;
-  margin: 0 -1rem;
-  padding: 0 1rem;
+  margin: 0 -0.5rem;
+  padding: 0 0.5rem;
 }
 
 .transactions-table {
@@ -65,10 +65,10 @@
 
 .transactions-table th {
   background: rgba(255, 255, 255, 0.08);
-  padding: 1rem;
+  padding: 0.75rem;
   text-align: left;
   font-weight: 500;
-  font-size: 0.9rem;
+  font-size: 0.8rem;
   color: rgba(255, 255, 255, 0.9);
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   cursor: pointer;
@@ -85,16 +85,16 @@
 }
 
 .transactions-table th:first-child {
-  border-top-left-radius: 8px;
+  border-top-left-radius: 6px;
 }
 
 .transactions-table th:last-child {
-  border-top-right-radius: 8px;
+  border-top-right-radius: 6px;
 }
 
 .transactions-table td {
-  padding: 1rem;
-  font-size: 0.9rem;
+  padding: 0.75rem;
+  font-size: 0.8rem;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
@@ -114,7 +114,7 @@
 .transactions-table .type {
   text-transform: uppercase;
   font-weight: 500;
-  font-size: 0.8rem;
+  font-size: 0.7rem;
 }
 
 .transactions-table .type.buy {
@@ -137,37 +137,37 @@
 
 .transactions-loading {
   text-align: center;
-  padding: 3rem;
+  padding: 2rem;
   color: white;
-  font-size: 1.2rem;
+  font-size: 1rem;
 }
 
 .transactions-error {
   background: rgba(239, 68, 68, 0.2);
   color: white;
   text-align: center;
-  padding: 1.5rem;
-  border-radius: 8px;
+  padding: 1rem;
+  border-radius: 6px;
   border: 1px solid rgba(239, 68, 68, 0.3);
 }
 
 .no-transactions {
   text-align: center;
-  padding: 3rem;
+  padding: 2rem;
   color: rgba(255, 255, 255, 0.7);
-  font-size: 1.1rem;
+  font-size: 1rem;
 }
 
 @media (max-width: 768px) {
   .transaction-history {
-    padding: 1.5rem;
-    margin: 1rem 0;
+    padding: 1rem;
+    margin: 0.75rem 0;
   }
 
   .transactions-header {
     flex-direction: column;
     align-items: flex-start;
-    gap: 1rem;
+    gap: 0.75rem;
   }
 
   .transactions-filters {
@@ -180,7 +180,7 @@
 
   .transactions-table td,
   .transactions-table th {
-    padding: 0.75rem;
-    font-size: 0.8rem;
+    padding: 0.5rem;
+    font-size: 0.7rem;
   }
 } 
