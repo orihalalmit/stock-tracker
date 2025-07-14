@@ -182,6 +182,7 @@ router.get('/search/:query', authenticate, async (req, res) => {
     if (sectionType === 'currency') {
       // Currency suggestions
       const currencySymbols = [
+        { symbol: 'USD', name: 'US Dollar Index' },
         { symbol: 'EURUSD=X', name: 'Euro to US Dollar' },
         { symbol: 'GBPUSD=X', name: 'British Pound to US Dollar' },
         { symbol: 'USDJPY=X', name: 'US Dollar to Japanese Yen' },

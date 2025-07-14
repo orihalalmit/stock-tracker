@@ -327,6 +327,23 @@
   border-left: 3px solid rgba(255, 255, 255, 0.2);
 }
 
+.historical-currency-note {
+  font-size: 10px;
+  color: #6c757d;
+  background-color: rgba(0, 0, 0, 0.05);
+  padding: 2px 4px;
+  border-radius: 3px;
+  margin-left: 4px;
+  vertical-align: super;
+}
+
+.historical-usd-note {
+  font-size: 13px;
+  font-weight: normal;
+  color: #6c757d;
+  margin-left: 8px;
+}
+
 .holdings-list {
   display: flex;
   flex-direction: column;
@@ -562,6 +579,82 @@
 .holding-daily-change {
   font-size: 11px;
   margin-top: 2px;
+}
+
+.currency-toggle {
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.currency-checkbox {
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  color: #6c757d;
+  cursor: pointer;
+  user-select: none;
+  background-color: rgba(0, 0, 0, 0.05);
+  padding: 8px 12px;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.currency-checkbox:hover {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+.currency-checkbox input {
+  margin-right: 8px;
+}
+
+.exchange-rate-info {
+  font-size: 13px;
+  color: #6c757d;
+  background-color: rgba(0, 0, 0, 0.05);
+  padding: 8px 12px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.rate-change {
+  font-size: 12px;
+  font-weight: 500;
+  padding: 2px 4px;
+  border-radius: 3px;
+}
+
+.rate-change.positive {
+  color: #0ECB81;
+  background-color: rgba(14, 203, 129, 0.1);
+}
+
+.rate-change.negative {
+  color: #F6465D;
+  background-color: rgba(246, 70, 93, 0.1);
+}
+
+.rate-impact-note {
+  font-size: 11px;
+  font-style: italic;
+  color: #6c757d;
+  margin-left: 6px;
+  background-color: rgba(0, 0, 0, 0.05);
+  padding: 2px 5px;
+  border-radius: 3px;
+}
+
+.rate-impact-badge {
+  font-size: 11px;
+  color: #6c757d;
+  background-color: rgba(0, 0, 0, 0.05);
+  padding: 3px 6px;
+  border-radius: 3px;
+  display: inline-block;
 }
 
 @media (max-width: 1024px) {

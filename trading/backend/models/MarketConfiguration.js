@@ -55,7 +55,7 @@ MarketConfigurationSchema.statics.getUserConfiguration = async function(userId) 
       sections: [
         {
           name: 'Currency',
-          symbols: [], // Special section for currency data
+          symbols: ['USD', 'EURUSD=X', 'GBPUSD=X', 'USDJPY=X'], // Added USD and common forex pairs
           order: 0,
           enabled: true
         },
@@ -102,7 +102,7 @@ MarketConfigurationSchema.statics.getDefaultConfiguration = async function() {
       sections: [
         {
           name: 'Currency',
-          symbols: [], // Special section for currency data
+          symbols: ['USD', 'EURUSD=X', 'GBPUSD=X', 'USDJPY=X'], // Added USD and common forex pairs
           order: 0,
           enabled: true
         },

@@ -3,13 +3,13 @@ import axios from 'axios';
 import CurrencyCard from '../CurrencyCard';
 import './PortfolioSummary.css';
 
-const formatCurrency = (value) => {
+const formatCurrency = (value, currency = 'USD') => {
   if (typeof value !== 'number' || isNaN(value)) {
-    return '$0.00';
+    return currency === 'USD' ? '$0.00' : '₪0.00';
   }
   return new Intl.NumberFormat('en-US', {
     style: 'currency',
-    currency: 'USD',
+    currency: currency,
     minimumFractionDigits: 2,
     maximumFractionDigits: 2
   }).format(value);
@@ -27,7 +27,7 @@ const formatPercentage = (value) => {
   }).format(value / 100);
 };
 
-const UsdIlsWidget = () => {
+const UsdIlsWidget = ({ onRateChange, onPreviousRateChange }) => {
   const [usdIlsData, setUsdIlsData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -37,6 +37,13 @@ const UsdIlsWidget = () => {
       try {
         const response = await axios.get('/api/forex/usdils');
         setUsdIlsData(response.data);
+        // Pass the current and previous rates to parent component
+        if (onRateChange && response.data) {
+          onRateChange(response.data.rate);
+        }
+        if (onPreviousRateChange && response.data) {
+          onPreviousRateChange(response.data.previousRate);
+        }
         setError(null);
       } catch (err) {
         console.error('Failed to fetch USD/ILS rate:', err);
@@ -57,10 +64,10 @@ const UsdIlsWidget = () => {
     };
 
     fetchUsdIls();
-    // Refresh every 5 minutes
-    const interval = setInterval(fetchUsdIls, 5 * 60 * 1000);
+    // Refresh every 15 minutes to match backend cache expiry
+    const interval = setInterval(fetchUsdIls, 15 * 60 * 1000);
     return () => clearInterval(interval);
-  }, []);
+  }, [onRateChange, onPreviousRateChange]);
 
   if (loading) {
     return (
@@ -188,6 +195,9 @@ const PortfolioSummary = ({ portfolio, showPremarket = false }) => {
   const [historicalData, setHistoricalData] = useState({});
   const [historicalLoading, setHistoricalLoading] = useState(true);
   const [isHoldingsExpanded, setIsHoldingsExpanded] = useState(false);
+  const [showInILS, setShowInILS] = useState(false);
+  const [usdIlsRate, setUsdIlsRate] = useState(0);
+  const [usdIlsPreviousRate, setUsdIlsPreviousRate] = useState(0);
   
   // Use the pre-calculated summary values from the backend
   const {
@@ -199,6 +209,72 @@ const PortfolioSummary = ({ portfolio, showPremarket = false }) => {
     preMarketSummary = null,
     intradaySummary = null
   } = summary;
+
+  // Function to handle USD/ILS rate updates
+  const handleRateChange = (rate) => {
+    setUsdIlsRate(rate);
+  };
+
+  // Function to handle USD/ILS previous rate updates
+  const handlePreviousRateChange = (rate) => {
+    setUsdIlsPreviousRate(rate);
+  };
+
+  // Convert USD value to ILS
+  const convertToILS = (usdValue) => {
+    return usdValue * usdIlsRate;
+  };
+
+  // Get the appropriate value based on currency selection
+  const getValueByCurrency = (usdValue) => {
+    if (showInILS && usdIlsRate > 0) {
+      return convertToILS(usdValue);
+    }
+    return usdValue;
+  };
+
+  // Calculate daily gain that includes USD/ILS rate change impact
+  const calculateDailyGainWithRateChange = (position) => {
+    if (!showInILS || usdIlsRate <= 0 || usdIlsPreviousRate <= 0) {
+      return position.dailyChange;
+    }
+    
+    // Calculate yesterday's value in USD
+    const yesterdayValueUSD = position.totalValue - position.dailyChange;
+    
+    // Calculate yesterday's value in ILS using yesterday's rate
+    const yesterdayValueILS = yesterdayValueUSD * usdIlsPreviousRate;
+    
+    // Calculate today's value in ILS using today's rate
+    const todayValueILS = position.totalValue * usdIlsRate;
+    
+    // The daily change in ILS includes both stock price change and exchange rate change
+    return todayValueILS - yesterdayValueILS;
+  };
+
+  // Calculate total daily gain with exchange rate impact
+  const calculateTotalDailyGainWithRateChange = () => {
+    if (!showInILS || usdIlsRate <= 0 || usdIlsPreviousRate <= 0) {
+      return totalDailyGain;
+    }
+    
+    // Calculate yesterday's total value in USD
+    const yesterdayTotalValueUSD = totalValue - totalDailyGain;
+    
+    // Calculate yesterday's total value in ILS using yesterday's rate
+    const yesterdayTotalValueILS = yesterdayTotalValueUSD * usdIlsPreviousRate;
+    
+    // Calculate today's total value in ILS using today's rate
+    const todayTotalValueILS = totalValue * usdIlsRate;
+    
+    // The total daily change in ILS includes both stock price changes and exchange rate change
+    return todayTotalValueILS - yesterdayTotalValueILS;
+  };
+
+  // Format currency based on selected currency
+  const formatPortfolioCurrency = (value) => {
+    return formatCurrency(value, showInILS ? 'ILS' : 'USD');
+  };
 
   // Fetch historical performance data
   useEffect(() => {
@@ -220,6 +296,7 @@ const PortfolioSummary = ({ portfolio, showPremarket = false }) => {
     fetchHistoricalData();
   }, [portfolio._id]);
 
+  // Format historical value without currency conversion
   const formatHistoricalValue = (data) => {
     if (!data || historicalLoading) return { value: 'Loading...', subtext: 'Calculating...' };
     
@@ -227,7 +304,8 @@ const PortfolioSummary = ({ portfolio, showPremarket = false }) => {
     const changePercentage = data.changePercentage || 0;
     
     return {
-      value: formatCurrency(change),
+      // Always use USD for historical values, regardless of ILS setting
+      value: formatCurrency(change, 'USD'),
       subtext: formatPercentage(changePercentage),
       isPositive: change >= 0
     };
@@ -240,15 +318,35 @@ const PortfolioSummary = ({ portfolio, showPremarket = false }) => {
           <h1>Portfolio Dashboard</h1>
           <p className="subtitle">Track your investments with real market data</p>
         </div>
+        <div className="currency-toggle">
+          <label className="currency-checkbox" title="Convert portfolio values using current USD/ILS exchange rate">
+            <input 
+              type="checkbox" 
+              checked={showInILS} 
+              onChange={() => setShowInILS(!showInILS)} 
+            />
+            Show in Israeli Shekel (ILS)
+          </label>
+          {showInILS && usdIlsRate > 0 && (
+            <div className="exchange-rate-info">
+              1 USD = {usdIlsRate.toFixed(4)} ILS
+              {usdIlsRate !== usdIlsPreviousRate && (
+                <span className={usdIlsRate > usdIlsPreviousRate ? "rate-change positive" : "rate-change negative"}>
+                  ({((usdIlsRate / usdIlsPreviousRate - 1) * 100).toFixed(2)}%)
+                </span>
+              )}
+            </div>
+          )}
+        </div>
       </div>
 
       <div className="dashboard-grid">
         <div className="dashboard-card">
           <div className="card-header">
             <span className="card-title">Portfolio Value</span>
-            <span className="card-icon">$</span>
+            <span className="card-icon">{showInILS ? '₪' : '$'}</span>
           </div>
-          <div className="card-value">{formatCurrency(totalValue)}</div>
+          <div className="card-value">{formatPortfolioCurrency(getValueByCurrency(totalValue))}</div>
           <div className="card-subtext">Total market value</div>
         </div>
 
@@ -258,7 +356,7 @@ const PortfolioSummary = ({ portfolio, showPremarket = false }) => {
             <span className="card-icon">📈</span>
           </div>
           <div className="card-value" style={{ color: totalOverallGain >= 0 ? '#0ECB81' : '#F6465D' }}>
-            {formatCurrency(totalOverallGain)}
+            {formatPortfolioCurrency(getValueByCurrency(totalOverallGain))}
           </div>
           <div className="card-subtext">{formatPercentage(totalOverallGainPercentage)}</div>
         </div>
@@ -268,10 +366,15 @@ const PortfolioSummary = ({ portfolio, showPremarket = false }) => {
             <span className="card-title">Today's Change</span>
             <span className="card-icon">📊</span>
           </div>
-          <div className="card-value" style={{ color: totalDailyGain >= 0 ? '#0ECB81' : '#F6465D' }}>
-            {formatCurrency(totalDailyGain)}
+          <div className="card-value" style={{ color: (showInILS ? calculateTotalDailyGainWithRateChange() : totalDailyGain) >= 0 ? '#0ECB81' : '#F6465D' }}>
+            {formatPortfolioCurrency(showInILS ? calculateTotalDailyGainWithRateChange() : totalDailyGain)}
           </div>
-          <div className="card-subtext">{formatPercentage(totalDailyGainPercentage)}</div>
+          <div className="card-subtext">
+            {formatPercentage(totalDailyGainPercentage)}
+            {showInILS && usdIlsRate > 0 && usdIlsPreviousRate > 0 && (
+              <span className="rate-impact-badge">Includes exchange rate impact</span>
+            )}
+          </div>
         </div>
 
         {/* Pre-market cards - show when premarket data is available */}
@@ -283,7 +386,7 @@ const PortfolioSummary = ({ portfolio, showPremarket = false }) => {
                 <span className="card-icon">🌅</span>
               </div>
               <div className="card-value" style={{ color: preMarketSummary.totalGain >= 0 ? '#0ECB81' : '#F6465D' }}>
-                {formatCurrency(preMarketSummary.totalGain)}
+                {formatPortfolioCurrency(getValueByCurrency(preMarketSummary.totalGain))}
               </div>
               <div className="card-subtext">{formatPercentage(preMarketSummary.totalGainPercentage)}</div>
             </div>
@@ -294,7 +397,7 @@ const PortfolioSummary = ({ portfolio, showPremarket = false }) => {
                 <span className="card-icon">📈</span>
               </div>
               <div className="card-value" style={{ color: intradaySummary.totalGain >= 0 ? '#0ECB81' : '#F6465D' }}>
-                {formatCurrency(intradaySummary.totalGain)}
+                {formatPortfolioCurrency(getValueByCurrency(intradaySummary.totalGain))}
               </div>
               <div className="card-subtext">{formatPercentage(intradaySummary.totalGainPercentage)}</div>
             </div>
@@ -324,7 +427,7 @@ const PortfolioSummary = ({ portfolio, showPremarket = false }) => {
                 </div>
                 <div className="card-content">
                   <div className={`main-value ${preMarketSummary.totalGain >= 0 ? 'positive' : 'negative'}`}>
-                    {formatCurrency(preMarketSummary.totalGain)}
+                    {formatPortfolioCurrency(getValueByCurrency(preMarketSummary.totalGain))}
                   </div>
                   <div className={`percentage ${preMarketSummary.totalGainPercentage >= 0 ? 'positive' : 'negative'}`}>
                     {formatPercentage(preMarketSummary.totalGainPercentage)}
@@ -340,7 +443,7 @@ const PortfolioSummary = ({ portfolio, showPremarket = false }) => {
                 </div>
                 <div className="card-content">
                   <div className={`main-value ${intradaySummary.totalGain >= 0 ? 'positive' : 'negative'}`}>
-                    {formatCurrency(intradaySummary.totalGain)}
+                    {formatPortfolioCurrency(getValueByCurrency(intradaySummary.totalGain))}
                   </div>
                   <div className={`percentage ${intradaySummary.totalGainPercentage >= 0 ? 'positive' : 'negative'}`}>
                     {formatPercentage(intradaySummary.totalGainPercentage)}
@@ -353,32 +456,32 @@ const PortfolioSummary = ({ portfolio, showPremarket = false }) => {
       )}
 
       {/* Historical Performance */}
-      <div className="historical-section">
-        <h3>Historical Performance</h3>
+                <div className="historical-section">
+            <h3>Historical Performance {showInILS && <span className="historical-usd-note">(Values shown in USD)</span>}</h3>
         <div className="historical-grid">
           <div className="historical-period">
             <div className="period-label">1D</div>
-            <div className={`period-value ${formatHistoricalValue(historicalData['1D']).isPositive ? 'positive' : 'negative'}`}>
-              {formatHistoricalValue(historicalData['1D']).value}
-            </div>
+                          <div className={`period-value ${formatHistoricalValue(historicalData['1D']).isPositive ? 'positive' : 'negative'}`}>
+                {formatHistoricalValue(historicalData['1D']).value}
+              </div>
             <div className={`period-subtext ${formatHistoricalValue(historicalData['1D']).isPositive ? 'positive' : 'negative'}`}>
               {formatHistoricalValue(historicalData['1D']).subtext}
             </div>
           </div>
           <div className="historical-period">
             <div className="period-label">1W</div>
-            <div className={`period-value ${formatHistoricalValue(historicalData['1W']).isPositive ? 'positive' : 'negative'}`}>
-              {formatHistoricalValue(historicalData['1W']).value}
-            </div>
+                          <div className={`period-value ${formatHistoricalValue(historicalData['1W']).isPositive ? 'positive' : 'negative'}`}>
+                {formatHistoricalValue(historicalData['1W']).value}
+              </div>
             <div className={`period-subtext ${formatHistoricalValue(historicalData['1W']).isPositive ? 'positive' : 'negative'}`}>
               {formatHistoricalValue(historicalData['1W']).subtext}
             </div>
           </div>
           <div className="historical-period">
             <div className="period-label">1M</div>
-            <div className={`period-value ${formatHistoricalValue(historicalData['1M']).isPositive ? 'positive' : 'negative'}`}>
-              {formatHistoricalValue(historicalData['1M']).value}
-            </div>
+                          <div className={`period-value ${formatHistoricalValue(historicalData['1M']).isPositive ? 'positive' : 'negative'}`}>
+                {formatHistoricalValue(historicalData['1M']).value}
+              </div>
             <div className={`period-subtext ${formatHistoricalValue(historicalData['1M']).isPositive ? 'positive' : 'negative'}`}>
               {formatHistoricalValue(historicalData['1M']).subtext}
             </div>
@@ -417,7 +520,7 @@ const PortfolioSummary = ({ portfolio, showPremarket = false }) => {
             <div className="header-content">
               <h2>Your Holdings</h2>
               <span className="section-subtitle">
-                {positions.length} positions • {formatCurrency(totalValue)} total value
+                {positions.length} positions • {formatPortfolioCurrency(getValueByCurrency(totalValue))} total value
               </span>
             </div>
             <div className="collapse-indicator">
@@ -479,10 +582,14 @@ const PortfolioSummary = ({ portfolio, showPremarket = false }) => {
                       </div>
                       <div className="holding-name">{name || symbol}</div>
                       <div className="holding-details">
-                        {shares} shares × purchased at {formatCurrency(averagePrice)}
+                        {shares} shares × purchased at {formatCurrency(showInILS && usdIlsRate > 0 ? averagePrice * usdIlsRate : averagePrice, showInILS ? 'ILS' : 'USD')}
                       </div>
-                      <div className="holding-daily-change" style={{ color: dailyChange >= 0 ? '#0ECB81' : '#F6465D' }}>
-                        Today: {formatCurrency(dailyChange)} ({formatPercentage(dailyChangePercentage)})
+                      <div className="holding-daily-change" style={{ color: (showInILS ? calculateDailyGainWithRateChange(position) : dailyChange) >= 0 ? '#0ECB81' : '#F6465D' }}>
+                        Today: {formatPortfolioCurrency(showInILS ? calculateDailyGainWithRateChange(position) : dailyChange)} 
+                        ({formatPercentage(dailyChangePercentage)})
+                        {showInILS && usdIlsRate > 0 && usdIlsPreviousRate > 0 && (
+                          <span className="rate-impact-note">includes exchange rate impact</span>
+                        )}
                       </div>
                     </div>
                     <div className="holding-value">
@@ -490,11 +597,11 @@ const PortfolioSummary = ({ portfolio, showPremarket = false }) => {
                         <div className="value-label">VALUE</div>
                         <div className="current-price-display">
                           <span className="price-label">Current Price:</span>
-                          <span className="price-amount">{formatCurrency(currentPrice)}</span>
+                          <span className="price-amount">{formatCurrency(showInILS && usdIlsRate > 0 ? currentPrice * usdIlsRate : currentPrice, showInILS ? 'ILS' : 'USD')}</span>
                         </div>
-                        <div className="value-amount">{formatCurrency(totalValue)}</div>
+                        <div className="value-amount">{formatPortfolioCurrency(getValueByCurrency(totalValue))}</div>
                         <div className="value-change" style={{ color: overallGain >= 0 ? '#0ECB81' : '#F6465D' }}>
-                          {formatCurrency(overallGain)} ({formatPercentage(overallGainPercentage)})
+                          {formatPortfolioCurrency(getValueByCurrency(overallGain))} ({formatPercentage(overallGainPercentage)})
                         </div>
                       </div>
                     </div>
@@ -505,7 +612,10 @@ const PortfolioSummary = ({ portfolio, showPremarket = false }) => {
         </div>
 
         <div className="market-sentiment">
-          <UsdIlsWidget />
+          <UsdIlsWidget 
+            onRateChange={handleRateChange} 
+            onPreviousRateChange={handlePreviousRateChange}
+          />
           <FearGreedIndex />
         </div>
       </div>

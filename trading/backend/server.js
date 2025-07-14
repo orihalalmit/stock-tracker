@@ -143,7 +143,10 @@ app.get('/api/stocks/snapshots', async (req, res) => {
     
     symbolsArray.forEach(symbol => {
       if (symbol.includes('=X') || symbol.includes('USD') || symbol.includes('EUR') || symbol.includes('GBP') || symbol.includes('JPY') || symbol.includes('CAD') || symbol.includes('AUD') || symbol.includes('CHF') || symbol.includes('SEK') || symbol.includes('NOK') || symbol.includes('DKK')) {
-        forexSymbols.push(symbol);
+        // Don't add single "USD" to forex symbols
+        if (symbol !== 'USD') {
+          forexSymbols.push(symbol);
+        }
       } else if (symbol.includes('BTC') || symbol.includes('ETH') || symbol === 'ETH' || symbol === 'BTC') {
         cryptoSymbols.push(symbol);
       } else {
@@ -170,31 +173,199 @@ app.get('/api/stocks/snapshots', async (req, res) => {
       }
     }
     
+    // Special handling for USD symbol (Dollar Index)
+    if (symbolsArray.includes('USD')) {
+      try {
+        // Use Frankfurter API to get a basket of currencies against USD
+        const usdBasket = ['EUR', 'GBP', 'JPY', 'CAD', 'AUD'];
+        const response = await axios.get(`https://api.frankfurter.dev/v1/latest?base=USD&symbols=${usdBasket.join(',')}`);
+        
+        if (response.data && response.data.rates) {
+          // Calculate a simple dollar index based on the average of these rates
+          const rates = response.data.rates;
+          const basketValues = Object.values(rates);
+          const dollarIndexValue = 100 / (basketValues.reduce((sum, rate) => sum + rate, 0) / basketValues.length);
+          
+          // Get yesterday's value for comparison
+          const yesterday = new Date();
+          yesterday.setDate(yesterday.getDate() - 1);
+          const yesterdayStr = yesterday.toISOString().split('T')[0];
+          
+          let previousDollarIndexValue;
+          try {
+            const historicalResponse = await axios.get(
+              `https://api.frankfurter.dev/v1/${yesterdayStr}?base=USD&symbols=${usdBasket.join(',')}`
+            );
+            const previousRates = historicalResponse.data.rates;
+            const previousBasketValues = Object.values(previousRates);
+            previousDollarIndexValue = 100 / (previousBasketValues.reduce((sum, rate) => sum + rate, 0) / previousBasketValues.length);
+          } catch (histError) {
+            console.log('Could not fetch historical dollar index, estimating previous value');
+            // If historical data fails, estimate a reasonable previous rate
+            const randomChange = (Math.random() * 0.01) - 0.005;
+            previousDollarIndexValue = dollarIndexValue / (1 + randomChange);
+          }
+          
+          // Add USD as a special symbol with dollar index value
+          result.snapshots['USD'] = {
+            latestTrade: { p: dollarIndexValue },
+            prevDailyBar: { c: previousDollarIndexValue },
+            dailyBar: { 
+              o: previousDollarIndexValue, 
+              h: Math.max(dollarIndexValue, previousDollarIndexValue), 
+              l: Math.min(dollarIndexValue, previousDollarIndexValue),
+              v: Math.floor(Math.random() * 1000000) + 100000
+            }
+          };
+          console.log('Added USD Dollar Index data');
+        }
+      } catch (error) {
+        console.error('Error fetching USD Dollar Index data:', error);
+        // Fallback for USD
+        const dollarIndexValue = 105.5;
+        const randomChange = (Math.random() - 0.5) * 0.02;
+        const previousDollarIndexValue = dollarIndexValue / (1 + randomChange);
+        
+        result.snapshots['USD'] = {
+          latestTrade: { p: dollarIndexValue },
+          prevDailyBar: { c: previousDollarIndexValue },
+          dailyBar: { 
+            o: previousDollarIndexValue, 
+            h: Math.max(dollarIndexValue, previousDollarIndexValue), 
+            l: Math.min(dollarIndexValue, previousDollarIndexValue),
+            v: Math.floor(Math.random() * 1000000) + 100000
+          }
+        };
+        console.log('Added fallback USD Dollar Index data');
+      }
+    }
+    
+    // Cache for forex rates
+    const forexCache = {
+      data: {},
+      lastUpdated: {},
+      cacheExpiry: 15 * 60 * 1000 // 15 minutes in milliseconds
+    };
+
+    // Helper function to get forex data from Frankfurter API
+    async function getForexRateFromAPI(baseCurrency, targetCurrency) {
+      try {
+        const currentTime = Date.now();
+        const cacheKey = `${baseCurrency}${targetCurrency}`;
+        
+        // Check if we have valid cached data
+        if (forexCache.data[cacheKey] && forexCache.lastUpdated[cacheKey] && 
+            (currentTime - forexCache.lastUpdated[cacheKey] < forexCache.cacheExpiry)) {
+          console.log(`Returning cached ${baseCurrency}/${targetCurrency} data from`, new Date(forexCache.lastUpdated[cacheKey]).toISOString());
+          return forexCache.data[cacheKey];
+        }
+        
+        // If cache is expired or doesn't exist, fetch new data
+        console.log(`Fetching fresh ${baseCurrency}/${targetCurrency} data from Frankfurter API`);
+        const response = await axios.get(`https://api.frankfurter.dev/v1/latest?base=${baseCurrency}&symbols=${targetCurrency}`);
+        
+        if (response.data && response.data.rates && response.data.rates[targetCurrency]) {
+          const currentRate = response.data.rates[targetCurrency];
+          
+          // Get yesterday's rate for comparison
+          const yesterday = new Date();
+          yesterday.setDate(yesterday.getDate() - 1);
+          const yesterdayStr = yesterday.toISOString().split('T')[0];
+          
+          let previousRate;
+          try {
+            const historicalResponse = await axios.get(
+              `https://api.frankfurter.dev/v1/${yesterdayStr}?base=${baseCurrency}&symbols=${targetCurrency}`
+            );
+            previousRate = historicalResponse.data.rates[targetCurrency];
+          } catch (histError) {
+            console.log(`Could not fetch historical rate for ${baseCurrency}/${targetCurrency}, estimating previous rate`);
+            // If historical data fails, estimate a reasonable previous rate
+            const randomChange = (Math.random() * 0.01) - 0.005;
+            previousRate = currentRate / (1 + randomChange);
+          }
+          
+          const dailyChange = currentRate - previousRate;
+          const dailyChangePercent = previousRate > 0 ? ((dailyChange / previousRate) * 100) : 0;
+          
+          const resultData = {
+            currentRate,
+            previousRate,
+            dailyChange,
+            dailyChangePercent
+          };
+          
+          // Update cache
+          forexCache.data[cacheKey] = resultData;
+          forexCache.lastUpdated[cacheKey] = currentTime;
+          
+          return resultData;
+        } else {
+          throw new Error(`Invalid response from Frankfurter API for ${baseCurrency}/${targetCurrency}`);
+        }
+      } catch (error) {
+        console.error(`Error fetching ${baseCurrency}/${targetCurrency} rate:`, error);
+        throw error;
+      }
+    }
+
     // Fetch forex data (simulate for now - in production you'd use a forex API)
     if (forexSymbols.length > 0) {
       try {
         for (const symbol of forexSymbols) {
-          // Simulate forex data for now
-          const baseRate = symbol === 'EURUSD=X' ? 1.0850 : 
-                          symbol === 'GBPUSD=X' ? 1.2650 :
-                          symbol === 'USDJPY=X' ? 148.50 :
-                          symbol === 'USDCAD=X' ? 1.3420 :
-                          symbol === 'AUDUSD=X' ? 0.6720 :
-                          1.0000;
+          let baseCurrency, targetCurrency;
           
-          const randomChange = (Math.random() - 0.5) * 0.02; // ±1% random change
-          const currentRate = baseRate * (1 + randomChange);
-          const previousRate = baseRate;
-          const change = currentRate - previousRate;
-          const changePercent = (change / previousRate) * 100;
+          // Parse the forex symbol to get base and target currencies
+          if (symbol.includes('=X')) {
+            // Format like EURUSD=X
+            const parts = symbol.replace('=X', '').split('');
+            baseCurrency = parts.slice(0, 3).join('');
+            targetCurrency = parts.slice(3, 6).join('');
+          } else if (symbol.length === 6 && 
+                    (symbol.includes('USD') || symbol.includes('EUR') || symbol.includes('GBP') || 
+                     symbol.includes('JPY') || symbol.includes('CAD') || symbol.includes('AUD'))) {
+            // Format like EURUSD
+            baseCurrency = symbol.substring(0, 3);
+            targetCurrency = symbol.substring(3, 6);
+          } else {
+            // Default to USD as base currency for other formats
+            baseCurrency = 'USD';
+            targetCurrency = symbol.replace('USD', '');
+          }
+          
+          let forexData;
+          
+          try {
+            forexData = await getForexRateFromAPI(baseCurrency, targetCurrency);
+          } catch (apiError) {
+            console.log(`API failed for ${baseCurrency}/${targetCurrency}, using fallback data`);
+            // Fallback data
+            const baseRate = symbol === 'EURUSD=X' || symbol === 'EURUSD' ? 1.0850 : 
+                            symbol === 'GBPUSD=X' || symbol === 'GBPUSD' ? 1.2650 :
+                            symbol === 'USDJPY=X' || symbol === 'USDJPY' ? 148.50 :
+                            symbol === 'USDCAD=X' || symbol === 'USDCAD' ? 1.3420 :
+                            symbol === 'AUDUSD=X' || symbol === 'AUDUSD' ? 0.6720 :
+                            1.0000;
+            
+            const randomChange = (Math.random() - 0.5) * 0.02; // ±1% random change
+            const currentRate = baseRate * (1 + randomChange);
+            const previousRate = baseRate;
+            
+            forexData = {
+              currentRate,
+              previousRate,
+              dailyChange: currentRate - previousRate,
+              dailyChangePercent: ((currentRate - previousRate) / previousRate) * 100
+            };
+          }
           
           result.snapshots[symbol] = {
-            latestTrade: { p: currentRate },
-            prevDailyBar: { c: previousRate },
+            latestTrade: { p: forexData.currentRate },
+            prevDailyBar: { c: forexData.previousRate },
             dailyBar: { 
-              o: previousRate, 
-              h: Math.max(currentRate, previousRate), 
-              l: Math.min(currentRate, previousRate),
+              o: forexData.previousRate, 
+              h: Math.max(forexData.currentRate, forexData.previousRate), 
+              l: Math.min(forexData.currentRate, forexData.previousRate),
               v: Math.floor(Math.random() * 1000000) + 100000
             }
           };
@@ -340,51 +511,91 @@ app.get('/api/debug/snapshots', async (req, res) => {
   }
 });
 
+// Cache for USD/ILS exchange rate
+const usdIlsCache = {
+  data: null,
+  lastUpdated: null,
+  cacheExpiry: 15 * 60 * 1000 // 15 minutes in milliseconds
+};
+
 // Get USD/ILS exchange rate
 app.get('/api/forex/usdils', async (req, res) => {
   try {
-    let currentRate, previousRate;
+    const currentTime = Date.now();
     
-    try {
-      // Get current rate from exchangerate-api.com
-      const currentResponse = await axios.get('https://api.exchangerate-api.com/v4/latest/USD');
-      currentRate = currentResponse.data.rates?.ILS || 3.60;
-      
-      // Since historical forex data often requires paid APIs, 
-      // let's simulate realistic daily changes for demo purposes
-      const today = new Date().getDate();
-      const seed = today % 10; // Use day of month as seed for consistent daily changes
-      const changePercent = (seed - 5) * 0.003; // Creates changes between -1.5% to +1.5%
-      previousRate = currentRate / (1 + changePercent);
-      
-    } catch (apiError) {
-      console.log('API failed, using fallback data with simulated change');
-      currentRate = 3.60;
-      previousRate = 3.58; // Simulate +0.56% change
+    // Check if we have valid cached data
+    if (usdIlsCache.data && usdIlsCache.lastUpdated && 
+        (currentTime - usdIlsCache.lastUpdated < usdIlsCache.cacheExpiry)) {
+      console.log('Returning cached USD/ILS data from', new Date(usdIlsCache.lastUpdated).toISOString());
+      return res.json(usdIlsCache.data);
     }
     
-    const dailyChange = currentRate - previousRate;
-    const dailyChangePercent = previousRate > 0 ? ((dailyChange / previousRate) * 100) : 0;
+    // If cache is expired or doesn't exist, fetch new data
+    console.log('Fetching fresh USD/ILS data from Frankfurter API');
+    const response = await axios.get('https://api.frankfurter.dev/v1/latest?base=USD&symbols=ILS');
     
-    res.json({
-      symbol: 'USD/ILS',
-      rate: parseFloat(currentRate.toFixed(4)),
-      previousRate: parseFloat(previousRate.toFixed(4)),
-      dailyChange: parseFloat(dailyChange.toFixed(4)),
-      dailyChangePercent: parseFloat(dailyChangePercent.toFixed(2)),
-      timestamp: new Date().toISOString(),
-      lastUpdated: new Date().toISOString().split('T')[0]
-    });
-    
+    if (response.data && response.data.rates && response.data.rates.ILS) {
+      const currentRate = response.data.rates.ILS;
+      
+      // Get yesterday's rate for comparison
+      const yesterday = new Date();
+      yesterday.setDate(yesterday.getDate() - 1);
+      const yesterdayStr = yesterday.toISOString().split('T')[0];
+      
+      let previousRate;
+      try {
+        const historicalResponse = await axios.get(
+          `https://api.frankfurter.dev/v1/${yesterdayStr}?base=USD&symbols=ILS`
+        );
+        previousRate = historicalResponse.data.rates.ILS;
+      } catch (histError) {
+        console.log('Could not fetch historical rate, estimating previous rate');
+        // If historical data fails, estimate a reasonable previous rate
+        // Use a small random change (±0.5%) to simulate a realistic previous value
+        const randomChange = (Math.random() * 0.01) - 0.005;
+        previousRate = currentRate / (1 + randomChange);
+      }
+      
+      const dailyChange = currentRate - previousRate;
+      const dailyChangePercent = previousRate > 0 ? ((dailyChange / previousRate) * 100) : 0;
+      
+      const resultData = {
+        symbol: 'USD/ILS',
+        rate: parseFloat(currentRate.toFixed(4)),
+        previousRate: parseFloat(previousRate.toFixed(4)),
+        dailyChange: parseFloat(dailyChange.toFixed(4)),
+        dailyChangePercent: parseFloat(dailyChangePercent.toFixed(2)),
+        timestamp: new Date().toISOString(),
+        lastUpdated: new Date().toISOString()
+      };
+      
+      // Update cache
+      usdIlsCache.data = resultData;
+      usdIlsCache.lastUpdated = currentTime;
+      
+      return res.json(resultData);
+    } else {
+      throw new Error('Invalid response from Frankfurter API');
+    }
   } catch (error) {
     console.error('Error fetching USD/ILS rate:', error);
-    // Return a fallback rate with simulated change
-    const currentRate = 3.60;
-    const previousRate = 3.58;
+    
+    // Check if we have stale cache data that's better than nothing
+    if (usdIlsCache.data) {
+      console.log('API request failed, returning stale cached data');
+      return res.json({
+        ...usdIlsCache.data,
+        error: 'Using stale cached data'
+      });
+    }
+    
+    // Return fallback data if no cache is available
+    const currentRate = 3.75; // Fallback rate
+    const previousRate = 3.73; // Fallback previous rate
     const dailyChange = currentRate - previousRate;
     const dailyChangePercent = ((dailyChange / previousRate) * 100);
     
-    res.json({
+    const fallbackData = {
       symbol: 'USD/ILS',
       rate: currentRate,
       previousRate: previousRate,
@@ -393,7 +604,9 @@ app.get('/api/forex/usdils', async (req, res) => {
       timestamp: new Date().toISOString(),
       lastUpdated: 'N/A',
       error: 'Using fallback data'
-    });
+    };
+    
+    return res.json(fallbackData);
   }
 });
 
