@@ -17,13 +17,9 @@ const Header = ({ lastUpdated, onRefresh, user, onLogout, isAdmin }) => {
       <div className="header-content">
         <div className="header-left">
           <h1 className="app-title">
-            <Logo size={36} className="title-logo" />
-            <span className="title-text">
-              <span className="title-main">StockFlow</span>
-              <span className="title-accent">Pro</span>
-            </span>
+            <Logo size={28} className="title-logo" />
+            <span className="title-text">Stock IO</span>
           </h1>
-          <p className="app-subtitle">Portfolio Management & Market Analysis</p>
         </div>
         
         <div className="header-right">
