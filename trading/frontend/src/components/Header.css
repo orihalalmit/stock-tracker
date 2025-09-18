@@ -1,14 +1,19 @@
 .header {
-  background: var(--gradient-glass);
-  backdrop-filter: var(--glass-backdrop);
-  border-bottom: var(--glass-border);
+  background: linear-gradient(135deg, 
+    rgba(248, 250, 252, 0.08), 
+    rgba(241, 245, 249, 0.12),
+    rgba(248, 250, 252, 0.08)
+  );
+  backdrop-filter: blur(20px) saturate(180%);
+  border-bottom: 1px solid rgba(248, 250, 252, 0.12);
   padding: var(--space-lg) var(--space-xl);
   position: sticky;
   top: 0;
   z-index: 100;
-  box-shadow: var(--shadow-xl);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.08);
   position: relative;
   overflow: hidden;
+  transition: all 0.3s ease;
 }
 
 .header::before {
@@ -48,15 +53,12 @@
 }
 
 .app-title {
-  font-size: 1.75rem;
-  font-weight: 800;
-  color: var(--text-primary);
   margin: 0;
   display: flex;
   align-items: center;
   gap: var(--space-md);
   position: relative;
-  letter-spacing: -0.02em;
+  transition: all 0.3s ease;
 }
 
 .app-title::after {
@@ -71,14 +73,52 @@
   opacity: 0.6;
 }
 
-.title-icon {
-  font-size: 1.5rem;
-  background: var(--gradient-accent);
+.title-logo {
+  filter: drop-shadow(0 2px 8px rgba(59, 130, 246, 0.3));
+  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: logoGlow 4s ease-in-out infinite;
+}
+
+.title-logo:hover {
+  transform: scale(1.05) rotate(2deg);
+  filter: drop-shadow(0 4px 16px rgba(245, 158, 11, 0.4));
+}
+
+.title-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1;
+}
+
+.title-main {
+  font-size: 1.75rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #3b82f6, #f59e0b, #8b5cf6);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  filter: drop-shadow(0 0 10px rgba(245, 158, 11, 0.3));
-  animation: glow 3s ease-in-out infinite;
+  letter-spacing: -0.03em;
+}
+
+.title-accent {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-tertiary);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-top: -2px;
+}
+
+@keyframes logoGlow {
+  0%, 100% { 
+    filter: drop-shadow(0 2px 8px rgba(59, 130, 246, 0.3)); 
+  }
+  33% { 
+    filter: drop-shadow(0 2px 8px rgba(245, 158, 11, 0.4)); 
+  }
+  66% { 
+    filter: drop-shadow(0 2px 8px rgba(139, 92, 246, 0.3)); 
+  }
 }
 
 .app-subtitle {
@@ -86,13 +126,34 @@
   color: var(--text-tertiary);
   margin: 0;
   font-weight: 500;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
-  padding: var(--space-xs) var(--space-sm);
-  background: rgba(245, 158, 11, 0.1);
-  border: 1px solid rgba(245, 158, 11, 0.2);
-  border-radius: var(--radius-lg);
-  backdrop-filter: blur(10px);
+  padding: var(--space-xs) var(--space-lg);
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.08), rgba(245, 158, 11, 0.08));
+  border: 1px solid rgba(245, 158, 11, 0.15);
+  border-radius: var(--radius-xl);
+  backdrop-filter: blur(12px);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.app-subtitle::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(245, 158, 11, 0.1), transparent);
+  transition: left 3s ease;
+  animation: subtitleShimmer 4s ease-in-out infinite;
+}
+
+@keyframes subtitleShimmer {
+  0% { left: -100%; }
+  50% { left: 100%; }
+  100% { left: 100%; }
 }
 
 .header-right {
@@ -150,10 +211,10 @@
 .refresh-button,
 .logout-button {
   padding: var(--space-sm) var(--space-lg);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-xl);
   cursor: pointer;
   font-weight: 600;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
   display: flex;
   align-items: center;
   gap: var(--space-sm);
@@ -161,6 +222,8 @@
   letter-spacing: 0.025em;
   position: relative;
   overflow: hidden;
+  backdrop-filter: blur(10px);
+  border-width: 1.5px;
 }
 
 .refresh-button {
@@ -263,12 +326,12 @@
     gap: var(--space-md);
   }
   
-  .app-title {
+  .title-main {
     font-size: 1.5rem;
   }
   
-  .title-icon {
-    font-size: 1.25rem;
+  .title-accent {
+    font-size: 0.8rem;
   }
 }
 
@@ -298,8 +361,12 @@
     width: 100%;
   }
   
-  .app-title {
+  .title-main {
     font-size: 1.375rem;
+  }
+  
+  .title-accent {
+    font-size: 0.75rem;
   }
   
   .app-subtitle {
@@ -354,8 +421,12 @@
     flex-direction: column;
   }
   
-  .app-title {
+  .title-main {
     font-size: 1.25rem;
+  }
+  
+  .title-accent {
+    font-size: 0.7rem;
   }
   
   .app-subtitle {

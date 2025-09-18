@@ -1,5 +1,6 @@
 import React from 'react';
 import './Header.css';
+import Logo from './Logo';
 
 const Header = ({ lastUpdated, onRefresh, user, onLogout, isAdmin }) => {
   const formatTime = (date) => {
@@ -16,8 +17,11 @@ const Header = ({ lastUpdated, onRefresh, user, onLogout, isAdmin }) => {
       <div className="header-content">
         <div className="header-left">
           <h1 className="app-title">
-            <span className="title-icon">📈</span>
-            Trading App
+            <Logo size={36} className="title-logo" />
+            <span className="title-text">
+              <span className="title-main">StockFlow</span>
+              <span className="title-accent">Pro</span>
+            </span>
           </h1>
           <p className="app-subtitle">Portfolio Management & Market Analysis</p>
         </div>
