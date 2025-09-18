@@ -1,305 +1,441 @@
 .positions-list {
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(10px);
-  border-radius: 10px;
-  padding: 1rem;
-  margin: 1rem 0;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--gradient-surface);
+  backdrop-filter: var(--glass-backdrop);
+  border-radius: var(--radius-2xl);
+  padding: var(--space-xl);
+  margin: var(--space-lg) 0;
+  border: var(--glass-border);
+  box-shadow: var(--shadow-lg);
+  position: relative;
+  overflow: hidden;
+}
+
+.positions-list::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(16, 185, 129, 0.4), transparent);
 }
 
 .positions-list h3 {
-  color: white;
-  margin: 0 0 1rem 0;
-  font-size: 1.1rem;
+  color: var(--text-primary);
+  margin: 0 0 var(--space-xl) 0;
+  font-size: 1.375rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  background: linear-gradient(135deg, var(--text-primary), var(--accent-green-light));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .positions-table-container {
   overflow-x: auto;
-  margin: 0 -0.5rem;
-  padding: 0 0.5rem;
+  margin: 0 calc(-1 * var(--space-sm));
+  padding: 0 var(--space-sm);
+  border-radius: var(--radius-lg);
 }
 
 .positions-table {
   width: 100%;
   border-collapse: separate;
   border-spacing: 0;
-  color: white;
+  color: var(--text-primary);
+  background: var(--gradient-glass);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  backdrop-filter: blur(15px);
 }
 
 .positions-table th {
-  background: rgba(255, 255, 255, 0.08);
-  padding: 0.75rem;
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(16, 185, 129, 0.05));
+  padding: var(--space-lg);
   text-align: left;
-  font-weight: 500;
+  font-weight: 700;
   font-size: 0.8rem;
-  color: rgba(255, 255, 255, 0.9);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--accent-green-light);
+  border-bottom: 2px solid rgba(16, 185, 129, 0.2);
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
   white-space: nowrap;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  position: relative;
+}
+
+.positions-table th::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(16, 185, 129, 0.1), transparent);
+  transition: left 0.6s ease;
+}
+
+.positions-table th:hover::before {
+  left: 100%;
 }
 
 .positions-table th.active {
-  color: #10b981;
+  color: var(--accent-gold-light);
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(245, 158, 11, 0.05));
+  border-bottom-color: rgba(245, 158, 11, 0.3);
 }
 
 .positions-table th:hover {
-  background: rgba(255, 255, 255, 0.12);
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(16, 185, 129, 0.08));
+  color: var(--text-primary);
 }
 
 .positions-table th:first-child {
-  border-top-left-radius: 6px;
+  border-top-left-radius: var(--radius-lg);
 }
 
 .positions-table th:last-child {
-  border-top-right-radius: 6px;
+  border-top-right-radius: var(--radius-lg);
 }
 
 .positions-table td {
-  padding: 0.75rem;
+  padding: var(--space-lg);
   font-size: 0.8rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid rgba(248, 250, 252, 0.08);
+  transition: all 0.3s ease;
+  background: rgba(248, 250, 252, 0.02);
 }
 
 .positions-table tr:last-child td {
   border-bottom: none;
 }
 
+.positions-table tr:last-child td:first-child {
+  border-bottom-left-radius: var(--radius-lg);
+}
+
+.positions-table tr:last-child td:last-child {
+  border-bottom-right-radius: var(--radius-lg);
+}
+
 .positions-table tr:hover td {
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(16, 185, 129, 0.05);
+  border-color: rgba(16, 185, 129, 0.1);
 }
 
 .positions-table .symbol {
-  font-weight: 600;
-  color: #10b981;
+  font-weight: 800;
+  color: var(--accent-green-light);
+  font-family: 'JetBrains Mono', monospace;
+  text-shadow: 0 0 10px rgba(16, 185, 129, 0.2);
 }
 
+/* Premium sector badges */
 .sector-badge {
   display: inline-block;
-  padding: 0.2rem 0.6rem;
-  border-radius: 15px;
+  padding: var(--space-xs) var(--space-md);
+  border-radius: var(--radius-xl);
   font-size: 0.7rem;
-  font-weight: 500;
-  background: rgba(255, 255, 255, 0.1);
+  font-weight: 700;
+  background: var(--gradient-glass);
+  border: 1px solid;
+  backdrop-filter: blur(10px);
+  letter-spacing: 0.025em;
+  text-transform: uppercase;
+  transition: all 0.3s ease;
 }
 
-/* Sector-specific colors */
+.sector-badge:hover {
+  transform: scale(1.05);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Sophisticated sector-specific colors */
 .sector-badge[data-sector="Technology"] {
-  background: rgba(59, 130, 246, 0.2);
-  color: #93c5fd;
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(59, 130, 246, 0.1));
+  color: var(--accent-blue-light);
+  border-color: rgba(59, 130, 246, 0.3);
 }
 
 .sector-badge[data-sector="Healthcare"] {
-  background: rgba(16, 185, 129, 0.2);
-  color: #6ee7b7;
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(16, 185, 129, 0.1));
+  color: var(--accent-green-light);
+  border-color: rgba(16, 185, 129, 0.3);
 }
 
 .sector-badge[data-sector="Financial Services"] {
-  background: rgba(245, 158, 11, 0.2);
-  color: #fcd34d;
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(245, 158, 11, 0.1));
+  color: var(--accent-gold-light);
+  border-color: rgba(245, 158, 11, 0.3);
 }
 
 .sector-badge[data-sector="Consumer Cyclical"] {
-  background: rgba(236, 72, 153, 0.2);
+  background: linear-gradient(135deg, rgba(236, 72, 153, 0.2), rgba(236, 72, 153, 0.1));
   color: #f9a8d4;
+  border-color: rgba(236, 72, 153, 0.3);
 }
 
 .sector-badge[data-sector="Consumer Defensive"] {
-  background: rgba(139, 92, 246, 0.2);
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(139, 92, 246, 0.1));
   color: #c4b5fd;
+  border-color: rgba(139, 92, 246, 0.3);
 }
 
 .sector-badge[data-sector="Industrials"] {
-  background: rgba(75, 85, 99, 0.2);
+  background: linear-gradient(135deg, rgba(75, 85, 99, 0.2), rgba(75, 85, 99, 0.1));
   color: #d1d5db;
+  border-color: rgba(75, 85, 99, 0.3);
 }
 
 .sector-badge[data-sector="Energy"] {
-  background: rgba(239, 68, 68, 0.2);
-  color: #fca5a5;
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.2), rgba(239, 68, 68, 0.1));
+  color: var(--accent-red-light);
+  border-color: rgba(239, 68, 68, 0.3);
 }
 
 .positions-table .shares {
-  font-family: monospace;
+  font-family: 'JetBrains Mono', monospace;
   text-align: right;
+  font-weight: 600;
+  color: var(--text-secondary);
 }
 
 .positions-table .price,
 .positions-table .value {
-  font-family: monospace;
+  font-family: 'JetBrains Mono', monospace;
   text-align: right;
+  font-weight: 700;
+  color: var(--text-primary);
 }
 
 .positions-table .portfolio-percent {
-  font-family: monospace;
+  font-family: 'JetBrains Mono', monospace;
   text-align: right;
-  font-weight: 500;
-  color: #a78bfa;
+  font-weight: 700;
+  color: var(--accent-gold-light);
+  text-shadow: 0 0 10px rgba(245, 158, 11, 0.2);
 }
 
 .positions-table .gain-loss {
-  font-family: monospace;
+  font-family: 'JetBrains Mono', monospace;
   text-align: right;
+  font-weight: 700;
 }
 
 .gain-loss.positive {
-  color: #10b981;
+  color: var(--accent-green-light);
+  text-shadow: 0 0 10px rgba(16, 185, 129, 0.3);
 }
 
 .gain-loss.negative {
-  color: #ef4444;
+  color: var(--accent-red-light);
+  text-shadow: 0 0 10px rgba(239, 68, 68, 0.3);
 }
 
 .gain-loss .percent {
   display: block;
   font-size: 0.7rem;
-  opacity: 0.8;
+  opacity: 0.9;
+  margin-top: var(--space-xs);
 }
 
+/* Premium loading and error states */
 .positions-loading {
   text-align: center;
-  padding: 2rem;
-  color: white;
-  font-size: 1rem;
+  padding: var(--space-2xl);
+  color: var(--text-primary);
+  font-size: 1.125rem;
+  font-weight: 600;
 }
 
 .positions-error {
-  background: rgba(239, 68, 68, 0.2);
-  color: white;
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.2), rgba(239, 68, 68, 0.1));
+  color: var(--text-primary);
   text-align: center;
-  padding: 1rem;
-  border-radius: 6px;
+  padding: var(--space-lg);
+  border-radius: var(--radius-lg);
   border: 1px solid rgba(239, 68, 68, 0.3);
+  backdrop-filter: blur(10px);
+  box-shadow: var(--shadow-md);
 }
 
 .no-positions {
   text-align: center;
-  padding: 2rem;
-  color: rgba(255, 255, 255, 0.7);
-  font-size: 1rem;
+  padding: var(--space-2xl);
+  color: var(--text-tertiary);
+  font-size: 1.125rem;
+  font-weight: 600;
 }
 
-/* Action buttons and editing styles */
+/* Premium action buttons */
 .actions {
   text-align: center;
   white-space: nowrap;
-  width: 100px;
+  width: 120px;
 }
 
 .position-actions {
   display: flex;
-  gap: 6px;
+  gap: var(--space-sm);
   justify-content: center;
   align-items: center;
 }
 
 .edit-btn,
 .delete-btn {
-  background: none;
-  border: none;
+  background: var(--gradient-glass);
+  border: var(--glass-border);
   cursor: pointer;
-  padding: 0.3rem;
-  border-radius: 4px;
+  padding: var(--space-sm);
+  border-radius: var(--radius-lg);
   font-size: 0.8rem;
-  transition: all 0.2s ease;
-  color: rgba(255, 255, 255, 0.7);
+  transition: all 0.3s ease;
+  color: var(--text-tertiary);
+  backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .edit-btn:hover {
-  color: #10b981;
+  color: var(--accent-green-light);
   background: rgba(16, 185, 129, 0.1);
+  border-color: rgba(16, 185, 129, 0.2);
+  box-shadow: var(--shadow-sm);
+  transform: translateY(-1px);
 }
 
 .delete-btn:hover {
-  color: #ef4444;
+  color: var(--accent-red-light);
   background: rgba(239, 68, 68, 0.1);
+  border-color: rgba(239, 68, 68, 0.2);
+  box-shadow: var(--shadow-sm);
+  transform: translateY(-1px);
 }
 
 .edit-actions {
   display: flex;
-  gap: 6px;
+  gap: var(--space-sm);
   justify-content: center;
   align-items: center;
 }
 
 .save-btn,
 .cancel-btn {
-  padding: 0.3rem 0.6rem;
+  padding: var(--space-sm) var(--space-lg);
   border: none;
-  border-radius: 4px;
+  border-radius: var(--radius-lg);
   font-size: 0.75rem;
-  font-weight: 500;
+  font-weight: 700;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
+  letter-spacing: 0.025em;
+  text-transform: uppercase;
 }
 
 .save-btn {
-  background: #10b981;
-  color: white;
+  background: linear-gradient(135deg, var(--accent-green), #059669);
+  color: var(--text-primary);
+  box-shadow: var(--shadow-sm);
 }
 
 .save-btn:hover:not(:disabled) {
-  background: #059669;
+  background: linear-gradient(135deg, #059669, #047857);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
 }
 
 .cancel-btn {
-  background: #6b7280;
-  color: white;
+  background: rgba(107, 114, 128, 0.8);
+  color: var(--text-primary);
+  box-shadow: var(--shadow-sm);
 }
 
 .cancel-btn:hover:not(:disabled) {
-  background: #4b5563;
+  background: rgba(75, 85, 99, 0.9);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
 }
 
 .save-btn:disabled,
 .cancel-btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+  transform: none;
 }
 
 .positions-table tr.editing {
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(16, 185, 129, 0.05);
 }
 
 .positions-table tr.editing td {
-  border-color: rgba(16, 185, 129, 0.3);
+  border-color: rgba(16, 185, 129, 0.2);
+  background: rgba(16, 185, 129, 0.03);
 }
 
 .edit-input {
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 4px;
-  padding: 0.3rem;
-  color: white;
+  background: var(--gradient-glass);
+  border: var(--glass-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-sm);
+  color: var(--text-primary);
   font-size: 0.8rem;
   width: 100%;
+  font-family: 'JetBrains Mono', monospace;
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
 }
 
 .edit-input:focus {
   outline: none;
-  border-color: #10b981;
+  border-color: var(--accent-green);
   box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
+  background: rgba(16, 185, 129, 0.05);
 }
 
 .edit-input option {
-  background: #1f2937;
-  color: white;
+  background: var(--primary-bg);
+  color: var(--text-primary);
 }
 
-@media (max-width: 768px) {
+/* Responsive Design */
+@media (max-width: 1024px) {
   .positions-list {
-    padding: 1rem;
-    margin: 0.75rem 0;
+    padding: var(--space-lg);
+    margin: var(--space-md) 0;
   }
 
   .positions-table td,
   .positions-table th {
-    padding: 0.5rem;
+    padding: var(--space-md);
+    font-size: 0.75rem;
+  }
+
+  .sector-badge {
+    padding: 2px var(--space-sm);
+    font-size: 0.65rem;
+  }
+
+  .actions {
+    width: 100px;
+  }
+}
+
+@media (max-width: 768px) {
+  .positions-list {
+    padding: var(--space-md);
+  }
+
+  .positions-table td,
+  .positions-table th {
+    padding: var(--space-sm);
     font-size: 0.7rem;
   }
 
   .sector-badge {
-    padding: 0.15rem 0.4rem;
+    padding: 2px var(--space-xs);
     font-size: 0.6rem;
   }
 
@@ -309,17 +445,78 @@
 
   .position-actions {
     flex-direction: column;
-    gap: 4px;
+    gap: var(--space-xs);
   }
 
   .edit-actions {
     flex-direction: column;
-    gap: 4px;
+    gap: var(--space-xs);
   }
 
   .edit-btn,
   .delete-btn {
-    padding: 0.2rem;
+    padding: var(--space-xs);
     font-size: 0.7rem;
   }
-} 
+
+  .save-btn,
+  .cancel-btn {
+    padding: var(--space-xs) var(--space-sm);
+    font-size: 0.7rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .positions-list {
+    padding: var(--space-sm);
+  }
+  
+  .positions-list h3 {
+    font-size: 1.25rem;
+  }
+
+  .positions-table-container {
+    margin: 0 calc(-1 * var(--space-xs));
+    padding: 0 var(--space-xs);
+  }
+
+  .positions-table td,
+  .positions-table th {
+    padding: var(--space-xs);
+    font-size: 0.65rem;
+  }
+
+  .sector-badge {
+    padding: 1px var(--space-xs);
+    font-size: 0.55rem;
+  }
+
+  .actions {
+    width: 70px;
+  }
+}
+
+/* Accessibility */
+.positions-table th:focus-visible,
+.edit-btn:focus-visible,
+.delete-btn:focus-visible,
+.save-btn:focus-visible,
+.cancel-btn:focus-visible {
+  outline: 2px solid var(--accent-gold);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .positions-table th::before {
+    animation: none;
+    transition: none;
+  }
+  
+  .sector-badge:hover,
+  .edit-btn:hover,
+  .delete-btn:hover,
+  .save-btn:hover,
+  .cancel-btn:hover {
+    transform: none;
+  }
+}

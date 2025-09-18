@@ -1,91 +1,354 @@
 .bitcoin-card {
-  background: linear-gradient(145deg, #2a2a2a 0%, #1e1e1e 100%);
-  border-radius: 8px;
-  padding: 20px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-  min-height: 140px;
+  background: var(--gradient-surface);
+  backdrop-filter: var(--glass-backdrop);
+  border-radius: var(--radius-2xl);
+  padding: var(--space-xl);
+  box-shadow: var(--shadow-lg);
+  border: var(--glass-border);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  min-height: 240px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+/* Bitcoin-specific premium effects */
+.bitcoin-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 165, 0, 0.08), transparent);
+  transition: left 0.8s ease;
+}
+
+.bitcoin-card:hover::before {
+  left: 100%;
+}
+
+.bitcoin-card::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #f7931a, #ffb84d, #f7931a);
+  box-shadow: 0 0 15px rgba(247, 147, 26, 0.4);
 }
 
 .bitcoin-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
-  border-color: rgba(255, 255, 255, 0.2);
+  transform: translateY(-6px) scale(1.02);
+  box-shadow: var(--shadow-premium), 0 0 40px rgba(247, 147, 26, 0.2);
+  border-color: rgba(247, 147, 26, 0.3);
 }
 
 .bitcoin-header {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  margin-bottom: 10px;
+  margin-bottom: var(--space-lg);
+  position: relative;
+  z-index: 2;
 }
 
 .bitcoin-symbol {
-  font-size: 18px;
-  font-weight: bold;
-  color: #ffffff;
+  font-size: 1.375rem;
+  font-weight: 800;
+  color: var(--text-primary);
   margin: 0;
+  letter-spacing: -0.01em;
+  background: linear-gradient(135deg, #f7931a, #ffb84d);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.bitcoin-symbol::before {
+  content: '₿';
+  position: absolute;
+  left: -25px;
+  top: 0;
+  font-size: 1.5rem;
+  background: linear-gradient(135deg, #f7931a, #ffb84d);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: float 3s ease-in-out infinite;
+  filter: drop-shadow(0 0 10px rgba(247, 147, 26, 0.3));
 }
 
 .bitcoin-name {
-  font-size: 12px;
-  color: #a0a0a0;
+  font-size: 0.75rem;
+  color: var(--text-tertiary);
   text-align: right;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: var(--space-xs) var(--space-sm);
+  background: rgba(247, 147, 26, 0.1);
+  border: 1px solid rgba(247, 147, 26, 0.2);
+  border-radius: var(--radius-lg);
+  backdrop-filter: blur(10px);
 }
 
 .bitcoin-price {
-  font-size: 24px;
-  font-weight: bold;
-  color: #ffffff;
-  margin: 10px 0;
+  font-size: 2.25rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin: var(--space-lg) 0;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  font-family: 'JetBrains Mono', monospace;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  position: relative;
+}
+
+.bitcoin-price::before {
+  content: '$';
+  position: absolute;
+  left: -15px;
+  top: 0;
+  font-size: 1.5rem;
+  color: #f7931a;
+  opacity: 0.8;
 }
 
 .bitcoin-change {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 2px;
+  gap: var(--space-sm);
+  padding: var(--space-md);
+  background: var(--gradient-glass);
+  border-radius: var(--radius-lg);
+  border: var(--glass-border);
+  backdrop-filter: blur(15px);
+  position: relative;
+}
+
+.bitcoin-change::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(247, 147, 26, 0.3), transparent);
 }
 
 .bitcoin-change.positive {
-  color: #4caf50;
+  color: var(--accent-green-light);
+  border-left: 3px solid var(--accent-green);
 }
 
 .bitcoin-change.negative {
-  color: #f44336;
+  color: var(--accent-red-light);
+  border-left: 3px solid var(--accent-red);
+}
+
+.bitcoin-change.positive::after {
+  content: '📈';
+  position: absolute;
+  right: var(--space-md);
+  top: var(--space-md);
+  font-size: 1rem;
+  opacity: 0.6;
+}
+
+.bitcoin-change.negative::after {
+  content: '📉';
+  position: absolute;
+  right: var(--space-md);
+  top: var(--space-md);
+  font-size: 1rem;
+  opacity: 0.6;
 }
 
 .change-amount {
-  font-size: 14px;
-  font-weight: 500;
+  font-size: 1rem;
+  font-weight: 700;
+  font-family: 'JetBrains Mono', monospace;
+  letter-spacing: 0.025em;
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
 }
 
 .change-percent {
-  font-size: 12px;
-  opacity: 0.8;
+  font-size: 0.875rem;
+  opacity: 0.9;
+  font-weight: 600;
+  font-family: 'JetBrains Mono', monospace;
+  letter-spacing: 0.025em;
+}
+
+.bitcoin-change.positive .change-amount {
+  text-shadow: 0 0 10px rgba(16, 185, 129, 0.3);
+}
+
+.bitcoin-change.negative .change-amount {
+  text-shadow: 0 0 10px rgba(239, 68, 68, 0.3);
 }
 
 .bitcoin-error {
-  font-size: 10px;
-  color: #ff9800;
-  margin-top: 5px;
+  font-size: 0.75rem;
+  color: var(--accent-red-light);
+  margin-top: var(--space-sm);
+  padding: var(--space-sm);
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  letter-spacing: 0.025em;
+  backdrop-filter: blur(10px);
+}
+
+/* Bitcoin-specific hover effects */
+.bitcoin-card:hover .bitcoin-symbol::before {
+  animation: float 1.5s ease-in-out infinite;
+  transform: scale(1.1);
+}
+
+.bitcoin-card:hover .bitcoin-price {
+  color: #f7931a;
+  text-shadow: 0 0 20px rgba(247, 147, 26, 0.4);
+}
+
+/* Premium loading state */
+.bitcoin-card.loading {
+  pointer-events: none;
+}
+
+.bitcoin-card.loading::before {
+  animation: shimmer 1.5s ease-in-out infinite;
+}
+
+.bitcoin-card.loading .bitcoin-price {
+  opacity: 0.7;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .bitcoin-card {
+    min-height: 220px;
+    padding: var(--space-lg);
+  }
+  
+  .bitcoin-price {
+    font-size: 2rem;
+  }
+  
+  .bitcoin-symbol {
+    font-size: 1.25rem;
+  }
 }
 
 @media (max-width: 768px) {
   .bitcoin-card {
-    min-height: 120px;
-    padding: 15px;
+    min-height: 200px;
+    padding: var(--space-lg);
   }
   
   .bitcoin-price {
-    font-size: 20px;
+    font-size: 1.875rem;
+    margin: var(--space-md) 0;
   }
   
   .bitcoin-symbol {
-    font-size: 16px;
+    font-size: 1.125rem;
   }
-} 
+  
+  .bitcoin-symbol::before {
+    left: -20px;
+    font-size: 1.25rem;
+  }
+  
+  .bitcoin-price::before {
+    left: -12px;
+    font-size: 1.25rem;
+  }
+  
+  .bitcoin-header {
+    margin-bottom: var(--space-md);
+  }
+  
+  .bitcoin-change {
+    padding: var(--space-sm);
+    gap: var(--space-sm);
+  }
+}
+
+@media (max-width: 480px) {
+  .bitcoin-card {
+    min-height: 180px;
+    padding: var(--space-md);
+  }
+  
+  .bitcoin-price {
+    font-size: 1.75rem;
+  }
+  
+  .bitcoin-symbol {
+    font-size: 1rem;
+  }
+  
+  .bitcoin-symbol::before {
+    left: -18px;
+    font-size: 1.125rem;
+  }
+  
+  .bitcoin-price::before {
+    left: -10px;
+    font-size: 1.125rem;
+  }
+  
+  .bitcoin-name {
+    font-size: 0.7rem;
+    padding: 2px var(--space-xs);
+  }
+  
+  .change-amount {
+    font-size: 0.875rem;
+  }
+  
+  .change-percent {
+    font-size: 0.8rem;
+  }
+  
+  .bitcoin-error {
+    font-size: 0.7rem;
+  }
+}
+
+/* Accessibility */
+.bitcoin-card:focus-visible {
+  outline: 2px solid #f7931a;
+  outline-offset: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bitcoin-card,
+  .bitcoin-card::before,
+  .bitcoin-symbol::before {
+    animation: none;
+    transition: none;
+  }
+  
+  .bitcoin-card:hover {
+    transform: none;
+  }
+  
+  .bitcoin-card:hover .bitcoin-symbol::before {
+    transform: none;
+  }
+}

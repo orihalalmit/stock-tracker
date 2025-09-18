@@ -1,13 +1,210 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+:root {
+  /* Premium Color Palette */
+  --primary-bg: #0a0a0a;
+  --secondary-bg: #131316;
+  --accent-bg: #1a1a1e;
+  --surface-bg: #1e1e23;
+  --elevated-bg: #252529;
+  
+  /* Text Colors */
+  --text-primary: #f8fafc;
+  --text-secondary: #cbd5e1;
+  --text-tertiary: #94a3b8;
+  --text-muted: #64748b;
+  
+  /* Accent Colors */
+  --accent-gold: #f59e0b;
+  --accent-gold-light: #fbbf24;
+  --accent-blue: #3b82f6;
+  --accent-blue-light: #60a5fa;
+  --accent-green: #10b981;
+  --accent-green-light: #34d399;
+  --accent-red: #ef4444;
+  --accent-red-light: #f87171;
+  
+  /* Premium Gradients */
+  --gradient-primary: linear-gradient(135deg, #0a0a0a 0%, #131316 50%, #1a1a1e 100%);
+  --gradient-surface: linear-gradient(135deg, #1e1e23 0%, #252529 100%);
+  --gradient-accent: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  --gradient-glass: linear-gradient(135deg, rgba(248, 250, 252, 0.05) 0%, rgba(203, 213, 225, 0.02) 100%);
+  
+  /* Premium Shadows */
+  --shadow-sm: 0 2px 4px -1px rgba(0, 0, 0, 0.3), 0 1px 2px -1px rgba(0, 0, 0, 0.2);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -2px rgba(0, 0, 0, 0.4);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.6), 0 10px 10px -5px rgba(0, 0, 0, 0.4);
+  --shadow-premium: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
+  
+  /* Glassmorphism */
+  --glass-border: 1px solid rgba(248, 250, 252, 0.08);
+  --glass-backdrop: blur(20px);
+  
+  /* Spacing */
+  --space-xs: 0.25rem;
+  --space-sm: 0.5rem;
+  --space-md: 1rem;
+  --space-lg: 1.5rem;
+  --space-xl: 2rem;
+  --space-2xl: 3rem;
+  
+  /* Border Radius */
+  --radius-sm: 0.375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+  --radius-2xl: 1.5rem;
+}
+
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  font-feature-settings: 'kern' 1;
+  background: var(--gradient-primary);
+  color: var(--text-primary);
+  line-height: 1.6;
+  letter-spacing: -0.01em;
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+  font-family: 'JetBrains Mono', source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+
+/* Premium Typography Scale */
+.text-xs { font-size: 0.75rem; line-height: 1rem; }
+.text-sm { font-size: 0.875rem; line-height: 1.25rem; }
+.text-base { font-size: 1rem; line-height: 1.5rem; }
+.text-lg { font-size: 1.125rem; line-height: 1.75rem; }
+.text-xl { font-size: 1.25rem; line-height: 1.75rem; }
+.text-2xl { font-size: 1.5rem; line-height: 2rem; }
+.text-3xl { font-size: 1.875rem; line-height: 2.25rem; }
+.text-4xl { font-size: 2.25rem; line-height: 2.5rem; }
+
+/* Font Weights */
+.font-light { font-weight: 300; }
+.font-normal { font-weight: 400; }
+.font-medium { font-weight: 500; }
+.font-semibold { font-weight: 600; }
+.font-bold { font-weight: 700; }
+.font-extrabold { font-weight: 800; }
+
+/* Text Colors */
+.text-primary { color: var(--text-primary); }
+.text-secondary { color: var(--text-secondary); }
+.text-tertiary { color: var(--text-tertiary); }
+.text-muted { color: var(--text-muted); }
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--secondary-bg);
+  border-radius: var(--radius-md);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--accent-bg);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--surface-bg);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--elevated-bg);
+}
+
+/* Selection */
+::selection {
+  background: rgba(245, 158, 11, 0.3);
+  color: var(--text-primary);
+}
+
+/* Focus Styles */
+*:focus-visible {
+  outline: 2px solid var(--accent-gold);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+/* Premium Animations */
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+@keyframes glow {
+  0%, 100% { box-shadow: 0 0 20px rgba(245, 158, 11, 0.3); }
+  50% { box-shadow: 0 0 40px rgba(245, 158, 11, 0.5); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+/* Utility Classes */
+.glass {
+  background: var(--gradient-glass);
+  backdrop-filter: var(--glass-backdrop);
+  border: var(--glass-border);
+}
+
+.premium-card {
+  background: var(--gradient-surface);
+  border: var(--glass-border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-lg);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.premium-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-premium);
+  border-color: rgba(245, 158, 11, 0.2);
+}
+
+.premium-button {
+  background: var(--gradient-accent);
+  color: var(--text-primary);
+  border: none;
+  border-radius: var(--radius-lg);
+  padding: var(--space-sm) var(--space-lg);
+  font-weight: 600;
+  font-size: 0.875rem;
+  letter-spacing: 0.025em;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: var(--shadow-md);
+  position: relative;
+  overflow: hidden;
+}
+
+.premium-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+.premium-button:hover::before {
+  left: 100%;
+}
+
+.premium-button:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-xl);
+  filter: brightness(1.1);
 } 
