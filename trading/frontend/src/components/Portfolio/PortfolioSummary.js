@@ -539,14 +539,14 @@ ILS
               </div>
               <div className="stat-item">
                 <span className="stat-label">Best Performer</span>
-                <span className="stat-value">
+                <span className="stat-value best-performer">
                   {positions.length > 0 ? 
                     positions.sort((a, b) => (b.overallGainPercentage || 0) - (a.overallGainPercentage || 0))[0].symbol : 'N/A'}
                 </span>
               </div>
               <div className="stat-item">
                 <span className="stat-label">Worst Performer</span>
-                <span className="stat-value">
+                <span className="stat-value worst-performer">
                   {positions.length > 0 ? 
                     positions.sort((a, b) => (a.overallGainPercentage || 0) - (b.overallGainPercentage || 0))[0].symbol : 'N/A'}
                 </span>
