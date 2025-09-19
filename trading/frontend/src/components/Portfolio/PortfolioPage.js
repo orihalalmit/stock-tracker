@@ -306,7 +306,7 @@ const PortfolioPage = ({ activeView = 'management', user: currentUser, onLogout,
               onClick={onLogout}
               title="Sign Out"
             >
-              🚪 Sign Out
+              🚪
             </button>
           </div>
         </div>
