@@ -300,7 +300,7 @@ const PortfolioPage = ({ activeView = 'management', user, onLogout, isAdmin }) =
             {isAdmin && (
               <span className="admin-badge-portfolio">Admin</span>
             )}
-            <span className="username">👤 {user?.username || user?.email || 'User'}</span>
+            <span className="username">👤 {currentUser?.username || currentUser?.email || user?.username || user?.email || 'User'}</span>
             <button 
               className="signout-btn"
               onClick={onLogout}
