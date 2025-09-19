@@ -24,41 +24,53 @@ const AddPositionForm = ({ onSubmit }) => {
     sector: 'Technology'
   });
   const [error, setError] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    setIsSubmitting(true);
 
     // Validate form
-    if (!formData.symbol) {
-      setError('Symbol is required');
+    if (!formData.symbol?.trim()) {
+      setError('Stock symbol is required');
+      setIsSubmitting(false);
       return;
     }
-    if (!formData.shares || formData.shares <= 0) {
-      setError('Shares must be greater than 0');
+    if (!formData.shares || parseFloat(formData.shares) <= 0) {
+      setError('Number of shares must be greater than 0');
+      setIsSubmitting(false);
       return;
     }
-    if (!formData.averagePrice || formData.averagePrice <= 0) {
+    if (!formData.averagePrice || parseFloat(formData.averagePrice) <= 0) {
       setError('Average price must be greater than 0');
+      setIsSubmitting(false);
       return;
     }
 
-    // Submit form
-    onSubmit({
-      ...formData,
-      symbol: formData.symbol.toUpperCase(),
-      shares: parseFloat(formData.shares),
-      averagePrice: parseFloat(formData.averagePrice)
-    });
+    try {
+      // Submit form
+      await onSubmit({
+        ...formData,
+        symbol: formData.symbol.trim().toUpperCase(),
+        shares: parseFloat(formData.shares),
+        averagePrice: parseFloat(formData.averagePrice)
+      });
 
-    // Reset form
-    setFormData({
-      symbol: '',
-      shares: '',
-      averagePrice: '',
-      sector: 'Technology'
-    });
-    setIsOpen(false);
+      // Reset form on success
+      setFormData({
+        symbol: '',
+        shares: '',
+        averagePrice: '',
+        sector: 'Technology'
+      });
+      setIsOpen(false);
+    } catch (err) {
+      setError('Failed to add position. Please try again.');
+      console.error('Error adding position:', err);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleChange = (e) => {
@@ -80,7 +92,7 @@ const AddPositionForm = ({ onSubmit }) => {
           <span className="button-text">Add New Position</span>
         </button>
         <p className="widget-description">
-          Track your investments by adding stocks to your portfolio
+          Track your investments by adding stocks to your portfolio. Click to get started!
         </p>
       </div>
     );
@@ -129,7 +141,8 @@ const AddPositionForm = ({ onSubmit }) => {
                   onChange={handleChange}
                   placeholder="e.g., AAPL, GOOGL, MSFT"
                   autoComplete="off"
-                  className="symbol-input"
+                  className="form-input symbol-input"
+                  required
                 />
                 <span className="input-icon">🔍</span>
               </div>
@@ -145,6 +158,7 @@ const AddPositionForm = ({ onSubmit }) => {
                   name="sector"
                   value={formData.sector}
                   onChange={handleChange}
+                  className="form-select"
                 >
                   {SECTORS.map(sector => (
                     <option key={sector} value={sector}>
@@ -170,7 +184,9 @@ const AddPositionForm = ({ onSubmit }) => {
                   onChange={handleChange}
                   placeholder="100"
                   step="any"
-                  min="0"
+                  min="0.01"
+                  className="form-input"
+                  required
                 />
                 <span className="input-icon">📊</span>
               </div>
@@ -189,8 +205,10 @@ const AddPositionForm = ({ onSubmit }) => {
                   value={formData.averagePrice}
                   onChange={handleChange}
                   placeholder="150.50"
-                  step="any"
-                  min="0"
+                  step="0.01"
+                  min="0.01"
+                  className="form-input"
+                  required
                 />
                 <span className="input-icon">💰</span>
               </div>
@@ -206,9 +224,13 @@ const AddPositionForm = ({ onSubmit }) => {
               <span className="button-icon">✕</span>
               Cancel
             </button>
-            <button type="submit" className="submit-button">
-              <span className="button-icon">✓</span>
-              Add Position
+            <button 
+              type="submit" 
+              className={`submit-button ${isSubmitting ? 'submitting' : ''}`}
+              disabled={isSubmitting}
+            >
+              <span className="button-icon">{isSubmitting ? '⏳' : '✓'}</span>
+              {isSubmitting ? 'Adding...' : 'Add Position'}
             </button>
           </div>
         </form>
