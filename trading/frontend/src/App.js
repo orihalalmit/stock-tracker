@@ -462,6 +462,8 @@ const MainApp = () => {
         user={user}
         onLogout={logout}
         isAdmin={isAdmin()}
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
       />
 
       <div className="tabs">

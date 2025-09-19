@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './Header.css';
 import Logo from './Logo';
 
-const Header = ({ lastUpdated, onRefresh, user, onLogout, isAdmin }) => {
+const Header = ({ lastUpdated, onRefresh, user, onLogout, isAdmin, activeTab, onTabChange }) => {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  
   const formatTime = (date) => {
     if (!date) return '';
     return date.toLocaleTimeString('en-US', {
@@ -23,12 +25,46 @@ const Header = ({ lastUpdated, onRefresh, user, onLogout, isAdmin }) => {
         </div>
         
         <div className="header-center">
-          <nav className="main-nav">
-            <a href="#portfolio" className="nav-link">Portfolio</a>
-            <a href="#watchlist" className="nav-link">Watchlist</a>
-            <a href="#insights" className="nav-link">Daily Insights</a>
-            <a href="#market" className="nav-link">Market Overview</a>
-          </nav>
+          <div className="menu-dropdown">
+            <button 
+              className="menu-toggle"
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              onMouseEnter={() => setIsMenuOpen(true)}
+            >
+              Menu ⋮
+            </button>
+            {isMenuOpen && (
+              <nav 
+                className="dropdown-nav"
+                onMouseLeave={() => setIsMenuOpen(false)}
+              >
+                <button 
+                  className={`nav-link ${activeTab === 'portfolio' ? 'active' : ''}`}
+                  onClick={() => { onTabChange('portfolio'); setIsMenuOpen(false); }}
+                >
+                  📊 Portfolio
+                </button>
+                <button 
+                  className={`nav-link ${activeTab === 'watchlists' ? 'active' : ''}`}
+                  onClick={() => { onTabChange('watchlists'); setIsMenuOpen(false); }}
+                >
+                  👁 Watchlist
+                </button>
+                <button 
+                  className={`nav-link ${activeTab === 'insights' ? 'active' : ''}`}
+                  onClick={() => { onTabChange('insights'); setIsMenuOpen(false); }}
+                >
+                  💡 Daily Insights
+                </button>
+                <button 
+                  className={`nav-link ${activeTab === 'market' ? 'active' : ''}`}
+                  onClick={() => { onTabChange('market'); setIsMenuOpen(false); }}
+                >
+                  📈 Market Overview
+                </button>
+              </nav>
+            )}
+          </div>
         </div>
 
         <div className="header-right">

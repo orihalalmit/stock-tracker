@@ -16,6 +16,7 @@ const PortfolioPage = ({ activeView = 'management' }) => {
   const [error, setError] = useState(null);
   const [activeTab, setActiveTab] = useState(activeView); // management, insights
   const [showPremarket, setShowPremarket] = useState(false);
+  const [isManagementCollapsed, setIsManagementCollapsed] = useState(true);
   const { user, token } = useAuth();
   
   // Use ref to track selected portfolio without causing re-renders
@@ -282,50 +283,64 @@ const PortfolioPage = ({ activeView = 'management' }) => {
   return (
     <div className="portfolio-page">
       <div className="portfolio-header">
-        <h1>Portfolio Management</h1>
-        <div className="portfolio-controls">
-          <div className="portfolio-selector">
-            <select
-              value={selectedPortfolio?._id || ''}
-              onChange={(e) => handlePortfolioChange(e.target.value)}
-            >
-              {portfolios.map(portfolio => (
-                <option key={portfolio._id} value={portfolio._id}>
-                  {portfolio.name}
-                </option>
-              ))}
-            </select>
-            <button
-              className="new-portfolio-btn"
-              onClick={() => {
-                const name = prompt('Enter portfolio name:');
-                if (name) createPortfolio(name);
-              }}
-            >
-              New Portfolio
-            </button>
-            {selectedPortfolio && portfolios.length > 1 && (
-              <button
-                className="delete-portfolio-btn"
-                onClick={() => deletePortfolio(selectedPortfolio._id)}
-                title="Delete Portfolio"
+        <div className="management-toggle">
+          <button 
+            className="toggle-management-btn"
+            onClick={() => setIsManagementCollapsed(!isManagementCollapsed)}
+          >
+            <span className="toggle-icon">{isManagementCollapsed ? '▶' : '▼'}</span>
+            <span>Portfolio Settings</span>
+          </button>
+          <span className="current-portfolio-name">
+            {selectedPortfolio?.name || 'No Portfolio Selected'}
+          </span>
+        </div>
+        
+        {!isManagementCollapsed && (
+          <div className="portfolio-controls">
+            <div className="portfolio-selector">
+              <select
+                value={selectedPortfolio?._id || ''}
+                onChange={(e) => handlePortfolioChange(e.target.value)}
               >
-                🗑️ Delete
+                {portfolios.map(portfolio => (
+                  <option key={portfolio._id} value={portfolio._id}>
+                    {portfolio.name}
+                  </option>
+                ))}
+              </select>
+              <button
+                className="new-portfolio-btn"
+                onClick={() => {
+                  const name = prompt('Enter portfolio name:');
+                  if (name) createPortfolio(name);
+                }}
+              >
+                New Portfolio
               </button>
+              {selectedPortfolio && portfolios.length > 1 && (
+                <button
+                  className="delete-portfolio-btn"
+                  onClick={() => deletePortfolio(selectedPortfolio._id)}
+                  title="Delete Portfolio"
+                >
+                  🗑️ Delete
+                </button>
+              )}
+            </div>
+            {selectedPortfolio && (
+              <div className="premarket-toggle">
+                <input
+                  type="checkbox"
+                  id="extended-hours-toggle"
+                  checked={showPremarket}
+                  onChange={(e) => setShowPremarket(e.target.checked)}
+                />
+                <label htmlFor="extended-hours-toggle">Extended Hours Analysis</label>
+              </div>
             )}
           </div>
-          {selectedPortfolio && (
-            <div className="premarket-toggle">
-              <input
-                type="checkbox"
-                id="extended-hours-toggle"
-                checked={showPremarket}
-                onChange={(e) => setShowPremarket(e.target.checked)}
-              />
-              <label htmlFor="extended-hours-toggle">Extended Hours Analysis</label>
-            </div>
-          )}
-        </div>
+        )}
       </div>
 
       {error && <div className="error-message">{error}</div>}
