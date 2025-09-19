@@ -22,19 +22,23 @@ const Header = ({ lastUpdated, onRefresh, user, onLogout, isAdmin }) => {
           </h1>
         </div>
         
+        <div className="header-center">
+          <nav className="main-nav">
+            <a href="#portfolio" className="nav-link">Portfolio</a>
+            <a href="#watchlist" className="nav-link">Watchlist</a>
+            <a href="#insights" className="nav-link">Daily Insights</a>
+            <a href="#market" className="nav-link">Market Overview</a>
+          </nav>
+        </div>
+
         <div className="header-right">
-          {user && (
-            <div className="user-info">
-              <span className="welcome-text">
-                Welcome, {user.firstName || user.username}
-                {isAdmin && <span className="admin-badge">Admin</span>}
-              </span>
-            </div>
+          {user && isAdmin && (
+            <span className="admin-badge">Admin</span>
           )}
           
           {lastUpdated && (
             <div className="last-updated">
-              Last updated: {formatTime(lastUpdated)}
+              {formatTime(lastUpdated)}
             </div>
           )}
           
@@ -44,8 +48,7 @@ const Header = ({ lastUpdated, onRefresh, user, onLogout, isAdmin }) => {
               className="refresh-button"
               title="Refresh data"
             >
-              <span className="refresh-icon">🔄</span>
-              Refresh
+              🔄
             </button>
           )}
           
@@ -55,8 +58,7 @@ const Header = ({ lastUpdated, onRefresh, user, onLogout, isAdmin }) => {
               className="logout-button"
               title="Logout"
             >
-              <span className="logout-icon">🚪</span>
-              Logout
+              🚪
             </button>
           )}
         </div>
