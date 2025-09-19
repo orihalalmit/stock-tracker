@@ -256,8 +256,10 @@ const AddPositionForm = ({ onSubmit }) => {
             </div>
           </div>
 
-          <div style={{marginTop: '1rem', padding: '0.5rem', background: 'rgba(16, 185, 129, 0.1)', borderRadius: '4px', fontSize: '0.8rem', color: 'rgba(255,255,255,0.8)'}}>
-            💡 Tip: Press Cmd+Enter to submit quickly, or scroll down to find the "Add Position" button
+          <div style={{marginTop: '1.5rem', padding: '1rem', background: 'rgba(16, 185, 129, 0.15)', borderRadius: '8px', fontSize: '0.9rem', color: 'rgba(255,255,255,0.9)', border: '1px solid rgba(16, 185, 129, 0.3)'}}>
+            <div style={{fontWeight: 'bold', marginBottom: '0.5rem'}}>🎯 Ready to submit?</div>
+            <div>The <strong>green "ADD POSITION"</strong> button is at the bottom of this form!</div>
+            <div style={{marginTop: '0.5rem', fontSize: '0.8rem', opacity: 0.8}}>💡 Quick tip: Press Cmd+Enter to submit instantly</div>
           </div>
 
           <div className="form-actions">
