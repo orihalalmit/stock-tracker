@@ -226,48 +226,6 @@
     padding: 0.5rem 0.75rem;
   }
 }
-  
-  .title-main {
-    font-size: 1.375rem;
-  }
-  
-  .title-accent {
-    font-size: 0.75rem;
-  }
-  
-  .app-subtitle {
-    font-size: 0.7rem;
-    padding: var(--space-xs) var(--space-sm);
-  }
-  
-  .refresh-button, 
-  .logout-button {
-    padding: var(--space-sm) var(--space-md);
-    font-size: 0.8rem;
-    flex: 1;
-    justify-content: center;
-  }
-  
-  .welcome-text {
-    font-size: 0.8rem;
-  }
-  
-  .admin-badge {
-    font-size: 0.6rem;
-    padding: 2px var(--space-xs);
-  }
-  
-  .last-updated {
-    font-size: 0.7rem;
-    padding: var(--space-xs);
-  }
-
-  .user-info {
-    padding: var(--space-sm) var(--space-md);
-    flex: 1;
-    justify-content: center;
-  }
-}
 
 @media (max-width: 480px) {
   .header {
