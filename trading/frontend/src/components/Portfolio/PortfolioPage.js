@@ -7,7 +7,6 @@ import AddPositionForm from './AddPositionForm';
 import TransactionHistory from './TransactionHistory';
 import ImportCSV from './ImportCSV';
 import PortfolioInsights from './PortfolioInsights';
-import TestForm from './TestForm';
 import { useAuth } from '../Auth/AuthContext';
 
 const PortfolioPage = ({ activeView = 'management', user: currentUser, onLogout, isAdmin }) => {
@@ -308,7 +307,6 @@ const PortfolioPage = ({ activeView = 'management', user: currentUser, onLogout,
 
   return (
     <div className="portfolio-page">
-      <TestForm />
       <div className="portfolio-header">
         <div className="management-toggle">
           <div className="toggle-left">
