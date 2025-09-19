@@ -7,6 +7,7 @@ import AddPositionForm from './AddPositionForm';
 import TransactionHistory from './TransactionHistory';
 import ImportCSV from './ImportCSV';
 import PortfolioInsights from './PortfolioInsights';
+import TestForm from './TestForm';
 import { useAuth } from '../Auth/AuthContext';
 
 const PortfolioPage = ({ activeView = 'management', user: currentUser, onLogout, isAdmin }) => {
@@ -170,15 +171,40 @@ const PortfolioPage = ({ activeView = 'management', user: currentUser, onLogout,
 
   const handleAddPosition = async (position) => {
     try {
-      await axios.post(
-        `/api/portfolio/${selectedPortfolioRef.current._id}/positions`,
-        position
+      console.log('🚀 Adding position:', position);
+      console.log('🔍 Selected portfolio:', selectedPortfolioRef.current);
+      console.log('🔍 Auth token exists:', !!token);
+      
+      if (!selectedPortfolioRef.current?._id) {
+        throw new Error('No portfolio selected');
+      }
+
+      const portfolioId = selectedPortfolioRef.current._id;
+      console.log('📤 Making API call to:', `/api/portfolio/${portfolioId}/positions`);
+      
+      const response = await axios.post(
+        `/api/portfolio/${portfolioId}/positions`,
+        position,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          }
+        }
       );
+      
+      console.log('✅ Position added successfully:', response.data);
       await fetchPortfolios(); // Refresh all portfolios with latest data
       setError(null);
+      return { success: true };
     } catch (err) {
-      setError('Failed to add position');
-      console.error(err);
+      console.error('❌ Error adding position:', err);
+      console.error('Error response:', err.response?.data);
+      console.error('Error status:', err.response?.status);
+      
+      const errorMessage = err.response?.data?.error || err.message || 'Failed to add position';
+      setError(`Failed to add position: ${errorMessage}`);
+      throw err; // Re-throw so the form can handle it
     }
   };
 
@@ -282,6 +308,7 @@ const PortfolioPage = ({ activeView = 'management', user: currentUser, onLogout,
 
   return (
     <div className="portfolio-page">
+      <TestForm />
       <div className="portfolio-header">
         <div className="management-toggle">
           <div className="toggle-left">

@@ -155,10 +155,27 @@
   font-size: 0.8rem;
   margin-bottom: 1rem;
   border: 1px solid rgba(239, 68, 68, 0.3);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
-.error-icon {
-  font-size: 1.2rem;
+.form-success {
+  background: rgba(16, 185, 129, 0.2);
+  color: white;
+  padding: 0.6rem;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  margin-bottom: 1rem;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.error-icon,
+.success-icon {
+  font-size: 1rem;
 }
 
 /* Form Grid */

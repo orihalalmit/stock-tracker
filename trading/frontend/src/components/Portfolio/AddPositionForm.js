@@ -25,6 +25,7 @@ const AddPositionForm = ({ onSubmit }) => {
   });
   const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -49,13 +50,22 @@ const AddPositionForm = ({ onSubmit }) => {
     }
 
     try {
+      console.log('📝 Form submitting with data:', {
+        symbol: formData.symbol.trim().toUpperCase(),
+        shares: parseFloat(formData.shares),
+        averagePrice: parseFloat(formData.averagePrice),
+        sector: formData.sector
+      });
+
       // Submit form
-      await onSubmit({
+      const result = await onSubmit({
         ...formData,
         symbol: formData.symbol.trim().toUpperCase(),
         shares: parseFloat(formData.shares),
         averagePrice: parseFloat(formData.averagePrice)
       });
+
+      console.log('✅ Form submission result:', result);
 
       // Reset form on success
       setFormData({
@@ -64,10 +74,27 @@ const AddPositionForm = ({ onSubmit }) => {
         averagePrice: '',
         sector: 'Technology'
       });
-      setIsOpen(false);
+      setError('');
+      
+      // Show success message
+      setSuccessMessage('Position added successfully!');
+      setTimeout(() => {
+        setSuccessMessage('');
+        setIsOpen(false);
+      }, 1500);
+      
     } catch (err) {
-      setError('Failed to add position. Please try again.');
-      console.error('Error adding position:', err);
+      console.error('❌ Form submission error:', err);
+      
+      // Extract more specific error message
+      let errorMessage = 'Failed to add position. Please try again.';
+      if (err.response?.data?.error) {
+        errorMessage = err.response.data.error;
+      } else if (err.message) {
+        errorMessage = err.message;
+      }
+      
+      setError(errorMessage);
     } finally {
       setIsSubmitting(false);
     }
@@ -122,6 +149,13 @@ const AddPositionForm = ({ onSubmit }) => {
           <div className="form-error">
             <span className="error-icon">⚠️</span>
             {error}
+          </div>
+        )}
+
+        {successMessage && (
+          <div className="form-success">
+            <span className="success-icon">✅</span>
+            {successMessage}
           </div>
         )}
 
