@@ -319,13 +319,13 @@ const PortfolioSummary = ({ portfolio, showPremarket = false }) => {
           <p className="subtitle">Track your investments with real market data</p>
         </div>
         <div className="currency-toggle">
-          <label className="currency-checkbox" title="Convert portfolio values using current USD/ILS exchange rate">
+          <label className="currency-checkbox" title="Convert portfolio values using current USD/ILS exchange rate" style={{ fontSize: '0.75rem' }}>
             <input 
               type="checkbox" 
               checked={showInILS} 
               onChange={() => setShowInILS(!showInILS)} 
             />
-            Show in Israeli Shekel (ILS)
+ILS
           </label>
           {showInILS && usdIlsRate > 0 && (
             <div className="exchange-rate-info">

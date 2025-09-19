@@ -43,7 +43,7 @@ body::after {
 .app {
   min-height: 100vh;
   position: relative;
-  padding-bottom: var(--space-2xl);
+  padding-bottom: var(--space-sm);
   backdrop-filter: blur(2px);
 }
 
