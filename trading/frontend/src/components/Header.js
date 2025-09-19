@@ -76,10 +76,6 @@ const Header = ({ lastUpdated, onRefresh, user, onLogout, isAdmin, activeTab, on
         </div>
 
         <div className="header-right">
-          {user && isAdmin && (
-            <span className="admin-badge">Admin</span>
-          )}
-          
           {lastUpdated && (
             <div className="last-updated">
               {formatTime(lastUpdated)}
@@ -93,16 +89,6 @@ const Header = ({ lastUpdated, onRefresh, user, onLogout, isAdmin, activeTab, on
               title="Refresh data"
             >
               🔄
-            </button>
-          )}
-          
-          {user && (
-            <button 
-              onClick={onLogout} 
-              className="logout-button"
-              title="Logout"
-            >
-              🚪
             </button>
           )}
         </div>

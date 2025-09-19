@@ -438,11 +438,11 @@ const MainApp = () => {
         </>
       );
     } else if (activeTab === 'portfolio') {
-      return <PortfolioPage />;
+      return <PortfolioPage user={user} onLogout={logout} isAdmin={isAdmin()} />;
     } else if (activeTab === 'watchlists') {
       return <WatchlistsPage />;
     } else if (activeTab === 'insights') {
-      return <PortfolioPage activeView="insights" />;
+      return <PortfolioPage activeView="insights" user={user} onLogout={logout} isAdmin={isAdmin()} />;
     } else if (activeTab === 'admin' && isAdmin()) {
       return <AdminPanel />;
     }

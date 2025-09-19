@@ -9,7 +9,7 @@ import ImportCSV from './ImportCSV';
 import PortfolioInsights from './PortfolioInsights';
 import { useAuth } from '../Auth/AuthContext';
 
-const PortfolioPage = ({ activeView = 'management' }) => {
+const PortfolioPage = ({ activeView = 'management', user, onLogout, isAdmin }) => {
   const [portfolios, setPortfolios] = useState([]);
   const [selectedPortfolio, setSelectedPortfolio] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -284,16 +284,31 @@ const PortfolioPage = ({ activeView = 'management' }) => {
     <div className="portfolio-page">
       <div className="portfolio-header">
         <div className="management-toggle">
-          <button 
-            className="toggle-management-btn"
-            onClick={() => setIsManagementCollapsed(!isManagementCollapsed)}
-          >
-            <span className="toggle-icon">{isManagementCollapsed ? '▶' : '▼'}</span>
-            <span>Portfolio Settings</span>
-          </button>
-          <span className="current-portfolio-name">
-            {selectedPortfolio?.name || 'No Portfolio Selected'}
-          </span>
+          <div className="toggle-left">
+            <button 
+              className="toggle-management-btn"
+              onClick={() => setIsManagementCollapsed(!isManagementCollapsed)}
+            >
+              <span className="toggle-icon">{isManagementCollapsed ? '▶' : '▼'}</span>
+              <span>Portfolio Settings</span>
+            </button>
+            <span className="current-portfolio-name">
+              {selectedPortfolio?.name || 'No Portfolio Selected'}
+            </span>
+          </div>
+          <div className="user-controls">
+            {isAdmin && (
+              <span className="admin-badge-portfolio">Admin</span>
+            )}
+            <span className="username">👤 {user?.username || user?.email || 'User'}</span>
+            <button 
+              className="signout-btn"
+              onClick={onLogout}
+              title="Sign Out"
+            >
+              🚪 Sign Out
+            </button>
+          </div>
         </div>
         
         {!isManagementCollapsed && (
