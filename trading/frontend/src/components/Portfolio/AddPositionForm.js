@@ -144,6 +144,8 @@ const AddPositionForm = ({ onSubmit }) => {
             ×
           </button>
         </div>
+        
+        <div className="form-scroll-container">
 
         {error && (
           <div className="form-error">
@@ -159,7 +161,7 @@ const AddPositionForm = ({ onSubmit }) => {
           </div>
         )}
 
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} style={{display: 'flex', flexDirection: 'column', height: '100%'}}>
           <div className="form-grid">
             <div className="form-group">
               <label htmlFor="symbol">
@@ -243,10 +245,19 @@ const AddPositionForm = ({ onSubmit }) => {
                   min="0.01"
                   className="form-input"
                   required
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && e.metaKey) {
+                      handleSubmit(e);
+                    }
+                  }}
                 />
                 <span className="input-icon">💰</span>
               </div>
             </div>
+          </div>
+
+          <div style={{marginTop: '1rem', padding: '0.5rem', background: 'rgba(16, 185, 129, 0.1)', borderRadius: '4px', fontSize: '0.8rem', color: 'rgba(255,255,255,0.8)'}}>
+            💡 Tip: Press Cmd+Enter to submit quickly, or scroll down to find the "Add Position" button
           </div>
 
           <div className="form-actions">
@@ -268,6 +279,7 @@ const AddPositionForm = ({ onSubmit }) => {
             </button>
           </div>
         </form>
+        </div>
       </div>
     </div>
   );
