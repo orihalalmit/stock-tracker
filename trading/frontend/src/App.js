@@ -441,6 +441,8 @@ const MainApp = () => {
       return <PortfolioPage />;
     } else if (activeTab === 'watchlists') {
       return <WatchlistsPage />;
+    } else if (activeTab === 'insights') {
+      return <PortfolioPage activeView="insights" />;
     } else if (activeTab === 'admin' && isAdmin()) {
       return <AdminPanel />;
     }
@@ -466,34 +468,6 @@ const MainApp = () => {
         onTabChange={setActiveTab}
       />
 
-      <div className="tabs">
-        <button
-          className={`tab-button ${activeTab === 'market' ? 'active' : ''}`}
-          onClick={() => setActiveTab('market')}
-        >
-          📊 Market Overview
-        </button>
-        <button
-          className={`tab-button ${activeTab === 'portfolio' ? 'active' : ''}`}
-          onClick={() => setActiveTab('portfolio')}
-        >
-          💼 Portfolio
-        </button>
-        <button
-          className={`tab-button ${activeTab === 'watchlists' ? 'active' : ''}`}
-          onClick={() => setActiveTab('watchlists')}
-        >
-          👀 Watchlists
-        </button>
-        {isAdmin() && (
-          <button
-            className={`tab-button ${activeTab === 'admin' ? 'active' : ''}`}
-            onClick={() => setActiveTab('admin')}
-          >
-            ⚙️ Admin Panel
-          </button>
-        )}
-      </div>
 
       <div className="content">
         {renderContent()}

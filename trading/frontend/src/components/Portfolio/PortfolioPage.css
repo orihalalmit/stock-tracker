@@ -21,17 +21,85 @@
 }
 
 .portfolio-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
   margin-bottom: var(--space-xl);
-  padding: var(--space-xl);
+  padding: var(--space-lg);
   background: var(--gradient-glass);
   backdrop-filter: var(--glass-backdrop);
   border-radius: var(--radius-2xl);
   border: var(--glass-border);
   position: relative;
   overflow: hidden;
+}
+
+/* Collapsible Portfolio Management Styles */
+.management-toggle {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-md) 0;
+}
+
+.toggle-management-btn {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(99, 102, 241, 0.08));
+  border: 1px solid rgba(59, 130, 246, 0.2);
+  border-radius: var(--radius-lg);
+  color: var(--text-secondary);
+  padding: var(--space-md) var(--space-lg);
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  font-family: inherit;
+  box-shadow: var(--shadow-sm);
+  backdrop-filter: blur(8px);
+  position: relative;
+  overflow: hidden;
+}
+
+.toggle-management-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.1), transparent);
+  transition: left 0.5s ease;
+}
+
+.toggle-management-btn:hover::before {
+  left: 100%;
+}
+
+.toggle-management-btn:hover {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(99, 102, 241, 0.12));
+  border-color: rgba(59, 130, 246, 0.3);
+  color: var(--text-primary);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md), 0 0 15px rgba(59, 130, 246, 0.2);
+}
+
+.toggle-icon {
+  font-size: 0.75rem;
+  color: var(--accent-blue);
+  transition: transform 0.3s ease;
+}
+
+.toggle-management-btn:hover .toggle-icon {
+  transform: scale(1.1);
+}
+
+.current-portfolio-name {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  background: linear-gradient(135deg, var(--accent-gold), var(--accent-blue));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .portfolio-header::before {
@@ -72,6 +140,28 @@
   display: flex;
   align-items: center;
   gap: var(--space-lg);
+  padding: var(--space-xl);
+  margin-top: var(--space-md);
+  background: linear-gradient(145deg, rgba(15, 23, 42, 0.8), rgba(30, 41, 59, 0.6));
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(59, 130, 246, 0.15);
+  border-radius: var(--radius-xl);
+  box-shadow: 
+    var(--shadow-lg),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  animation: slideDown 0.3s ease-out;
+  position: relative;
+  overflow: hidden;
+}
+
+.portfolio-controls::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.3), transparent);
 }
 
 .portfolio-selector {

@@ -62,6 +62,14 @@ const Header = ({ lastUpdated, onRefresh, user, onLogout, isAdmin, activeTab, on
                 >
                   📈 Market Overview
                 </button>
+                {isAdmin && (
+                  <button 
+                    className={`nav-link ${activeTab === 'admin' ? 'active' : ''}`}
+                    onClick={() => { onTabChange('admin'); setIsMenuOpen(false); }}
+                  >
+                    ⚙️ Admin Panel
+                  </button>
+                )}
               </nav>
             )}
           </div>
