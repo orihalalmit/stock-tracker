@@ -9,7 +9,7 @@ import ImportCSV from './ImportCSV';
 import PortfolioInsights from './PortfolioInsights';
 import { useAuth } from '../Auth/AuthContext';
 
-const PortfolioPage = ({ activeView = 'management', user, onLogout, isAdmin }) => {
+const PortfolioPage = ({ activeView = 'management', user: currentUser, onLogout, isAdmin }) => {
   const [portfolios, setPortfolios] = useState([]);
   const [selectedPortfolio, setSelectedPortfolio] = useState(null);
   const [loading, setLoading] = useState(true);
