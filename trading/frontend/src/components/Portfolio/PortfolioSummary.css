@@ -816,6 +816,9 @@
   margin-top: var(--space-xs);
   font-family: 'JetBrains Mono', monospace;
   font-weight: 600;
+  display: block;
+  line-height: 1.4;
+  word-break: break-word;
 }
 
 /* Currency controls */
