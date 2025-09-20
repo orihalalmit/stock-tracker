@@ -652,6 +652,12 @@
   .portfolio-controls {
     gap: var(--space-md);
   }
+  
+  /* Start stacking market widgets on tablets */
+  .market-sentiment {
+    grid-template-columns: 1fr !important;
+    gap: var(--space-lg);
+  }
 }
 
 @media (max-width: 768px) {
@@ -708,9 +714,10 @@
   }
   
   .market-sentiment {
-    grid-template-columns: 1fr;
-    gap: var(--space-md);
+    grid-template-columns: 1fr !important; /* Force single column on mobile */
+    gap: var(--space-lg);
     padding: var(--space-lg);
+    margin: var(--space-lg) 0;
   }
   
   .market-sentiment::before {
@@ -719,6 +726,13 @@
     transform: translateX(-50%);
     font-size: 0.75rem;
     padding: var(--space-xs) var(--space-md);
+  }
+  
+  /* Ensure widgets stack properly */
+  .usd-ils-widget,
+  .fear-greed-widget {
+    width: 100%;
+    margin-bottom: var(--space-md);
   }
 
   .portfolio-tabs {
@@ -812,15 +826,23 @@
   }
   
   .market-sentiment {
+    grid-template-columns: 1fr !important; /* Force single column on small mobile */
     margin: var(--space-lg) 0;
     padding: var(--space-md);
-    gap: var(--space-sm);
+    gap: var(--space-md);
   }
   
   .market-sentiment::before {
     top: -5px;
     font-size: 0.7rem;
     padding: var(--space-xs) var(--space-sm);
+  }
+  
+  /* Extra spacing for small mobile */
+  .usd-ils-widget,
+  .fear-greed-widget {
+    width: 100%;
+    margin-bottom: var(--space-sm);
   }
 }
 
@@ -838,6 +860,14 @@
   position: relative;
   overflow: hidden;
   min-height: 200px; /* Ensure minimum height for visibility */
+}
+
+/* Mobile-first approach: stack on smaller screens */
+@media (max-width: 900px) {
+  .market-sentiment {
+    grid-template-columns: 1fr !important;
+    gap: var(--space-lg);
+  }
 }
 
 .market-sentiment::before {
