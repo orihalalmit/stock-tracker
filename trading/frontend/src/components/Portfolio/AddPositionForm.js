@@ -118,9 +118,6 @@ const AddPositionForm = ({ onSubmit }) => {
           <span className="button-icon">📈</span>
           <span className="button-text">Add New Position</span>
         </button>
-        <p className="widget-description">
-          Track your investments by adding stocks to your portfolio. Click to get started!
-        </p>
       </div>
     );
   }
@@ -133,7 +130,6 @@ const AddPositionForm = ({ onSubmit }) => {
             <div className="form-icon">📊</div>
             <div className="header-text">
               <h3>Add New Position</h3>
-              <p className="form-subtitle">Enter your stock position details</p>
             </div>
           </div>
           <button 
@@ -256,12 +252,6 @@ const AddPositionForm = ({ onSubmit }) => {
             </div>
           </div>
 
-          <div style={{marginTop: '1.5rem', padding: '1.5rem', background: 'rgba(16, 185, 129, 0.2)', borderRadius: '12px', fontSize: '1rem', color: 'white', border: '2px solid rgba(16, 185, 129, 0.5)', textAlign: 'center'}}>
-            <div style={{fontSize: '1.5rem', marginBottom: '1rem'}}>⬇️ SCROLL DOWN ⬇️</div>
-            <div style={{fontWeight: 'bold', fontSize: '1.1rem', marginBottom: '0.5rem'}}>🎯 HUGE GREEN SUBMIT BUTTON BELOW!</div>
-            <div style={{fontSize: '1rem'}}>The <strong>massive "ADD POSITION"</strong> button is at the bottom!</div>
-            <div style={{marginTop: '1rem', fontSize: '0.9rem', opacity: 0.9}}>💡 Or press Cmd+Enter to submit instantly</div>
-          </div>
 
           <div className="form-actions">
             <button 
