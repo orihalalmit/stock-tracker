@@ -498,7 +498,7 @@
 .portfolio-actions::before {
   content: "Portfolio Management";
   position: absolute;
-  top: -12px;
+  top: -8px;
   left: 20px;
   background: var(--gradient-surface);
   color: var(--accent-gold-light);
@@ -510,6 +510,7 @@
   letter-spacing: 0.05em;
   text-transform: uppercase;
   box-shadow: var(--shadow-sm);
+  z-index: 10;
 }
 
 .portfolio-actions::after {
