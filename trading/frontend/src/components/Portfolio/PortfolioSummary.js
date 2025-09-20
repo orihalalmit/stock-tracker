@@ -35,8 +35,8 @@ const FearGreedIndex = () => {
   useEffect(() => {
     const fetchFearGreedIndex = async () => {
       try {
-        // Default to crypto for now, but could be made configurable
-        const response = await axios.get('/api/market/fear-greed?type=crypto');
+        // Default to stock market Fear & Greed (CNN), fallback to crypto if needed
+        const response = await axios.get('/api/market/fear-greed?type=stock');
         setFearGreedData(response.data);
         setError(null);
       } catch (err) {
