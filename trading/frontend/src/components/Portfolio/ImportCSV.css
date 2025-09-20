@@ -57,13 +57,13 @@
 .import-csv-modal {
   background: rgba(255, 255, 255, 0.05);
   backdrop-filter: blur(10px);
-  border-radius: 10px;
+  border-radius: 12px;
   border: 1px solid rgba(255, 255, 255, 0.1);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-  width: 450px;
+  width: 550px;
   max-width: 90vw;
   height: auto;
-  max-height: 75vh;
+  max-height: 80vh;
   display: flex;
   flex-direction: column;
   margin: auto;
@@ -73,8 +73,8 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1rem;
-  padding: 1rem 1.5rem 0 1.5rem;
+  margin-bottom: 1.25rem;
+  padding: 1.5rem 2rem 0 2rem;
   flex-shrink: 0;
 }
 
@@ -120,14 +120,14 @@
 }
 
 .modal-content {
-  padding: 0 1.5rem 1.5rem 1.5rem;
+  padding: 0 2rem 2rem 2rem;
 }
 
 .dropzone {
   background: rgba(255, 255, 255, 0.05);
   border: 2px dashed rgba(255, 255, 255, 0.2);
-  border-radius: 10px;
-  padding: 1.5rem;
+  border-radius: 12px;
+  padding: 2rem;
   text-align: center;
   cursor: pointer;
   transition: all 0.3s ease;

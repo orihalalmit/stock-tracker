@@ -498,13 +498,13 @@
 .portfolio-actions::before {
   content: "Portfolio Management";
   position: absolute;
-  top: -8px;
+  top: -10px;
   left: 20px;
   background: var(--gradient-surface);
   color: var(--accent-gold-light);
-  padding: var(--space-xs) var(--space-lg);
+  padding: var(--space-sm) var(--space-xl);
   border-radius: var(--radius-xl);
-  font-size: 0.75rem;
+  font-size: 0.9rem;
   font-weight: 700;
   border: var(--glass-border);
   letter-spacing: 0.05em;

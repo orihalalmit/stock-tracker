@@ -77,20 +77,20 @@
 .add-position-form {
   background: rgba(255, 255, 255, 0.05);
   backdrop-filter: blur(10px);
-  border-radius: 10px;
+  border-radius: 12px;
   border: 1px solid rgba(255, 255, 255, 0.1);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-  width: 380px;
+  width: 520px;
   max-width: 90vw;
   height: auto;
-  max-height: 75vh;
+  max-height: 80vh;
   display: flex;
   flex-direction: column;
   margin: auto;
 }
 
 .form-scroll-container {
-  padding: 0 1.5rem 0 1.5rem;
+  padding: 0 2rem 0 2rem;
   overflow-y: visible;
 }
 
@@ -109,8 +109,8 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1rem;
-  padding: 1rem 1.5rem 0 1.5rem;
+  margin-bottom: 1.25rem;
+  padding: 1.5rem 2rem 0 2rem;
   flex-shrink: 0;
 }
 
@@ -196,14 +196,14 @@
 .form-grid {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
-  margin-bottom: 1rem;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
 }
 
 .form-group {
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
+  gap: 0.5rem;
 }
 
 .form-group.full-width {
@@ -239,11 +239,11 @@
 .form-input {
   background: rgba(255, 255, 255, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 6px;
-  padding: 0.625rem;
+  border-radius: 8px;
+  padding: 0.875rem;
   padding-right: 2.5rem;
   color: white;
-  font-size: 0.9rem;
+  font-size: 1rem;
   transition: all 0.2s ease;
   width: 100%;
   box-sizing: border-box;
@@ -395,14 +395,14 @@
 
 .form-actions {
   display: flex;
-  gap: 0.75rem;
+  gap: 1rem;
   justify-content: flex-end;
-  padding: 1rem 1.5rem;
+  padding: 1.5rem 2rem;
   border-top: 1px solid rgba(16, 185, 129, 0.3);
   background: rgba(16, 185, 129, 0.1);
-  border-radius: 0 0 10px 10px;
+  border-radius: 0 0 12px 12px;
   flex-shrink: 0;
-  margin-top: 0.5rem;
+  margin-top: 1rem;
 }
 
 
