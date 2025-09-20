@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import CurrencyCard from '../CurrencyCard';
 import './PortfolioSummary.css';
 
 const formatCurrency = (value, currency = 'USD') => {
@@ -27,79 +26,6 @@ const formatPercentage = (value) => {
   }).format(value / 100);
 };
 
-const UsdIlsWidget = ({ onRateChange, onPreviousRateChange }) => {
-  const [usdIlsData, setUsdIlsData] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    const fetchUsdIls = async () => {
-      try {
-        const response = await axios.get('/api/forex/usdils');
-        setUsdIlsData(response.data);
-        // Pass the current and previous rates to parent component
-        if (onRateChange && response.data) {
-          onRateChange(response.data.rate);
-        }
-        if (onPreviousRateChange && response.data) {
-          onPreviousRateChange(response.data.previousRate);
-        }
-        setError(null);
-      } catch (err) {
-        console.error('Failed to fetch USD/ILS rate:', err);
-        setError('Failed to load currency data');
-        setUsdIlsData({
-          symbol: 'USD/ILS',
-          rate: 0,
-          previousRate: 0,
-          dailyChange: 0,
-          dailyChangePercent: 0,
-          timestamp: new Date().toISOString(),
-          lastUpdated: 'N/A',
-          error: 'Failed to fetch rate'
-        });
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchUsdIls();
-    // Refresh every 15 minutes to match backend cache expiry
-    const interval = setInterval(fetchUsdIls, 15 * 60 * 1000);
-    return () => clearInterval(interval);
-  }, [onRateChange, onPreviousRateChange]);
-
-  if (loading) {
-    return (
-      <div className="currency-widget">
-        <div className="widget-header">
-          <h3>USD/ILS Exchange Rate</h3>
-          <div className="loading">Loading...</div>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="currency-widget">
-        <div className="widget-header">
-          <h3>USD/ILS Exchange Rate</h3>
-          <div className="error">{error}</div>
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <div className="currency-widget">
-      <div className="widget-header">
-        <h3>USD/ILS Exchange Rate</h3>
-      </div>
-      {usdIlsData && <CurrencyCard currency={usdIlsData} />}
-    </div>
-  );
-};
 
 const FearGreedIndex = () => {
   const [fearGreedData, setFearGreedData] = useState({ score: 50 });
@@ -196,8 +122,8 @@ const PortfolioSummary = ({ portfolio, showPremarket = false }) => {
   const [historicalLoading, setHistoricalLoading] = useState(true);
   const [isHoldingsExpanded, setIsHoldingsExpanded] = useState(false);
   const [showInILS, setShowInILS] = useState(false);
-  const [usdIlsRate, setUsdIlsRate] = useState(0);
-  const [usdIlsPreviousRate, setUsdIlsPreviousRate] = useState(0);
+  const [usdIlsRate] = useState(0);
+  const [usdIlsPreviousRate] = useState(0);
   
   // Use the pre-calculated summary values from the backend
   const {
@@ -210,15 +136,6 @@ const PortfolioSummary = ({ portfolio, showPremarket = false }) => {
     intradaySummary = null
   } = summary;
 
-  // Function to handle USD/ILS rate updates
-  const handleRateChange = (rate) => {
-    setUsdIlsRate(rate);
-  };
-
-  // Function to handle USD/ILS previous rate updates
-  const handlePreviousRateChange = (rate) => {
-    setUsdIlsPreviousRate(rate);
-  };
 
   // Convert USD value to ILS
   const convertToILS = (usdValue) => {

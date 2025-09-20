@@ -51,7 +51,7 @@ const AddPositionForm = ({ onSubmit }) => {
 
     try {
       // Submit form
-      const result = await onSubmit({
+      await onSubmit({
         ...formData,
         symbol: formData.symbol.trim().toUpperCase(),
         shares: parseFloat(formData.shares),
