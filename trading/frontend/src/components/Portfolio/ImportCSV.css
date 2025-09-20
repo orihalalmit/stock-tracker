@@ -60,10 +60,11 @@
   border-radius: 12px;
   border: 1px solid rgba(255, 255, 255, 0.1);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-  width: 550px;
-  max-width: 90vw;
+  width: 650px;
+  max-width: 95vw;
+  min-height: 550px;
   height: auto;
-  max-height: 80vh;
+  max-height: 90vh;
   display: flex;
   flex-direction: column;
   margin: auto;
@@ -73,8 +74,8 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1.25rem;
-  padding: 1.5rem 2rem 0 2rem;
+  margin-bottom: 2rem;
+  padding: 2rem 2.5rem 0 2.5rem;
   flex-shrink: 0;
 }
 
@@ -85,21 +86,21 @@
 }
 
 .modal-icon {
-  font-size: 1.5rem;
+  font-size: 2rem;
   background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-  width: 36px;
-  height: 36px;
-  border-radius: 8px;
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 2px 6px rgba(59, 130, 246, 0.3);
+  box-shadow: 0 4px 8px rgba(59, 130, 246, 0.3);
 }
 
 .modal-header h3 {
   color: white;
   margin: 0;
-  font-size: 1.1rem;
+  font-size: 1.4rem;
   font-weight: 600;
 }
 
@@ -120,17 +121,26 @@
 }
 
 .modal-content {
-  padding: 0 2rem 2rem 2rem;
+  flex: 1;
+  padding: 0 2.5rem 2.5rem 2.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .dropzone {
   background: rgba(255, 255, 255, 0.05);
-  border: 2px dashed rgba(255, 255, 255, 0.2);
-  border-radius: 12px;
-  padding: 2rem;
+  border: 3px dashed rgba(255, 255, 255, 0.2);
+  border-radius: 15px;
+  padding: 3rem;
   text-align: center;
   cursor: pointer;
   transition: all 0.3s ease;
+  min-height: 200px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 .dropzone:hover {
@@ -151,21 +161,22 @@
 }
 
 .upload-icon {
-  font-size: 2rem;
-  margin-bottom: 0.25rem;
+  font-size: 3rem;
+  margin-bottom: 1rem;
   color: rgba(255, 255, 255, 0.7);
 }
 
 .upload-text {
   color: white;
-  font-size: 1rem;
-  font-weight: 500;
+  font-size: 1.2rem;
+  font-weight: 600;
   line-height: 1.5;
+  margin-bottom: 0.5rem;
 }
 
 .upload-hint {
   color: rgba(255, 255, 255, 0.6);
-  font-size: 0.8rem;
+  font-size: 1rem;
 }
 
 .import-error {
