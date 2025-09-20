@@ -67,10 +67,10 @@
   background: rgba(0, 0, 0, 0.8);
   backdrop-filter: blur(8px);
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
   z-index: 9999;
-  padding: 20px;
+  padding: 60px 20px 20px 20px;
   overflow-y: auto;
 }
 
@@ -368,6 +368,10 @@
 
 /* Mobile Responsive */
 @media (max-width: 768px) {
+  .add-position-form-overlay {
+    padding: 40px 15px 15px 15px;
+  }
+  
   .add-position-form {
     width: 95vw;
     max-width: none;
