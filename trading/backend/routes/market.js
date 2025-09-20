@@ -523,4 +523,23 @@ router.post('/config/validate-symbols', authenticate, async (req, res) => {
   }
 });
 
+// Fear & Greed Index endpoint
+router.get('/fear-greed', async (req, res) => {
+  try {
+    // For now, return mock data. In production, you would fetch from a real API
+    const mockData = {
+      score: Math.floor(Math.random() * 100), // Random score between 0-100
+      previousClose: Math.floor(Math.random() * 100),
+      oneWeekAgo: Math.floor(Math.random() * 100),
+      oneMonthAgo: Math.floor(Math.random() * 100),
+      lastUpdated: new Date().toISOString()
+    };
+    
+    res.json(mockData);
+  } catch (error) {
+    console.error('Error fetching Fear & Greed index:', error);
+    res.status(500).json({ error: 'Failed to fetch Fear & Greed index' });
+  }
+});
+
 module.exports = router; 

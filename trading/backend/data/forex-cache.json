@@ -1,0 +1,14 @@
+{
+  "data": {
+    "EURUSD": {
+      "currentRate": 1.1745,
+      "previousRate": 1.17888,
+      "dailyChange": -0.0043799999999998285,
+      "dailyChangePercent": -0.3715390879478682
+    }
+  },
+  "lastUpdated": {
+    "EURUSD": 1758376756679
+  },
+  "savedAt": "2025-09-20T13:59:17.256Z"
+}

@@ -712,6 +712,14 @@
     gap: var(--space-md);
     padding: var(--space-lg);
   }
+  
+  .market-sentiment::before {
+    top: -6px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.75rem;
+    padding: var(--space-xs) var(--space-md);
+  }
 
   .portfolio-tabs {
     padding: var(--space-lg);
@@ -802,6 +810,18 @@
     padding: var(--space-md) var(--space-xl);
     font-size: 0.875rem;
   }
+  
+  .market-sentiment {
+    margin: var(--space-lg) 0;
+    padding: var(--space-md);
+    gap: var(--space-sm);
+  }
+  
+  .market-sentiment::before {
+    top: -5px;
+    font-size: 0.7rem;
+    padding: var(--space-xs) var(--space-sm);
+  }
 }
 
 /* Market Sentiment Section */
@@ -817,6 +837,7 @@
   border: var(--glass-border);
   position: relative;
   overflow: hidden;
+  min-height: 200px; /* Ensure minimum height for visibility */
 }
 
 .market-sentiment::before {
@@ -852,6 +873,33 @@
   font-size: 1rem;
   font-weight: 600;
   text-align: center;
+}
+
+/* Mobile responsiveness for widgets */
+@media (max-width: 768px) {
+  .usd-ils-widget,
+  .fear-greed-widget {
+    padding: var(--space-md);
+    border-radius: var(--radius-lg);
+  }
+  
+  .widget-header h2,
+  .widget-header h3 {
+    font-size: 0.9rem;
+    margin-bottom: var(--space-sm);
+  }
+}
+
+@media (max-width: 480px) {
+  .usd-ils-widget,
+  .fear-greed-widget {
+    padding: var(--space-sm);
+  }
+  
+  .widget-header h2,
+  .widget-header h3 {
+    font-size: 0.85rem;
+  }
 }
 
 

@@ -914,6 +914,19 @@
   .dashboard-grid {
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   }
+  
+  /* Fear & Greed optimizations for tablets */
+  .fear-greed-card {
+    padding: var(--space-lg);
+  }
+  
+  .fear-greed-header h2 {
+    font-size: 1.25rem;
+  }
+  
+  .fear-greed-details {
+    padding: var(--space-md);
+  }
 }
 
 @media (max-width: 768px) {
@@ -960,6 +973,55 @@
   .historical-grid {
     grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
   }
+  
+  /* Fear & Greed mobile optimizations */
+  .fear-greed-card {
+    padding: var(--space-md);
+    margin-top: var(--space-lg);
+  }
+  
+  .fear-greed-header {
+    flex-direction: column;
+    gap: var(--space-md);
+    margin-bottom: var(--space-lg);
+    text-align: center;
+  }
+  
+  .fear-greed-header h2 {
+    font-size: 1.125rem;
+    margin-bottom: var(--space-sm);
+  }
+  
+  .sentiment-tag {
+    align-self: center;
+    padding: var(--space-sm) var(--space-md);
+    font-size: 0.8rem;
+  }
+  
+  .fear-greed-details {
+    padding: var(--space-md);
+  }
+  
+  .fear-greed-details p {
+    font-size: 0.8rem;
+    flex-direction: column;
+    gap: var(--space-xs);
+    text-align: center;
+  }
+  
+  .fear-greed-details p span {
+    font-size: 0.9rem;
+  }
+  
+  .fear-greed-description {
+    font-size: 0.8rem;
+    text-align: center;
+    line-height: 1.5;
+  }
+  
+  .scale-labels {
+    font-size: 0.7rem;
+  }
 }
 
 @media (max-width: 480px) {
@@ -997,6 +1059,59 @@
   
   .historical-grid {
     grid-template-columns: 1fr;
+  }
+  
+  /* Fear & Greed ultra-mobile optimizations */
+  .fear-greed-card {
+    padding: var(--space-sm);
+    margin-top: var(--space-md);
+  }
+  
+  .fear-greed-header h2 {
+    font-size: 1rem;
+  }
+  
+  .sentiment-tag {
+    padding: var(--space-xs) var(--space-sm);
+    font-size: 0.75rem;
+  }
+  
+  .fear-greed-scale {
+    margin: var(--space-lg) 0;
+  }
+  
+  .scale-bar {
+    height: 10px;
+  }
+  
+  .scale-indicator {
+    width: 16px;
+    height: 16px;
+    border: 2px solid var(--accent-gold);
+  }
+  
+  .scale-labels {
+    font-size: 0.65rem;
+    margin-top: var(--space-sm);
+  }
+  
+  .fear-greed-details {
+    padding: var(--space-sm);
+    margin: var(--space-md) 0;
+  }
+  
+  .fear-greed-details p {
+    font-size: 0.75rem;
+    margin: var(--space-xs) 0;
+  }
+  
+  .fear-greed-details p span {
+    font-size: 0.85rem;
+  }
+  
+  .fear-greed-description {
+    font-size: 0.75rem;
+    margin-top: var(--space-md);
   }
 }
 
