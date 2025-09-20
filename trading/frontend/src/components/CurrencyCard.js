@@ -24,7 +24,7 @@ const CurrencyCard = ({ currency }) => {
   return (
     <div className={`currency-card ${changeClass}`}>
       <div className="currency-header">
-        <h3 className="currency-symbol">{currency.symbol}</h3>
+        <h3 className="currency-symbol">USD/ILS</h3>
         <span className={`change-arrow ${changeClass}`}>{arrow}</span>
       </div>
       
@@ -43,17 +43,13 @@ const CurrencyCard = ({ currency }) => {
       
       <div className="currency-details">
         <div className="detail-row">
-          <span className="detail-label">Previous:</span>
+          <span className="detail-label">Previous Close</span>
           <span className="detail-value">₪{formatRate(currency.previousRate)}</span>
-        </div>
-        <div className="detail-row">
-          <span className="detail-label">Updated:</span>
-          <span className="detail-value">{currency.lastUpdated}</span>
         </div>
         {currency.error && (
           <div className="detail-row error">
-            <span className="detail-label">Status:</span>
-            <span className="detail-value">Offline</span>
+            <span className="detail-label">Status</span>
+            <span className="detail-value">Using cached data</span>
           </div>
         )}
       </div>
