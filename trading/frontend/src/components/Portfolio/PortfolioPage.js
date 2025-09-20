@@ -303,13 +303,13 @@ const PortfolioPage = ({ activeView = 'management', user: currentUser, onLogout,
         <TransactionHistory portfolioId={selectedPortfolio._id} />
         
         <div className="market-sentiment">
+          <FearGreedIndex />
           <div className="usd-ils-widget">
             <div className="widget-header">
               <h3>USD/ILS Exchange Rate</h3>
             </div>
             {usdIlsData && <CurrencyCard currency={usdIlsData} />}
           </div>
-          <FearGreedIndex />
         </div>
       </>
     );

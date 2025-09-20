@@ -721,11 +721,11 @@
   }
   
   .market-sentiment::before {
-    top: -6px;
+    top: -8px;
     left: 50%;
     transform: translateX(-50%);
-    font-size: 0.75rem;
-    padding: var(--space-xs) var(--space-md);
+    font-size: 0.8rem;
+    padding: var(--space-xs) var(--space-lg);
   }
   
   /* Ensure widgets stack properly */
@@ -833,9 +833,9 @@
   }
   
   .market-sentiment::before {
-    top: -5px;
-    font-size: 0.7rem;
-    padding: var(--space-xs) var(--space-sm);
+    top: -7px;
+    font-size: 0.75rem;
+    padding: var(--space-xs) var(--space-md);
   }
   
   /* Extra spacing for small mobile */
@@ -873,13 +873,13 @@
 .market-sentiment::before {
   content: "Market Information";
   position: absolute;
-  top: -8px;
+  top: -10px;
   left: 20px;
   background: var(--gradient-surface);
   color: var(--accent-blue);
-  padding: var(--space-xs) var(--space-lg);
+  padding: var(--space-sm) var(--space-xl);
   border-radius: var(--radius-xl);
-  font-size: 0.8rem;
+  font-size: 0.9rem;
   font-weight: 700;
   border: var(--glass-border);
   letter-spacing: 0.05em;
