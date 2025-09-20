@@ -45,14 +45,19 @@ cp trading/backend/.env.example trading/backend/.env
 
 ### Optional Variables
 
-1. **Alpaca API** (for live market data):
+1. **Polygon.io API** (for forex data):
+   ```bash
+   POLYGON_API_KEY=your_polygon_api_key
+   ```
+
+2. **Alpaca API** (for live market data):
    ```bash
    ALPACA_API_KEY=your_alpaca_api_key
    ALPACA_SECRET_KEY=your_alpaca_secret_key
    ALPACA_BASE_URL=https://paper-api.alpaca.markets/v2
    ```
 
-2. **Application Configuration**:
+3. **Application Configuration**:
    ```bash
    NODE_ENV=production
    PORT=3001
@@ -75,6 +80,15 @@ cp trading/backend/.env.example trading/backend/.env
 - Use a dedicated database user with minimal permissions
 - Enable authentication on your MongoDB instance
 - Use SSL/TLS connections in production
+
+### 4. API Key Security
+- **Polygon.io API**: Required for accurate forex data (USD/ILS, EUR/USD, etc.)
+  - Sign up at https://polygon.io and get your API key
+  - Free tier has rate limits; consider upgrading for production use
+  - Without this key, the app will use fallback forex data
+- **Alpaca API**: Optional for live stock market data
+  - Use paper trading URL for testing: https://paper-api.alpaca.markets/v2
+  - Use live URL for production: https://api.alpaca.markets/v2
 
 ## Deployment Steps
 
@@ -137,6 +151,7 @@ Once deployed:
 - [ ] Set strong ADMIN_PASSWORD
 - [ ] Set secure JWT_SECRET (32+ characters)
 - [ ] Configure production MONGODB_URI
+- [ ] Set POLYGON_API_KEY for accurate forex data
 - [ ] Set NODE_ENV=production
 - [ ] Remove any development/debug code
 - [ ] Set up proper logging
@@ -144,4 +159,5 @@ Once deployed:
 - [ ] Set up monitoring and backups
 - [ ] Test admin login functionality
 - [ ] Verify user registration works
-- [ ] Test portfolio creation and management 
+- [ ] Test portfolio creation and management
+- [ ] Verify forex data is working (USD/ILS rates) 

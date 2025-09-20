@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const axios = require('axios');
 const path = require('path');
+const fs = require('fs');
 require('dotenv').config();
 const connectDB = require('./config/db');
 const AlpacaService = require('./services/alpacaService');
@@ -16,6 +17,7 @@ const alpacaService = new AlpacaService();
 console.log('Environment variables check:');
 console.log('NODE_ENV:', process.env.NODE_ENV);
 console.log('MONGODB_URI exists:', !!process.env.MONGODB_URI);
+console.log('POLYGON_API_KEY exists:', !!process.env.POLYGON_API_KEY);
 
 // Security warnings for production
 if (process.env.NODE_ENV === 'production') {
@@ -25,6 +27,9 @@ if (process.env.NODE_ENV === 'production') {
   }
   if (!process.env.ADMIN_PASSWORD) {
     console.warn('⚠️  WARNING: ADMIN_PASSWORD is not set. Admin user will not be created.');
+  }
+  if (!process.env.POLYGON_API_KEY) {
+    console.warn('⚠️  WARNING: POLYGON_API_KEY is not set. Forex data will use fallback values.');
   }
 }
 
@@ -240,14 +245,59 @@ app.get('/api/stocks/snapshots', async (req, res) => {
       }
     }
     
-    // Cache for forex rates
+    // Cache for forex rates with persistent storage
+    const forexCacheFile = path.join(__dirname, 'data', 'forex-cache.json');
+    
     const forexCache = {
       data: {},
       lastUpdated: {},
-      cacheExpiry: 15 * 60 * 1000 // 15 minutes in milliseconds
+      cacheExpiry: 15 * 60 * 1000, // 15 minutes in milliseconds
+      
+      // Load cache from file on startup
+      load() {
+        try {
+          if (fs.existsSync(forexCacheFile)) {
+            const cached = JSON.parse(fs.readFileSync(forexCacheFile, 'utf8'));
+            this.data = cached.data || {};
+            this.lastUpdated = cached.lastUpdated || {};
+            console.log('Forex cache loaded from file');
+          }
+        } catch (error) {
+          console.error('Error loading forex cache:', error);
+          this.data = {};
+          this.lastUpdated = {};
+        }
+      },
+      
+      // Save cache to file
+      save() {
+        try {
+          // Ensure data directory exists
+          const dataDir = path.dirname(forexCacheFile);
+          if (!fs.existsSync(dataDir)) {
+            fs.mkdirSync(dataDir, { recursive: true });
+          }
+          
+          fs.writeFileSync(forexCacheFile, JSON.stringify({
+            data: this.data,
+            lastUpdated: this.lastUpdated,
+            savedAt: new Date().toISOString()
+          }, null, 2));
+        } catch (error) {
+          console.error('Error saving forex cache:', error);
+        }
+      },
+      
+      // Get cached data even if expired (for fallback)
+      getFallbackData(cacheKey) {
+        return this.data[cacheKey] || null;
+      }
     };
+    
+    // Load existing cache on startup
+    forexCache.load();
 
-    // Helper function to get forex data from Frankfurter API
+    // Helper function to get forex data from Polygon.io API
     async function getForexRateFromAPI(baseCurrency, targetCurrency) {
       try {
         const currentTime = Date.now();
@@ -261,28 +311,40 @@ app.get('/api/stocks/snapshots', async (req, res) => {
         }
         
         // If cache is expired or doesn't exist, fetch new data
-        console.log(`Fetching fresh ${baseCurrency}/${targetCurrency} data from Frankfurter API`);
-        const response = await axios.get(`https://api.frankfurter.dev/v1/latest?base=${baseCurrency}&symbols=${targetCurrency}`);
+        console.log(`Fetching fresh ${baseCurrency}/${targetCurrency} data from Polygon.io API`);
+        const polygonSymbol = `C:${baseCurrency}${targetCurrency}`;
         
-        if (response.data && response.data.rates && response.data.rates[targetCurrency]) {
-          const currentRate = response.data.rates[targetCurrency];
+        // Check if API key is available
+        if (!process.env.POLYGON_API_KEY) {
+          throw new Error('POLYGON_API_KEY environment variable is not set');
+        }
+        
+        // Use previous day aggregates endpoint (available with current plan)
+        const response = await axios.get(`https://api.polygon.io/v2/aggs/ticker/${polygonSymbol}/prev?apikey=${process.env.POLYGON_API_KEY}`);
+        
+        if (response.data && response.data.results && response.data.results.length > 0) {
+          const result = response.data.results[0];
+          const currentRate = result.c; // close price from previous day
           
-          // Get yesterday's rate for comparison
-          const yesterday = new Date();
-          yesterday.setDate(yesterday.getDate() - 1);
-          const yesterdayStr = yesterday.toISOString().split('T')[0];
-          
+          // Get day before yesterday for comparison
           let previousRate;
           try {
+            const dayBeforeYesterday = new Date();
+            dayBeforeYesterday.setDate(dayBeforeYesterday.getDate() - 2);
+            const dayBeforeYesterdayStr = dayBeforeYesterday.toISOString().split('T')[0];
+            
             const historicalResponse = await axios.get(
-              `https://api.frankfurter.dev/v1/${yesterdayStr}?base=${baseCurrency}&symbols=${targetCurrency}`
+              `https://api.polygon.io/v2/aggs/ticker/${polygonSymbol}/range/1/day/${dayBeforeYesterdayStr}/${dayBeforeYesterdayStr}?apikey=${process.env.POLYGON_API_KEY}`
             );
-            previousRate = historicalResponse.data.rates[targetCurrency];
+            if (historicalResponse.data && historicalResponse.data.results && historicalResponse.data.results.length > 0) {
+              previousRate = historicalResponse.data.results[0].c; // close price
+            } else {
+              throw new Error('No historical data available');
+            }
           } catch (histError) {
-            console.log(`Could not fetch historical rate for ${baseCurrency}/${targetCurrency}, estimating previous rate`);
-            // If historical data fails, estimate a reasonable previous rate
-            const randomChange = (Math.random() * 0.01) - 0.005;
-            previousRate = currentRate / (1 + randomChange);
+            console.log(`Could not fetch historical rate for ${baseCurrency}/${targetCurrency}, using open price as previous rate`);
+            // Use the open price of the current day as previous rate
+            previousRate = result.o || (currentRate * 0.999); // fallback to slightly lower rate
           }
           
           const dailyChange = currentRate - previousRate;
@@ -295,21 +357,41 @@ app.get('/api/stocks/snapshots', async (req, res) => {
             dailyChangePercent
           };
           
-          // Update cache
+          // Update cache and save to file
           forexCache.data[cacheKey] = resultData;
           forexCache.lastUpdated[cacheKey] = currentTime;
+          forexCache.save();
           
           return resultData;
         } else {
-          throw new Error(`Invalid response from Frankfurter API for ${baseCurrency}/${targetCurrency}`);
+          throw new Error(`Invalid response from Polygon.io API for ${baseCurrency}/${targetCurrency}`);
         }
       } catch (error) {
-        console.error(`Error fetching ${baseCurrency}/${targetCurrency} rate:`, error);
+        console.error(`Error fetching ${baseCurrency}/${targetCurrency} rate:`, error.response?.status, error.response?.data?.message || error.message);
+        
+        // Handle specific API errors
+        if (error.response?.status === 429) {
+          console.log(`Rate limit exceeded for ${baseCurrency}/${targetCurrency}, will use fallback data`);
+        } else if (error.response?.status === 403) {
+          console.log(`API access denied for ${baseCurrency}/${targetCurrency}, will use fallback data`);
+        }
+        
+        // Try to use cached data as fallback, even if expired
+        const fallbackData = forexCache.getFallbackData(cacheKey);
+        if (fallbackData) {
+          console.log(`Using cached fallback data for ${baseCurrency}/${targetCurrency} due to API error`);
+          return {
+            ...fallbackData,
+            isStale: true,
+            lastError: error.response?.status || 'API_ERROR'
+          };
+        }
+        
         throw error;
       }
     }
 
-    // Fetch forex data (simulate for now - in production you'd use a forex API)
+    // Fetch forex data using Polygon.io API
     if (forexSymbols.length > 0) {
       try {
         for (const symbol of forexSymbols) {
@@ -511,12 +593,52 @@ app.get('/api/debug/snapshots', async (req, res) => {
   }
 });
 
-// Cache for USD/ILS exchange rate
+// Cache for USD/ILS exchange rate with persistent storage
+const usdIlsCacheFile = path.join(__dirname, 'data', 'usdils-cache.json');
+
 const usdIlsCache = {
   data: null,
   lastUpdated: null,
-  cacheExpiry: 15 * 60 * 1000 // 15 minutes in milliseconds
+  cacheExpiry: 15 * 60 * 1000, // 15 minutes in milliseconds
+  
+  // Load cache from file on startup
+  load() {
+    try {
+      if (fs.existsSync(usdIlsCacheFile)) {
+        const cached = JSON.parse(fs.readFileSync(usdIlsCacheFile, 'utf8'));
+        this.data = cached.data || null;
+        this.lastUpdated = cached.lastUpdated || null;
+        console.log('USD/ILS cache loaded from file');
+      }
+    } catch (error) {
+      console.error('Error loading USD/ILS cache:', error);
+      this.data = null;
+      this.lastUpdated = null;
+    }
+  },
+  
+  // Save cache to file
+  save() {
+    try {
+      // Ensure data directory exists
+      const dataDir = path.dirname(usdIlsCacheFile);
+      if (!fs.existsSync(dataDir)) {
+        fs.mkdirSync(dataDir, { recursive: true });
+      }
+      
+      fs.writeFileSync(usdIlsCacheFile, JSON.stringify({
+        data: this.data,
+        lastUpdated: this.lastUpdated,
+        savedAt: new Date().toISOString()
+      }, null, 2));
+    } catch (error) {
+      console.error('Error saving USD/ILS cache:', error);
+    }
+  }
 };
+
+// Load existing USD/ILS cache on startup
+usdIlsCache.load();
 
 // Get USD/ILS exchange rate
 app.get('/api/forex/usdils', async (req, res) => {
@@ -531,29 +653,40 @@ app.get('/api/forex/usdils', async (req, res) => {
     }
     
     // If cache is expired or doesn't exist, fetch new data
-    console.log('Fetching fresh USD/ILS data from Frankfurter API');
-    const response = await axios.get('https://api.frankfurter.dev/v1/latest?base=USD&symbols=ILS');
+    console.log('Fetching fresh USD/ILS data from Polygon.io API');
+    const polygonSymbol = 'C:USDILS';
     
-    if (response.data && response.data.rates && response.data.rates.ILS) {
-      const currentRate = response.data.rates.ILS;
+    // Check if API key is available
+    if (!process.env.POLYGON_API_KEY) {
+      throw new Error('POLYGON_API_KEY environment variable is not set');
+    }
+    
+    // Use previous day aggregates endpoint (available with current plan)
+    const response = await axios.get(`https://api.polygon.io/v2/aggs/ticker/${polygonSymbol}/prev?apikey=${process.env.POLYGON_API_KEY}`);
+    
+    if (response.data && response.data.results && response.data.results.length > 0) {
+      const result = response.data.results[0];
+      const currentRate = result.c; // close price from previous day
       
-      // Get yesterday's rate for comparison
-      const yesterday = new Date();
-      yesterday.setDate(yesterday.getDate() - 1);
-      const yesterdayStr = yesterday.toISOString().split('T')[0];
-      
+      // Get day before yesterday for comparison
       let previousRate;
       try {
+        const dayBeforeYesterday = new Date();
+        dayBeforeYesterday.setDate(dayBeforeYesterday.getDate() - 2);
+        const dayBeforeYesterdayStr = dayBeforeYesterday.toISOString().split('T')[0];
+        
         const historicalResponse = await axios.get(
-          `https://api.frankfurter.dev/v1/${yesterdayStr}?base=USD&symbols=ILS`
+          `https://api.polygon.io/v2/aggs/ticker/${polygonSymbol}/range/1/day/${dayBeforeYesterdayStr}/${dayBeforeYesterdayStr}?apikey=${process.env.POLYGON_API_KEY}`
         );
-        previousRate = historicalResponse.data.rates.ILS;
+        if (historicalResponse.data && historicalResponse.data.results && historicalResponse.data.results.length > 0) {
+          previousRate = historicalResponse.data.results[0].c; // close price
+        } else {
+          throw new Error('No historical data available');
+        }
       } catch (histError) {
-        console.log('Could not fetch historical rate, estimating previous rate');
-        // If historical data fails, estimate a reasonable previous rate
-        // Use a small random change (±0.5%) to simulate a realistic previous value
-        const randomChange = (Math.random() * 0.01) - 0.005;
-        previousRate = currentRate / (1 + randomChange);
+        console.log('Could not fetch historical rate, using open price as previous rate');
+        // Use the open price of the current day as previous rate
+        previousRate = result.o || (currentRate * 0.999); // fallback to slightly lower rate
       }
       
       const dailyChange = currentRate - previousRate;
@@ -569,13 +702,14 @@ app.get('/api/forex/usdils', async (req, res) => {
         lastUpdated: new Date().toISOString()
       };
       
-      // Update cache
+      // Update cache and save to file
       usdIlsCache.data = resultData;
       usdIlsCache.lastUpdated = currentTime;
+      usdIlsCache.save();
       
       return res.json(resultData);
     } else {
-      throw new Error('Invalid response from Frankfurter API');
+      throw new Error('Invalid response from Polygon.io API');
     }
   } catch (error) {
     console.error('Error fetching USD/ILS rate:', error);
