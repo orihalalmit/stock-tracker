@@ -123,7 +123,7 @@ const AddPositionForm = ({ onSubmit }) => {
   }
 
   return (
-    <div className="add-position-form-overlay">
+    <div className="add-position-form-overlay" onClick={(e) => e.target === e.currentTarget && setIsOpen(false)}>
       <div className="add-position-form">
         <div className="form-header">
           <div className="header-content">
