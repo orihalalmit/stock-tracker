@@ -71,74 +71,74 @@ const ImportCSV = ({ onImport }) => {
   }
 
   return (
-    <div className="import-csv-overlay" onClick={(e) => e.target === e.currentTarget && setIsOpen(false)}>
-      <div className="import-csv-modal">
-        <div className="modal-header">
-          <div className="header-content">
-            <div className="modal-icon">📊</div>
-            <h3>Import Portfolio CSV</h3>
-          </div>
-          <button 
-            className="close-button"
-            onClick={() => setIsOpen(false)}
-            title="Close"
-          >
-            ×
-          </button>
+    <div className="import-csv-inline-form">
+      <div className="inline-form-header">
+        <h3>📊 Import Portfolio CSV</h3>
+        <button 
+          className="collapse-button"
+          onClick={() => setIsOpen(false)}
+          title="Collapse"
+        >
+          ▲ Collapse
+        </button>
+      </div>
+      
+      {error && (
+        <div className="form-error">
+          <span className="error-icon">⚠️</span>
+          {error}
         </div>
+      )}
 
-        <div className="modal-content">
-          <div
-            className={`dropzone ${isDragging ? 'dragging' : ''}`}
-            onDragOver={handleDragOver}
-            onDragLeave={handleDragLeave}
-            onDrop={handleDrop}
-            onClick={() => fileInputRef.current?.click()}
-          >
-            <div className="dropzone-content">
-              <div className="upload-icon">📄</div>
-              <p className="upload-text">
-                Drag & drop a CSV file here<br />
-                or click to select
-              </p>
-              <p className="upload-hint">
-                CSV should include: symbol, shares, averagePrice, sector
-              </p>
-            </div>
-          </div>
-
-          {error && <div className="import-error">{error}</div>}
-
-          <div className="csv-template">
-            <p className="template-text">
-              Download template:
-              <button
-                className="template-button"
-                onClick={() => {
-                  const template = 'symbol,shares,averagePrice,sector\nAAPL,100,150.50,Technology\nGOOGL,50,2800.75,Technology';
-                  const blob = new Blob([template], { type: 'text/csv' });
-                  const url = window.URL.createObjectURL(blob);
-                  const a = document.createElement('a');
-                  a.href = url;
-                  a.download = 'portfolio_template.csv';
-                  a.click();
-                  window.URL.revokeObjectURL(url);
-                }}
-              >
-                portfolio_template.csv
-              </button>
+      <div className="import-csv-content">
+        <div
+          className={`dropzone ${isDragging ? 'dragging' : ''}`}
+          onDragOver={handleDragOver}
+          onDragLeave={handleDragLeave}
+          onDrop={handleDrop}
+          onClick={() => fileInputRef.current?.click()}
+        >
+          <div className="dropzone-content">
+            <div className="upload-icon">📄</div>
+            <p className="upload-text">
+              Drag & drop a CSV file here<br />
+              or click to select
+            </p>
+            <p className="upload-hint">
+              CSV should include: symbol, shares, averagePrice, sector
             </p>
           </div>
         </div>
 
-        <input
-          ref={fileInputRef}
-          type="file"
-          accept=".csv"
-          onChange={handleFileSelect}
-          style={{ display: 'none' }}
-        />
+        <div className="csv-template">
+          <p className="template-text">
+            Download template:
+            <button
+              className="template-button"
+              onClick={() => {
+                const template = 'symbol,shares,averagePrice,sector\nAAPL,100,150.50,Technology\nGOOGL,50,2800.75,Technology';
+                const blob = new Blob([template], { type: 'text/csv' });
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'portfolio_template.csv';
+                a.click();
+                window.URL.revokeObjectURL(url);
+              }}
+            >
+              portfolio_template.csv
+            </button>
+          </p>
+        </div>
       </div>
+
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept=".csv"
+        onChange={handleFileSelect}
+        style={{ display: 'none' }}
+      />
     </div>
   );
 };

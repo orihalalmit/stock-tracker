@@ -770,15 +770,15 @@
     flex-direction: row;
     gap: var(--space-sm);
     justify-content: center;
-    margin-top: var(--space-xl);
+    margin-top: calc(var(--space-xl) + var(--space-md));
   }
   
   .portfolio-actions::before {
-    top: -8px;
+    top: -6px;
     left: 50%;
     transform: translateX(-50%);
-    font-size: 0.75rem;
-    padding: var(--space-xs) var(--space-md);
+    font-size: 0.7rem;
+    padding: var(--space-xs) var(--space-sm);
   }
   
   .portfolio-tabs {
