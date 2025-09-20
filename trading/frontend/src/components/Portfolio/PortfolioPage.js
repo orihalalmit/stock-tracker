@@ -193,6 +193,19 @@ const PortfolioPage = ({ activeView = 'management', user: currentUser, onLogout,
       );
       
       console.log('✅ Position added successfully:', response.data);
+      
+      // Automatically consolidate duplicates after adding position
+      try {
+        console.log('🔄 Auto-consolidating duplicate positions...');
+        const consolidateResponse = await axios.post(`/api/portfolio/${portfolioId}/consolidate`);
+        if (consolidateResponse.data.duplicatesConsolidated > 0) {
+          console.log(`✅ Auto-consolidated ${consolidateResponse.data.duplicatesConsolidated} duplicate positions`);
+        }
+      } catch (consolidateErr) {
+        console.warn('⚠️ Auto-consolidation failed:', consolidateErr);
+        // Don't fail the entire operation if consolidation fails
+      }
+      
       await fetchPortfolios(); // Refresh all portfolios with latest data
       setError(null);
       return { success: true };
@@ -211,9 +224,10 @@ const PortfolioPage = ({ activeView = 'management', user: currentUser, onLogout,
     try {
       const formData = new FormData();
       formData.append('file', file);
+      const portfolioId = selectedPortfolioRef.current._id;
       
       await axios.post(
-        `/api/portfolio/${selectedPortfolioRef.current._id}/import`,
+        `/api/portfolio/${portfolioId}/import`,
         formData,
         {
           headers: {
@@ -221,6 +235,18 @@ const PortfolioPage = ({ activeView = 'management', user: currentUser, onLogout,
           }
         }
       );
+      
+      // Automatically consolidate duplicates after CSV import
+      try {
+        console.log('🔄 Auto-consolidating duplicate positions after CSV import...');
+        const consolidateResponse = await axios.post(`/api/portfolio/${portfolioId}/consolidate`);
+        if (consolidateResponse.data.duplicatesConsolidated > 0) {
+          console.log(`✅ Auto-consolidated ${consolidateResponse.data.duplicatesConsolidated} duplicate positions`);
+        }
+      } catch (consolidateErr) {
+        console.warn('⚠️ Auto-consolidation after CSV import failed:', consolidateErr);
+        // Don't fail the entire operation if consolidation fails
+      }
       
       await fetchPortfolios(); // Refresh all portfolios with latest data
       setError(null);
@@ -230,27 +256,6 @@ const PortfolioPage = ({ activeView = 'management', user: currentUser, onLogout,
     }
   };
 
-  const handleConsolidatePositions = async () => {
-    if (!window.confirm('This will consolidate duplicate positions by combining shares and recalculating weighted average cost. Continue?')) {
-      return;
-    }
-
-    try {
-      const response = await axios.post(`/api/portfolio/${selectedPortfolioRef.current._id}/consolidate`);
-      
-      if (response.data.duplicatesConsolidated > 0) {
-        alert(`Successfully consolidated ${response.data.duplicatesConsolidated} duplicate positions!`);
-      } else {
-        alert('No duplicate positions found to consolidate.');
-      }
-      
-      await fetchPortfolios(); // Refresh all portfolios with latest data
-      setError(null);
-    } catch (err) {
-      setError('Failed to consolidate positions');
-      console.error(err);
-    }
-  };
 
   if (loading) {
     return <div className="loading">Loading portfolios...</div>;
@@ -293,13 +298,6 @@ const PortfolioPage = ({ activeView = 'management', user: currentUser, onLogout,
         <div className="portfolio-actions">
           <AddPositionForm onSubmit={handleAddPosition} />
           <ImportCSV onImport={handleImportCSV} />
-          <button 
-            className="consolidate-btn"
-            onClick={handleConsolidatePositions}
-            title="Consolidate duplicate positions"
-          >
-            🔄 Consolidate Duplicates
-          </button>
         </div>
       </>
     );
