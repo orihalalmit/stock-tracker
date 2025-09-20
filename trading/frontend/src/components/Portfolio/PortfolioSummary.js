@@ -27,7 +27,8 @@ const formatPercentage = (value) => {
   }).format(value / 100);
 };
 
-const UsdIlsWidget = ({ onRateChange, onPreviousRateChange }) => {
+// UsdIlsWidget component removed - now handled in PortfolioPage
+const UsdIlsWidgetUnused = ({ onRateChange, onPreviousRateChange }) => {
   const [usdIlsData, setUsdIlsData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -210,15 +211,7 @@ const PortfolioSummary = ({ portfolio, showPremarket = false }) => {
     intradaySummary = null
   } = summary;
 
-  // Function to handle USD/ILS rate updates
-  const handleRateChange = (rate) => {
-    setUsdIlsRate(rate);
-  };
-
-  // Function to handle USD/ILS previous rate updates
-  const handlePreviousRateChange = (rate) => {
-    setUsdIlsPreviousRate(rate);
-  };
+  // USD/ILS rate handlers removed - now handled in PortfolioPage
 
   // Convert USD value to ILS
   const convertToILS = (usdValue) => {
