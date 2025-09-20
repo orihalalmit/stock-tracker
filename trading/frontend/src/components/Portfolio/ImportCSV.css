@@ -60,11 +60,11 @@
   border-radius: 12px;
   border: 1px solid rgba(255, 255, 255, 0.1);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-  width: 650px;
+  width: 700px;
   max-width: 95vw;
-  min-height: 550px;
+  min-height: 650px;
   height: auto;
-  max-height: 90vh;
+  max-height: 95vh;
   display: flex;
   flex-direction: column;
   margin: auto;
@@ -74,8 +74,8 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 2rem;
-  padding: 2rem 2.5rem 0 2.5rem;
+  margin-bottom: 2.5rem;
+  padding: 2.5rem 3rem 0 3rem;
   flex-shrink: 0;
 }
 
@@ -122,10 +122,11 @@
 
 .modal-content {
   flex: 1;
-  padding: 0 2.5rem 2.5rem 2.5rem;
+  padding: 0 3rem 3rem 3rem;
   display: flex;
   flex-direction: column;
   justify-content: center;
+  min-height: 400px;
 }
 
 .dropzone {
