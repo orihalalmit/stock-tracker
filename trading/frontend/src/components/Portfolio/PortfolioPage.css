@@ -697,6 +697,14 @@
     gap: var(--space-md);
     padding: var(--space-md);
     justify-content: center;
+    margin-top: var(--space-lg);
+  }
+  
+  .portfolio-actions::before {
+    top: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.8rem;
   }
   
   .market-sentiment {
@@ -762,6 +770,15 @@
     flex-direction: row;
     gap: var(--space-sm);
     justify-content: center;
+    margin-top: var(--space-xl);
+  }
+  
+  .portfolio-actions::before {
+    top: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.75rem;
+    padding: var(--space-xs) var(--space-md);
   }
   
   .portfolio-tabs {
