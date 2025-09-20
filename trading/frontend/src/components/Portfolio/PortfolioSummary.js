@@ -611,13 +611,6 @@ ILS
           </div>
         </div>
 
-        <div className="market-sentiment">
-          <UsdIlsWidget 
-            onRateChange={handleRateChange} 
-            onPreviousRateChange={handlePreviousRateChange}
-          />
-          <FearGreedIndex />
-        </div>
       </div>
     </div>
   );

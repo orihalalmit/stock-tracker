@@ -7,6 +7,7 @@ import AddPositionForm from './AddPositionForm';
 import TransactionHistory from './TransactionHistory';
 import ImportCSV from './ImportCSV';
 import PortfolioInsights from './PortfolioInsights';
+import CurrencyCard from '../CurrencyCard';
 import { useAuth } from '../Auth/AuthContext';
 
 const PortfolioPage = ({ activeView = 'management', user: currentUser, onLogout, isAdmin }) => {
@@ -17,6 +18,8 @@ const PortfolioPage = ({ activeView = 'management', user: currentUser, onLogout,
   const [activeTab, setActiveTab] = useState(activeView); // management, insights
   const [showPremarket, setShowPremarket] = useState(false);
   const [isManagementCollapsed, setIsManagementCollapsed] = useState(true);
+  const [usdIlsData, setUsdIlsData] = useState(null);
+  const [fearGreedData, setFearGreedData] = useState({ score: 50 });
   const { user, token } = useAuth();
   
   // Use ref to track selected portfolio without causing re-renders
@@ -256,6 +259,93 @@ const PortfolioPage = ({ activeView = 'management', user: currentUser, onLogout,
     }
   };
 
+  // Fetch USD/ILS data
+  const fetchUsdIlsData = useCallback(async () => {
+    try {
+      const response = await axios.get('/api/forex/usdils');
+      setUsdIlsData(response.data);
+    } catch (err) {
+      console.error('Failed to fetch USD/ILS rate:', err);
+      setUsdIlsData({
+        symbol: 'USD/ILS',
+        rate: 0,
+        previousRate: 0,
+        dailyChange: 0,
+        dailyChangePercent: 0,
+        timestamp: new Date().toISOString(),
+        lastUpdated: 'N/A',
+        error: 'Failed to fetch rate'
+      });
+    }
+  }, []);
+
+  // Fetch Fear & Greed data
+  const fetchFearGreedData = useCallback(async () => {
+    try {
+      const response = await axios.get('/api/market/fear-greed');
+      setFearGreedData(response.data);
+    } catch (err) {
+      console.error('Failed to fetch Fear & Greed index:', err);
+      setFearGreedData({ score: 50 });
+    }
+  }, []);
+
+  // Fetch market widgets data on component mount
+  useEffect(() => {
+    if (user && token) {
+      fetchUsdIlsData();
+      fetchFearGreedData();
+    }
+  }, [user, token, fetchUsdIlsData, fetchFearGreedData]);
+
+  // Fear & Greed Index Component
+  const FearGreedIndex = () => {
+    const value = fearGreedData.score;
+    let sentiment = 'Neutral';
+    if (value <= 25) sentiment = 'Extreme Fear';
+    else if (value <= 45) sentiment = 'Fear';
+    else if (value <= 55) sentiment = 'Neutral';
+    else if (value <= 75) sentiment = 'Greed';
+    else sentiment = 'Extreme Greed';
+
+    const formatHistoricalValue = (val) => {
+      if (val === null || val === undefined) return 'N/A';
+      return val.toString();
+    };
+
+    return (
+      <div className="fear-greed-widget">
+        <div className="widget-header">
+          <h2>Fear & Greed Index</h2>
+        </div>
+        <div className="fear-greed-content">
+          <div className="fear-greed-score">
+            <div className="score-circle">
+              <div className="score-value">{value}</div>
+              <div className="score-label">{sentiment}</div>
+            </div>
+          </div>
+          <div className="fear-greed-scale">
+            <div className="scale-bar">
+              <div className="scale-fill" style={{ width: `${value}%` }}></div>
+            </div>
+            <div className="scale-labels">
+              <span>Extreme Fear</span>
+              <span>Extreme Greed</span>
+            </div>
+          </div>
+          <div className="fear-greed-history">
+            <p>Previous Close: <span>{formatHistoricalValue(fearGreedData.previousClose)}</span></p>
+            <p>1 Week Ago: <span>{formatHistoricalValue(fearGreedData.oneWeekAgo)}</span></p>
+            <p>1 Month Ago: <span>{formatHistoricalValue(fearGreedData.oneMonthAgo)}</span></p>
+          </div>
+          <p className="fear-greed-description">
+            The Fear & Greed Index measures market sentiment from 0 (extreme fear) to 100 (extreme greed), helping identify potential buying or selling opportunities.
+          </p>
+        </div>
+      </div>
+    );
+  };
 
   if (loading) {
     return <div className="loading">Loading portfolios...</div>;
@@ -299,6 +389,16 @@ const PortfolioPage = ({ activeView = 'management', user: currentUser, onLogout,
         />
 
         <TransactionHistory portfolioId={selectedPortfolio._id} />
+        
+        <div className="market-sentiment">
+          <div className="usd-ils-widget">
+            <div className="widget-header">
+              <h3>USD/ILS Exchange Rate</h3>
+            </div>
+            {usdIlsData && <CurrencyCard currency={usdIlsData} />}
+          </div>
+          <FearGreedIndex />
+        </div>
       </>
     );
   };
