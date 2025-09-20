@@ -285,6 +285,11 @@ const PortfolioPage = ({ activeView = 'management', user: currentUser, onLogout,
     return (
       <>
         <PortfolioSummary portfolio={selectedPortfolio} showPremarket={showPremarket} />
+        
+        <div className="portfolio-actions">
+          <AddPositionForm onSubmit={handleAddPosition} />
+          <ImportCSV onImport={handleImportCSV} />
+        </div>
 
         <PositionsList
           positions={selectedPortfolio.positions}
@@ -294,11 +299,6 @@ const PortfolioPage = ({ activeView = 'management', user: currentUser, onLogout,
         />
 
         <TransactionHistory portfolioId={selectedPortfolio._id} />
-        
-        <div className="portfolio-actions">
-          <AddPositionForm onSubmit={handleAddPosition} />
-          <ImportCSV onImport={handleImportCSV} />
-        </div>
       </>
     );
   };
