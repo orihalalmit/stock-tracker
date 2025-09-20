@@ -46,12 +46,6 @@ const CurrencyCard = ({ currency }) => {
           <span className="detail-label">Previous Close</span>
           <span className="detail-value">₪{formatRate(currency.previousRate)}</span>
         </div>
-        {currency.error && (
-          <div className="detail-row error">
-            <span className="detail-label">Status</span>
-            <span className="detail-value">Using cached data</span>
-          </div>
-        )}
       </div>
     </div>
   );
