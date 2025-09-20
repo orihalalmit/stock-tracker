@@ -168,6 +168,22 @@ const MainApp = () => {
     }
   }, [activeTab, user]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  // Fetch USD/ILS data when app loads (needed for portfolio ILS conversion)
+  useEffect(() => {
+    if (!user || authLoading) return;
+    
+    console.log('Fetching USD/ILS data for portfolio conversion...');
+    fetchUsdIlsData();
+    
+    // Auto-refresh USD/ILS data every 5 minutes
+    const usdIlsInterval = setInterval(() => {
+      console.log('Auto-refreshing USD/ILS data...');
+      fetchUsdIlsData();
+    }, 5 * 60 * 1000);
+    
+    return () => clearInterval(usdIlsInterval);
+  }, [user, authLoading]);
+
   // Market configuration editing functions
   const editSection = (section) => {
     const newName = prompt('Enter section name:', section.name);
@@ -438,11 +454,11 @@ const MainApp = () => {
         </>
       );
     } else if (activeTab === 'portfolio') {
-      return <PortfolioPage user={user} onLogout={logout} isAdmin={isAdmin()} />;
+      return <PortfolioPage user={user} onLogout={logout} isAdmin={isAdmin()} usdIlsData={usdIls} />;
     } else if (activeTab === 'watchlists') {
       return <WatchlistsPage />;
     } else if (activeTab === 'insights') {
-      return <PortfolioPage activeView="insights" user={user} onLogout={logout} isAdmin={isAdmin()} />;
+      return <PortfolioPage activeView="insights" user={user} onLogout={logout} isAdmin={isAdmin()} usdIlsData={usdIls} />;
     } else if (activeTab === 'admin' && isAdmin()) {
       return <AdminPanel />;
     }

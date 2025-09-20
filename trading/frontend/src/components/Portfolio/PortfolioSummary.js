@@ -116,14 +116,16 @@ const FearGreedIndex = () => {
   );
 };
 
-const PortfolioSummary = ({ portfolio, showPremarket = false }) => {
+const PortfolioSummary = ({ portfolio, showPremarket = false, usdIlsData }) => {
   const { positions = [], summary = {} } = portfolio;
   const [historicalData, setHistoricalData] = useState({});
   const [historicalLoading, setHistoricalLoading] = useState(true);
   const [isHoldingsExpanded, setIsHoldingsExpanded] = useState(false);
   const [showInILS, setShowInILS] = useState(false);
-  const [usdIlsRate] = useState(0);
-  const [usdIlsPreviousRate] = useState(0);
+  
+  // Extract USD/ILS rates from the passed data
+  const usdIlsRate = usdIlsData?.rate || 0;
+  const usdIlsPreviousRate = usdIlsData?.previousRate || 0;
   
   // Use the pre-calculated summary values from the backend
   const {

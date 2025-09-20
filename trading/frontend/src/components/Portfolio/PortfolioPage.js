@@ -10,7 +10,7 @@ import PortfolioInsights from './PortfolioInsights';
 import CurrencyCard from '../CurrencyCard';
 import { useAuth } from '../Auth/AuthContext';
 
-const PortfolioPage = ({ activeView = 'management', user: currentUser, onLogout, isAdmin }) => {
+const PortfolioPage = ({ activeView = 'management', user: currentUser, onLogout, isAdmin, usdIlsData }) => {
   const [portfolios, setPortfolios] = useState([]);
   const [selectedPortfolio, setSelectedPortfolio] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -18,7 +18,6 @@ const PortfolioPage = ({ activeView = 'management', user: currentUser, onLogout,
   const [activeTab, setActiveTab] = useState(activeView); // management, insights
   const [showPremarket, setShowPremarket] = useState(false);
   const [isManagementCollapsed, setIsManagementCollapsed] = useState(true);
-  const [usdIlsData, setUsdIlsData] = useState(null);
   const { user, token } = useAuth();
   
   // Use ref to track selected portfolio without causing re-renders
@@ -258,32 +257,6 @@ const PortfolioPage = ({ activeView = 'management', user: currentUser, onLogout,
     }
   };
 
-  // Fetch USD/ILS data
-  const fetchUsdIlsData = useCallback(async () => {
-    try {
-      const response = await axios.get('/api/forex/usdils');
-      setUsdIlsData(response.data);
-    } catch (err) {
-      console.error('Failed to fetch USD/ILS rate:', err);
-      setUsdIlsData({
-        symbol: 'USD/ILS',
-        rate: 0,
-        previousRate: 0,
-        dailyChange: 0,
-        dailyChangePercent: 0,
-        timestamp: new Date().toISOString(),
-        lastUpdated: 'N/A',
-        error: 'Failed to fetch rate'
-      });
-    }
-  }, []);
-
-  // Fetch market widgets data on component mount
-  useEffect(() => {
-    if (user && token) {
-      fetchUsdIlsData();
-    }
-  }, [user, token, fetchUsdIlsData]);
 
 
   if (loading) {
@@ -313,7 +286,7 @@ const PortfolioPage = ({ activeView = 'management', user: currentUser, onLogout,
 
     return (
       <>
-        <PortfolioSummary portfolio={selectedPortfolio} showPremarket={showPremarket} />
+        <PortfolioSummary portfolio={selectedPortfolio} showPremarket={showPremarket} usdIlsData={usdIlsData} />
         
         <div className="portfolio-actions">
           <AddPositionForm onSubmit={handleAddPosition} />
