@@ -533,7 +533,7 @@ ILS
             <div className="summary-stats">
               <div className="stat-item">
                 <span className="stat-label">Top Holding</span>
-                <span className="stat-value">
+                <span className="stat-value top-holding">
                   {positions.length > 0 ? positions.sort((a, b) => (b.totalValue || 0) - (a.totalValue || 0))[0].symbol : 'N/A'}
                 </span>
               </div>

@@ -395,6 +395,15 @@
   text-shadow: 0 0 15px rgba(59, 130, 246, 0.4);
 }
 
+.stat-value.top-holding {
+  color: #fbbf24;
+  text-shadow: 0 0 15px rgba(251, 191, 36, 0.4);
+  background: linear-gradient(135deg, #fbbf24, #f59e0b);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
 .stat-value.best-performer {
   color: var(--accent-green-light);
   text-shadow: 0 0 15px rgba(16, 185, 129, 0.4);
