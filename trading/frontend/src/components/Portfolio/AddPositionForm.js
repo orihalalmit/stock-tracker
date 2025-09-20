@@ -50,13 +50,6 @@ const AddPositionForm = ({ onSubmit }) => {
     }
 
     try {
-      console.log('📝 Form submitting with data:', {
-        symbol: formData.symbol.trim().toUpperCase(),
-        shares: parseFloat(formData.shares),
-        averagePrice: parseFloat(formData.averagePrice),
-        sector: formData.sector
-      });
-
       // Submit form
       const result = await onSubmit({
         ...formData,
@@ -64,8 +57,6 @@ const AddPositionForm = ({ onSubmit }) => {
         shares: parseFloat(formData.shares),
         averagePrice: parseFloat(formData.averagePrice)
       });
-
-      console.log('✅ Form submission result:', result);
 
       // Reset form on success
       setFormData({
@@ -81,10 +72,10 @@ const AddPositionForm = ({ onSubmit }) => {
       setTimeout(() => {
         setSuccessMessage('');
         setIsOpen(false);
-      }, 1500);
+      }, 2000);
       
     } catch (err) {
-      console.error('❌ Form submission error:', err);
+      console.error('Form submission error:', err);
       
       // Extract more specific error message
       let errorMessage = 'Failed to add position. Please try again.';
@@ -123,159 +114,111 @@ const AddPositionForm = ({ onSubmit }) => {
   }
 
   return (
-    <div className="add-position-form-overlay" onClick={(e) => e.target === e.currentTarget && setIsOpen(false)}>
-      <div className="add-position-form">
-        <div className="form-header">
-          <div className="header-content">
-            <div className="form-icon">📊</div>
-            <div className="header-text">
-              <h3>Add New Position</h3>
-            </div>
-          </div>
-          <button 
-            className="close-button"
-            onClick={() => setIsOpen(false)}
-            title="Close"
-          >
-            ×
-          </button>
+    <div className="add-position-inline-form">
+      <div className="inline-form-header">
+        <h3>📊 Add New Position</h3>
+        <button 
+          className="collapse-button"
+          onClick={() => setIsOpen(false)}
+          title="Collapse"
+        >
+          ▲ Collapse
+        </button>
+      </div>
+      
+      {error && (
+        <div className="form-error">
+          <span className="error-icon">⚠️</span>
+          {error}
         </div>
-        
-        <div className="form-scroll-container">
+      )}
 
-        {error && (
-          <div className="form-error">
-            <span className="error-icon">⚠️</span>
-            {error}
-          </div>
-        )}
+      {successMessage && (
+        <div className="form-success">
+          <span className="success-icon">✅</span>
+          {successMessage}
+        </div>
+      )}
 
-        {successMessage && (
-          <div className="form-success">
-            <span className="success-icon">✅</span>
-            {successMessage}
-          </div>
-        )}
-
-        <form onSubmit={handleSubmit} style={{display: 'flex', flexDirection: 'column', height: '100%'}}>
-          <div className="form-grid">
-            <div className="form-group">
-              <label htmlFor="symbol">
-                <span className="label-text">Stock Symbol</span>
-                <span className="label-required">*</span>
-              </label>
-              <div className="input-wrapper">
-                <input
-                  type="text"
-                  id="symbol"
-                  name="symbol"
-                  value={formData.symbol}
-                  onChange={handleChange}
-                  placeholder="e.g., AAPL, GOOGL, MSFT"
-                  autoComplete="off"
-                  className="form-input symbol-input"
-                  required
-                />
-                <span className="input-icon">🔍</span>
-              </div>
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="sector">
-                <span className="label-text">Sector</span>
-              </label>
-              <div className="select-wrapper">
-                <select
-                  id="sector"
-                  name="sector"
-                  value={formData.sector}
-                  onChange={handleChange}
-                  className="form-select"
-                >
-                  {SECTORS.map(sector => (
-                    <option key={sector} value={sector}>
-                      {sector}
-                    </option>
-                  ))}
-                </select>
-                <span className="select-arrow">▼</span>
-              </div>
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="shares">
-                <span className="label-text">Number of Shares</span>
-                <span className="label-required">*</span>
-              </label>
-              <div className="input-wrapper">
-                <input
-                  type="number"
-                  id="shares"
-                  name="shares"
-                  value={formData.shares}
-                  onChange={handleChange}
-                  placeholder="100"
-                  step="any"
-                  min="0.01"
-                  className="form-input"
-                  required
-                />
-                <span className="input-icon">📊</span>
-              </div>
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="averagePrice">
-                <span className="label-text">Average Price</span>
-                <span className="label-required">*</span>
-              </label>
-              <div className="input-wrapper">
-                <input
-                  type="number"
-                  id="averagePrice"
-                  name="averagePrice"
-                  value={formData.averagePrice}
-                  onChange={handleChange}
-                  placeholder="150.50"
-                  step="0.01"
-                  min="0.01"
-                  className="form-input"
-                  required
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' && e.metaKey) {
-                      handleSubmit(e);
-                    }
-                  }}
-                />
-                <span className="input-icon">💰</span>
-              </div>
-            </div>
+      <form onSubmit={handleSubmit} className="inline-form">
+        <div className="inline-form-row">
+          <div className="form-group">
+            <label htmlFor="symbol">Stock Symbol *</label>
+            <input
+              type="text"
+              id="symbol"
+              name="symbol"
+              value={formData.symbol}
+              onChange={handleChange}
+              placeholder="AAPL"
+              autoComplete="off"
+              className="form-input"
+              required
+            />
           </div>
 
+          <div className="form-group">
+            <label htmlFor="shares">Shares *</label>
+            <input
+              type="number"
+              id="shares"
+              name="shares"
+              value={formData.shares}
+              onChange={handleChange}
+              placeholder="100"
+              step="any"
+              min="0.01"
+              className="form-input"
+              required
+            />
+          </div>
 
-          <div className="form-actions">
-            <button 
-              type="button" 
-              className="cancel-button"
-              onClick={() => setIsOpen(false)}
+          <div className="form-group">
+            <label htmlFor="averagePrice">Price *</label>
+            <input
+              type="number"
+              id="averagePrice"
+              name="averagePrice"
+              value={formData.averagePrice}
+              onChange={handleChange}
+              placeholder="150.50"
+              step="0.01"
+              min="0.01"
+              className="form-input"
+              required
+            />
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="sector">Sector</label>
+            <select
+              id="sector"
+              name="sector"
+              value={formData.sector}
+              onChange={handleChange}
+              className="form-select"
             >
-              <span className="button-icon">✕</span>
-              Cancel
-            </button>
+              {SECTORS.map(sector => (
+                <option key={sector} value={sector}>
+                  {sector}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="form-group">
             <button 
               type="submit" 
-              className={`submit-button ${isSubmitting ? 'submitting' : ''}`}
+              className={`inline-submit-button ${isSubmitting ? 'submitting' : ''}`}
               disabled={isSubmitting}
             >
-              <span className="button-icon">{isSubmitting ? '⏳' : '✓'}</span>
-              {isSubmitting ? 'Adding...' : 'Add Position'}
+              {isSubmitting ? '⏳ Adding...' : '✓ Add Position'}
             </button>
           </div>
-        </form>
         </div>
-      </div>
+      </form>
     </div>
   );
 };
 
-export default AddPositionForm; 
+export default AddPositionForm;
