@@ -35,7 +35,8 @@ const FearGreedIndex = () => {
   useEffect(() => {
     const fetchFearGreedIndex = async () => {
       try {
-        const response = await axios.get('/api/market/fear-greed');
+        // Default to crypto for now, but could be made configurable
+        const response = await axios.get('/api/market/fear-greed?type=crypto');
         setFearGreedData(response.data);
         setError(null);
       } catch (err) {
@@ -90,8 +91,8 @@ const FearGreedIndex = () => {
   return (
     <div className="fear-greed-card">
       <div className="fear-greed-header">
-        <h2>Fear & Greed Index</h2>
-        <div className="sentiment-tag">{sentiment}</div>
+        <h2>{fearGreedData.type || 'Fear & Greed Index'}</h2>
+        <div className="sentiment-tag">{fearGreedData.classification || sentiment}</div>
       </div>
       <div className="fear-greed-scale">
         <div className="scale-bar">
@@ -108,9 +109,21 @@ const FearGreedIndex = () => {
         <p>Previous Close: <span>{formatHistoricalValue(fearGreedData.previousClose)}</span></p>
         <p>1 Week Ago: <span>{formatHistoricalValue(fearGreedData.oneWeekAgo)}</span></p>
         <p>1 Month Ago: <span>{formatHistoricalValue(fearGreedData.oneMonthAgo)}</span></p>
+        {fearGreedData.lastUpdated && (
+          <p>Last Updated: <span>{new Date(fearGreedData.lastUpdated).toLocaleDateString()}</span></p>
+        )}
       </div>
       <p className="fear-greed-description">
-        The Fear & Greed Index measures market sentiment from 0 (extreme fear) to 100 (extreme greed), helping identify potential buying or selling opportunities.
+        {fearGreedData.type === 'Crypto Fear & Greed Index' 
+          ? 'The Crypto Fear & Greed Index measures cryptocurrency market sentiment from 0 (extreme fear) to 100 (extreme greed), helping identify potential buying or selling opportunities.'
+          : 'The Fear & Greed Index measures market sentiment from 0 (extreme fear) to 100 (extreme greed), helping identify potential buying or selling opportunities.'
+        }
+        {fearGreedData.source && (
+          <span className="data-source"> Data from {fearGreedData.source}.</span>
+        )}
+        {fearGreedData.error && (
+          <span className="error-note"> Note: {fearGreedData.error}</span>
+        )}
       </p>
     </div>
   );

@@ -830,6 +830,19 @@
   font-weight: 500;
 }
 
+.data-source {
+  font-size: 0.8rem;
+  color: var(--text-quaternary);
+  font-style: italic;
+  opacity: 0.8;
+}
+
+.error-note {
+  font-size: 0.8rem;
+  color: var(--accent-gold);
+  font-style: italic;
+}
+
 .holding-daily-change {
   font-size: 0.75rem;
   margin-top: var(--space-xs);
