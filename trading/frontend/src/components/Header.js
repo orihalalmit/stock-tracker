@@ -21,6 +21,7 @@ const Header = ({ lastUpdated, onRefresh, user, onLogout, isAdmin, activeTab, on
           <h1 className="app-title">
             <Logo size={28} className="title-logo" />
             <span className="title-text">Stock IO</span>
+            <span className="rights-text">by Ori H</span>
           </h1>
         </div>
         
