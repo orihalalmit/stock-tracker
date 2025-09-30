@@ -16,7 +16,7 @@ const SECTORS = [
   'Utilities'
 ];
 
-const PositionsList = ({ positions, portfolioId, onPositionUpdate, portfolioSummary }) => {
+const PositionsList = ({ positions, portfolioId, onPositionUpdate, portfolioSummary, showInILS, usdIlsData }) => {
   const [sortBy, setSortBy] = useState('totalValue');
   const [sortOrder, setSortOrder] = useState('desc');
   const [editingPosition, setEditingPosition] = useState(null);
@@ -24,13 +24,52 @@ const PositionsList = ({ positions, portfolioId, onPositionUpdate, portfolioSumm
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  const formatCurrency = (value) => {
+  // Extract USD/ILS rates from the passed data
+  const usdIlsRate = usdIlsData?.rate || 0;
+  const usdIlsPreviousRate = usdIlsData?.previousRate || 0;
+
+  const formatCurrency = (value, currency = null) => {
+    const currencyCode = currency || (showInILS && usdIlsRate > 0 ? 'ILS' : 'USD');
+    const symbol = currencyCode === 'ILS' ? '₪' : '$';
+    
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
       currency: 'USD',
       minimumFractionDigits: 2,
       maximumFractionDigits: 2
-    }).format(value || 0);
+    }).format(value || 0).replace('$', symbol);
+  };
+
+  // Convert USD value to ILS
+  const convertToILS = (usdValue) => {
+    return usdValue * usdIlsRate;
+  };
+
+  // Get the appropriate value based on currency selection
+  const getValueByCurrency = (usdValue) => {
+    if (showInILS && usdIlsRate > 0) {
+      return convertToILS(usdValue);
+    }
+    return usdValue;
+  };
+
+  // Calculate daily gain that includes USD/ILS rate change impact
+  const calculateDailyGainWithRateChange = (position) => {
+    if (!showInILS || usdIlsRate <= 0 || usdIlsPreviousRate <= 0) {
+      return position.dailyChange;
+    }
+    
+    // Calculate yesterday's value in USD
+    const yesterdayValueUSD = position.totalValue - position.dailyChange;
+    
+    // Calculate yesterday's value in ILS using yesterday's rate
+    const yesterdayValueILS = yesterdayValueUSD * usdIlsPreviousRate;
+    
+    // Calculate today's value in ILS using today's rate
+    const todayValueILS = position.totalValue * usdIlsRate;
+    
+    // The daily change in ILS includes both stock price change and exchange rate change
+    return todayValueILS - yesterdayValueILS;
   };
 
   const formatPercent = (value) => {
@@ -44,7 +83,10 @@ const PositionsList = ({ positions, portfolioId, onPositionUpdate, portfolioSumm
   const calculatePortfolioPercentage = (positionValue) => {
     const totalValue = portfolioSummary?.totalValue || 0;
     if (totalValue === 0) return 0;
-    return (positionValue / totalValue) * 100;
+    // Use converted values for both position and total when in ILS mode
+    const convertedPositionValue = getValueByCurrency(positionValue);
+    const convertedTotalValue = getValueByCurrency(totalValue);
+    return (convertedPositionValue / convertedTotalValue) * 100;
   };
 
   const handleSort = (field) => {
@@ -182,8 +224,8 @@ const PositionsList = ({ positions, portfolioId, onPositionUpdate, portfolioSumm
 
       switch (sortBy) {
         case 'totalValue':
-          aValue = a.totalValue || 0;
-          bValue = b.totalValue || 0;
+          aValue = getValueByCurrency(a.totalValue || 0);
+          bValue = getValueByCurrency(b.totalValue || 0);
           break;
         case 'symbol':
           return sortOrder === 'asc'
@@ -194,12 +236,12 @@ const PositionsList = ({ positions, portfolioId, onPositionUpdate, portfolioSumm
           bValue = b.shares || 0;
           break;
         case 'overallGain':
-          aValue = a.overallGain || 0;
-          bValue = b.overallGain || 0;
+          aValue = getValueByCurrency(a.overallGain || 0);
+          bValue = getValueByCurrency(b.overallGain || 0);
           break;
         case 'dailyChange':
-          aValue = a.dailyChange || 0;
-          bValue = b.dailyChange || 0;
+          aValue = showInILS ? calculateDailyGainWithRateChange(a) : (a.dailyChange || 0);
+          bValue = showInILS ? calculateDailyGainWithRateChange(b) : (b.dailyChange || 0);
           break;
         case 'portfolioPercent':
           aValue = calculatePortfolioPercentage(a.totalValue || 0);
@@ -252,7 +294,8 @@ const PositionsList = ({ positions, portfolioId, onPositionUpdate, portfolioSumm
           <tbody>
             {sortedPositions.map((position) => {
               const isOverallPositive = (position.overallGain || 0) >= 0;
-              const isDailyPositive = (position.dailyChange || 0) >= 0;
+              const dailyChangeValue = showInILS ? calculateDailyGainWithRateChange(position) : position.dailyChange;
+              const isDailyPositive = (dailyChangeValue || 0) >= 0;
               const isEditing = editingPosition === position.symbol;
 
               return (
@@ -298,18 +341,18 @@ const PositionsList = ({ positions, portfolioId, onPositionUpdate, portfolioSumm
                         step="any"
                       />
                     ) : (
-                      formatCurrency(position.averagePrice)
+                      formatCurrency(position.averagePrice, 'USD')
                     )}
                   </td>
-                  <td className="price">{formatCurrency(position.currentPrice)}</td>
-                  <td className="value">{formatCurrency(position.totalValue)}</td>
+                  <td className="price">{formatCurrency(getValueByCurrency(position.currentPrice))}</td>
+                  <td className="value">{formatCurrency(getValueByCurrency(position.totalValue))}</td>
                   <td className="portfolio-percent">{formatPortfolioPercent(calculatePortfolioPercentage(position.totalValue))}</td>
                   <td className={`gain-loss ${isOverallPositive ? 'positive' : 'negative'}`}>
-                    {formatCurrency(position.overallGain)}
+                    {formatCurrency(getValueByCurrency(position.overallGain))}
                     <span className="percent">({formatPercent(position.overallGainPercentage)})</span>
                   </td>
                   <td className={`gain-loss ${isDailyPositive ? 'positive' : 'negative'}`}>
-                    {formatCurrency(position.dailyChange)}
+                    {formatCurrency(dailyChangeValue)}
                     <span className="percent">({formatPercent(position.dailyChangePercentage)})</span>
                   </td>
                   <td className="actions">

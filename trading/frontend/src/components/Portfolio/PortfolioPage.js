@@ -18,6 +18,7 @@ const PortfolioPage = ({ activeView = 'management', user: currentUser, onLogout,
   const [activeTab, setActiveTab] = useState(activeView); // management, insights
   const [showPremarket, setShowPremarket] = useState(false);
   const [isManagementCollapsed, setIsManagementCollapsed] = useState(true);
+  const [showInILS, setShowInILS] = useState(false);
   const { user, token } = useAuth();
   
   // Use ref to track selected portfolio without causing re-renders
@@ -286,7 +287,13 @@ const PortfolioPage = ({ activeView = 'management', user: currentUser, onLogout,
 
     return (
       <>
-        <PortfolioSummary portfolio={selectedPortfolio} showPremarket={showPremarket} usdIlsData={usdIlsData} />
+        <PortfolioSummary 
+          portfolio={selectedPortfolio} 
+          showPremarket={showPremarket} 
+          usdIlsData={usdIlsData}
+          showInILS={showInILS}
+          setShowInILS={setShowInILS}
+        />
         
         <div className="portfolio-actions">
           <AddPositionForm onSubmit={handleAddPosition} />
@@ -298,6 +305,8 @@ const PortfolioPage = ({ activeView = 'management', user: currentUser, onLogout,
           portfolioId={selectedPortfolio._id}
           onPositionUpdate={fetchPortfolios}
           portfolioSummary={selectedPortfolio.summary}
+          showInILS={showInILS}
+          usdIlsData={usdIlsData}
         />
 
         <TransactionHistory portfolioId={selectedPortfolio._id} />
