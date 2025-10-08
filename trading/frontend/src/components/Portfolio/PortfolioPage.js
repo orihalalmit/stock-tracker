@@ -169,15 +169,48 @@ const PortfolioPage = ({ activeView = 'management' }) => {
 
   const handleAddPosition = async (position) => {
     try {
-      await axios.post(
-        `/api/portfolio/${selectedPortfolioRef.current._id}/positions`,
-        position
+      console.log('🚀 Adding position:', position);
+      console.log('🔍 Selected portfolio:', selectedPortfolioRef.current);
+      console.log('🔍 Auth token exists:', !!token);
+      
+      const portfolioId = selectedPortfolioRef.current?._id;
+      if (!portfolioId) {
+        throw new Error('No portfolio selected');
+      }
+      
+      // Ensure the position data has the correct field names for the backend
+      const positionData = {
+        symbol: position.symbol,
+        shares: position.shares,
+        averageCost: position.averagePrice, // Backend expects averageCost
+        averagePrice: position.averagePrice, // Keep both for compatibility
+        sector: position.sector
+      };
+      
+      console.log('📤 Making API call to:', `/api/portfolio/${portfolioId}/positions`);
+      
+      const response = await axios.post(
+        `/api/portfolio/${portfolioId}/positions`,
+        positionData
       );
+      
+      console.log('✅ Position added successfully:', response.data);
       await fetchPortfolios(); // Refresh all portfolios with latest data
       setError(null);
     } catch (err) {
-      setError('Failed to add position');
-      console.error(err);
+      console.error('❌ Error adding position:', err);
+      console.error('Error response:', err.response?.data);
+      console.error('Error status:', err.response?.status);
+      
+      if (err.response?.status === 401) {
+        setError('Authentication failed. Please log in again.');
+      } else if (err.response?.status === 404) {
+        setError('Portfolio not found. Please refresh and try again.');
+      } else if (err.response?.data?.error) {
+        setError(`Failed to add position: ${err.response.data.error}`);
+      } else {
+        setError('Failed to add position. Please check your input and try again.');
+      }
     }
   };
 

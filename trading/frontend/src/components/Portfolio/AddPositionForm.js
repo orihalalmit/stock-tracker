@@ -25,7 +25,7 @@ const AddPositionForm = ({ onSubmit }) => {
   });
   const [error, setError] = useState('');
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
 
@@ -43,22 +43,28 @@ const AddPositionForm = ({ onSubmit }) => {
       return;
     }
 
-    // Submit form
-    onSubmit({
-      ...formData,
-      symbol: formData.symbol.toUpperCase(),
-      shares: parseFloat(formData.shares),
-      averagePrice: parseFloat(formData.averagePrice)
-    });
+    try {
+      // Submit form
+      await onSubmit({
+        ...formData,
+        symbol: formData.symbol.toUpperCase().trim(),
+        shares: parseFloat(formData.shares),
+        averagePrice: parseFloat(formData.averagePrice),
+        sector: formData.sector
+      });
 
-    // Reset form
-    setFormData({
-      symbol: '',
-      shares: '',
-      averagePrice: '',
-      sector: 'Technology'
-    });
-    setIsOpen(false);
+      // Reset form only on success
+      setFormData({
+        symbol: '',
+        shares: '',
+        averagePrice: '',
+        sector: 'Technology'
+      });
+      setIsOpen(false);
+    } catch (err) {
+      console.error('Form submission error:', err);
+      setError(err.message || 'Failed to add position');
+    }
   };
 
   const handleChange = (e) => {

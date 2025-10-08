@@ -398,6 +398,12 @@ router.delete('/:id', authenticate, async (req, res) => {
 // Add a position to a portfolio
 router.post('/:id/positions', authenticate, async (req, res) => {
   try {
+    console.log('📥 Received add position request:', {
+      portfolioId: req.params.id,
+      body: req.body,
+      userId: req.user._id
+    });
+
     let query = { _id: req.params.id };
     
     // Non-admin users can only modify their own portfolios
@@ -407,13 +413,45 @@ router.post('/:id/positions', authenticate, async (req, res) => {
     
     const portfolio = await Portfolio.findOne(query);
     if (!portfolio) {
+      console.log('❌ Portfolio not found for query:', query);
       return res.status(404).json({ error: 'Portfolio not found' });
     }
 
-    const newSymbol = req.body.symbol.toUpperCase();
+    // Validate required fields
+    if (!req.body.symbol) {
+      console.log('❌ Missing symbol in request body');
+      return res.status(400).json({ error: 'Symbol is required' });
+    }
+    if (!req.body.shares || isNaN(parseFloat(req.body.shares))) {
+      console.log('❌ Invalid shares value:', req.body.shares);
+      return res.status(400).json({ error: 'Valid shares value is required' });
+    }
+    if (!req.body.averageCost && !req.body.averagePrice) {
+      console.log('❌ Missing price information');
+      return res.status(400).json({ error: 'Average cost or average price is required' });
+    }
+
+    const newSymbol = req.body.symbol.toUpperCase().trim();
     const newShares = parseFloat(req.body.shares);
     const newAverageCost = parseFloat(req.body.averageCost || req.body.averagePrice);
     const newSector = req.body.sector || 'Unknown';
+
+    // Additional validation
+    if (newShares <= 0) {
+      console.log('❌ Invalid shares value (must be > 0):', newShares);
+      return res.status(400).json({ error: 'Shares must be greater than 0' });
+    }
+    if (newAverageCost <= 0 || isNaN(newAverageCost)) {
+      console.log('❌ Invalid average cost:', newAverageCost);
+      return res.status(400).json({ error: 'Average cost must be a valid positive number' });
+    }
+
+    console.log('✅ Validated position data:', {
+      symbol: newSymbol,
+      shares: newShares,
+      averageCost: newAverageCost,
+      sector: newSector
+    });
 
     // Check if position already exists
     const existingPosition = portfolio.positions.find(pos => pos.symbol === newSymbol);
@@ -457,14 +495,31 @@ router.post('/:id/positions', authenticate, async (req, res) => {
     });
 
     // Save both portfolio and transaction
+    console.log('💾 Saving portfolio and transaction...');
     await Promise.all([
       portfolio.save(),
       transaction.save()
     ]);
 
+    console.log('✅ Position added successfully to portfolio:', portfolio.name);
     res.status(201).json(portfolio);
   } catch (error) {
-    console.error('Error adding position:', error);
+    console.error('❌ Error adding position:', error);
+    console.error('Error details:', {
+      message: error.message,
+      stack: error.stack,
+      name: error.name
+    });
+    
+    // Return more specific error messages
+    if (error.name === 'ValidationError') {
+      const validationErrors = Object.values(error.errors).map(err => err.message);
+      return res.status(400).json({ 
+        error: 'Validation failed', 
+        details: validationErrors 
+      });
+    }
+    
     res.status(400).json({ error: 'Failed to add position' });
   }
 });
