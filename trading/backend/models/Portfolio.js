@@ -14,7 +14,11 @@ const PositionSchema = new mongoose.Schema({
   },
   averageCost: {
     type: Number,
-    required: true,
+    min: 0,
+    set: v => Math.max(0, Number(v) || 0), // Convert to number and ensure non-negative
+  },
+  averagePrice: {
+    type: Number,
     min: 0,
     set: v => Math.max(0, Number(v) || 0), // Convert to number and ensure non-negative
   },
@@ -38,7 +42,26 @@ const PositionSchema = new mongoose.Schema({
 PositionSchema.pre('save', function(next) {
   // Ensure numeric fields are valid numbers
   if (isNaN(this.shares)) this.shares = 0;
-  if (isNaN(this.averageCost)) this.averageCost = 0;
+  
+  // Handle both averageCost and averagePrice for backward compatibility
+  // Normalize to use averageCost as the primary field
+  if (this.averagePrice && !this.averageCost) {
+    this.averageCost = this.averagePrice;
+  } else if (this.averageCost && !this.averagePrice) {
+    this.averagePrice = this.averageCost;
+  }
+  
+  // Ensure at least one price field is valid
+  if (isNaN(this.averageCost) && isNaN(this.averagePrice)) {
+    this.averageCost = 0;
+    this.averagePrice = 0;
+  } else {
+    // Ensure both are set to the same value
+    const price = this.averageCost || this.averagePrice || 0;
+    this.averageCost = price;
+    this.averagePrice = price;
+  }
+  
   this.lastUpdated = new Date();
   next();
 });
@@ -75,17 +98,32 @@ const PortfolioSchema = new mongoose.Schema({
   },
 });
 
+// Normalize positions after loading from database
+PortfolioSchema.post('init', function() {
+  // Normalize all positions to ensure both averageCost and averagePrice are set
+  if (this.positions) {
+    this.positions.forEach(pos => {
+      if (pos.averagePrice && !pos.averageCost) {
+        pos.averageCost = pos.averagePrice;
+      } else if (pos.averageCost && !pos.averagePrice) {
+        pos.averagePrice = pos.averageCost;
+      }
+    });
+  }
+});
+
 // Update the updatedAt timestamp before saving
 PortfolioSchema.pre('save', function(next) {
   this.updatedAt = new Date();
   
-  // Clean positions array
-  this.positions = this.positions.filter(pos => 
-    pos.symbol && 
-    !isNaN(pos.shares) && 
-    !isNaN(pos.averageCost) && 
-    pos.shares > 0
-  );
+  // Clean positions array - handle both averageCost and averagePrice
+  this.positions = this.positions.filter(pos => {
+    const hasValidSymbol = pos.symbol;
+    const hasValidShares = !isNaN(pos.shares) && pos.shares > 0;
+    const hasValidPrice = (!isNaN(pos.averageCost) && pos.averageCost > 0) || 
+                          (!isNaN(pos.averagePrice) && pos.averagePrice > 0);
+    return hasValidSymbol && hasValidShares && hasValidPrice;
+  });
   
   next();
 });

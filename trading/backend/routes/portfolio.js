@@ -410,10 +410,21 @@ router.post('/:id/positions', authenticate, async (req, res) => {
       return res.status(404).json({ error: 'Portfolio not found' });
     }
 
-    const newSymbol = req.body.symbol.toUpperCase();
+    const newSymbol = req.body.symbol?.toUpperCase();
     const newShares = parseFloat(req.body.shares);
     const newAverageCost = parseFloat(req.body.averageCost || req.body.averagePrice);
     const newSector = req.body.sector || 'Unknown';
+
+    // Validate inputs
+    if (!newSymbol) {
+      return res.status(400).json({ error: 'Stock symbol is required' });
+    }
+    if (isNaN(newShares) || newShares <= 0) {
+      return res.status(400).json({ error: 'Valid number of shares is required' });
+    }
+    if (isNaN(newAverageCost) || newAverageCost <= 0) {
+      return res.status(400).json({ error: 'Valid average price is required' });
+    }
 
     // Check if position already exists
     const existingPosition = portfolio.positions.find(pos => pos.symbol === newSymbol);
@@ -465,7 +476,11 @@ router.post('/:id/positions', authenticate, async (req, res) => {
     res.status(201).json(portfolio);
   } catch (error) {
     console.error('Error adding position:', error);
-    res.status(400).json({ error: 'Failed to add position' });
+    console.error('Error details:', error.message);
+    if (error.name === 'ValidationError') {
+      return res.status(400).json({ error: `Validation error: ${error.message}` });
+    }
+    res.status(400).json({ error: error.message || 'Failed to add position' });
   }
 });
 
