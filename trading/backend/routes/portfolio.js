@@ -410,6 +410,12 @@ router.post('/:id/positions', authenticate, async (req, res) => {
       return res.status(404).json({ error: 'Portfolio not found' });
     }
 
+    // Fix missing userId in legacy portfolios
+    if (!portfolio.userId) {
+      console.warn('Portfolio missing userId, setting to current user:', portfolio._id);
+      portfolio.userId = req.user._id;
+    }
+
     const newSymbol = req.body.symbol?.toUpperCase();
     const newShares = parseFloat(req.body.shares);
     const newAverageCost = parseFloat(req.body.averageCost || req.body.averagePrice);
