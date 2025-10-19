@@ -152,7 +152,7 @@ app.get('/api/stocks/snapshots', async (req, res) => {
         if (symbol !== 'USD') {
           forexSymbols.push(symbol);
         }
-      } else if (symbol.includes('BTC') || symbol.includes('ETH') || symbol === 'ETH' || symbol === 'BTC') {
+      } else if (symbol === 'BTC' || symbol === 'ETH' || symbol === 'BTC-USD' || symbol === 'ETH-USD') {
         cryptoSymbols.push(symbol);
       } else {
         stockSymbols.push(symbol);
@@ -463,8 +463,8 @@ app.get('/api/stocks/snapshots', async (req, res) => {
     if (cryptoSymbols.length > 0) {
       try {
         for (const symbol of cryptoSymbols) {
-          const basePrice = symbol.includes('BTC') || symbol === 'BTC' ? 100000 :
-                           symbol.includes('ETH') || symbol === 'ETH' ? 3500 :
+          const basePrice = symbol === 'BTC' || symbol === 'BTC-USD' ? 100000 :
+                           symbol === 'ETH' || symbol === 'ETH-USD' ? 3500 :
                            50000;
           
           const randomChange = (Math.random() - 0.5) * 0.10; // ±5% random change
